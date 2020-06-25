@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react'
-import { View, Text, StyleSheet, Dimensions, AsyncStorage, ActivityIndicator } from 'react-native'
+import { View, Text, StyleSheet, Dimensions, ActivityIndicator } from 'react-native'
 import Icon from 'react-native-vector-icons/dist/Feather'
 import { TouchableWithoutFeedback, TouchableHighlight, TouchableOpacity } from 'react-native-gesture-handler'
+import  AsyncStorage from '@react-native-community/async-storage'
 
 import NotificationCard from '../NotificationCard/NotificationCard'
 

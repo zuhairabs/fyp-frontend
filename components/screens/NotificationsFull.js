@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
-import { View, Text, StyleSheet, Dimensions, Platform, StatusBar, AsyncStorage, Alert, ActivityIndicator } from 'react-native'
+import { View, Text, StyleSheet, Dimensions, Platform, StatusBar, Alert, ActivityIndicator } from 'react-native'
 import { ScrollView, TouchableWithoutFeedback } from 'react-native-gesture-handler'
+import  AsyncStorage from '@react-native-community/async-storage'
 
 import StatusBarWhite from '../UXComponents/StatusBar'
 import NavbarBackButton from '../Header/NavbarBackButton'

@@ -74,7 +74,7 @@ const SingleBooking = (props) => {
                         </View>
                         :
                         <View style={styles.contentContainer}>
-                            <StoreCard store={booking.store} noBookButton />
+                            <StoreCard store={booking.store} noBookButton navigation={props.navigation} />
                             <View style={styles.bookingData}>
                                 <View style={styles.cardContainer}>
                                     <View style={styles.card}>

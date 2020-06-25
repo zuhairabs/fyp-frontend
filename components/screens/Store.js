@@ -20,7 +20,7 @@ const Store = (props) => {
     const [storeData, setStoreData] = useState({})
     const [headerImage, setHeaderImage] = useState("")
     const [images, setImages] = useState([])
-    const [bookSlot, setBookSlot] = useState(props.bookSlot || false)
+    const [bookSlot, setBookSlot] = useState(props.route.params.bookSlot || false)
 
     useEffect(() => {
         fetch("https://shopout.herokuapp.com/store/fetch", {
@@ -38,8 +38,8 @@ const Store = (props) => {
                 if (res.status === 200) {
                     res.json().then(data => {
                         setStoreData(data.store)
-                        setImages([data.store.business.logo, data.store.business.logo, data.store.business.logo, data.store.business.logo])
-                        setHeaderImage(data.store.business.logo)
+                        setImages(data.store.business.images)
+                        setHeaderImage(data.store.business.images[0])
                         setLoading(false)
                     })
                 }
@@ -189,8 +189,7 @@ const styles = StyleSheet.create({
     headerImageContainer: {
         height: Math.floor(DEVICE_HEIGHT / 3.4),
         width: "100%",
-        borderWidth: 1,
-        borderColor: "#66666617"
+        backgroundColor: "#6666662F"
     },
     headerImage: {
         height: undefined,
@@ -214,7 +213,6 @@ const styles = StyleSheet.create({
     },
     carouselImageContainer: {
         marginHorizontal: 10,
-        borderWidth: 1,
         borderColor: "#66666666",
         borderRadius: 15,
         flex: 1,
@@ -233,7 +231,6 @@ const styles = StyleSheet.create({
         width: undefined,
         height: undefined,
         flex: 1,
-        resizeMode: "contain",
         opacity: 0.3,
         borderRadius: 15
     },

@@ -1,20 +1,35 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, FlatList, TouchableOpacity } from 'react-native';
 
-const CategoryScroll = () => {
-    const data = [
-        { id: 1, text: "Apparels" },
-        { id: 2, text: "Electronics" },
-        { id: 3, text: "Furniture" },
-        { id: 4, text: "Beauty Products" },
-        { id: 5, text: "Showrooms" }
-    ];
+const CategoryScroll = (props) => {
+    // const data = [
+    //     { id: 1, text: "Apparels" },
+    //     { id: 2, text: "Electronics" },
+    //     { id: 3, text: "Furniture" },
+    //     { id: 4, text: "Beauty Products" },
+    //     { id: 5, text: "Showrooms" }
+    // ];
+
+    const [categories, setCategories] = useState([])
+
+    useEffect(() => {
+        const formatData = async () => {
+            let data = []
+            props.categories.forEach(element => {
+                data.push({ key: element._id, name: element.name })
+            });
+            return data
+        }
+        formatData().then(data => {
+            setCategories(data)
+        })
+    }, [props.categories])
 
     const renderItem = (item) => {
         return (
             <TouchableOpacity style={styles.categoryScrollCard}>
                 <Text style={styles.CategoryScrollText}>
-                    {item.text}
+                    {item.name.toLowerCase()}
                 </Text>
             </TouchableOpacity>
         );
@@ -25,7 +40,7 @@ const CategoryScroll = () => {
             horizontal={true}
             showsHorizontalScrollIndicator={false}
             style={styles.CategoryScroll}
-            data={data}
+            data={categories}
             renderItem={({ item }) => renderItem(item)} />
     );
 };
@@ -43,6 +58,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 5,
         marginHorizontal: 10,
         fontSize: 10,
+        textTransform: "capitalize",
     },
     categoryScrollCard: {
         padding: 5,

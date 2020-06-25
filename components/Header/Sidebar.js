@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
-import { View, Text, StyleSheet, AsyncStorage } from 'react-native'
+import { View, Text, StyleSheet } from 'react-native'
 import { TouchableOpacity } from 'react-native-gesture-handler'
+import  AsyncStorage from '@react-native-community/async-storage'
 
 const Sidebar = () => {
     const [user, setUser] = useState({})

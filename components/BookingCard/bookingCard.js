@@ -12,9 +12,9 @@ const BookingCard = (props) => {
     return (
         <View style={styles.card}>
             <View style={styles.container}>
-                <TouchableWithoutFeedback 
+                <TouchableWithoutFeedback
                     style={styles.mainCard}
-                    onPress={()=>{extended ? setExtended(false) : setExtended(true)}}
+                    onPress={() => { extended ? setExtended(false) : setExtended(true) }}
                 >
                     <View style={styles.dateContainer}>
                         <Text style={styles.date}>
@@ -26,7 +26,9 @@ const BookingCard = (props) => {
                     </View>
                     <View style={styles.imageContainer}>
                         <Image
-                            source={{ uri: `data:image/gif;base64,${props.booking.store.business.logo}` }}
+                            source={{
+                                uri: `data:image/gif;base64,${props.booking.store.business.images[0] || props.booking.store.business.logo}`
+                            }}
                             style={styles.image}
                         />
                     </View>
@@ -55,8 +57,8 @@ const BookingCard = (props) => {
                     extended
                         ? <View style={styles.extension}>
                             <TouchableOpacity
-                                onPress={()=>{
-                                    props.navigation.navigate("SingleBooking", {booking: props.booking._id})
+                                onPress={() => {
+                                    props.navigation.navigate("SingleBooking", { booking: props.booking._id })
                                 }}
                             >
                                 <Text style={styles.tabText}>View</Text>
@@ -65,7 +67,7 @@ const BookingCard = (props) => {
                                 <Text style={styles.tabText}>Edit</Text>
                             </TouchableOpacity>
                             <TouchableOpacity
-                                onPress={()=>{
+                                onPress={() => {
                                     Alert.alert("Are you sure you want to delete this booking?")
                                 }}
                             >
@@ -95,7 +97,9 @@ const styles = StyleSheet.create({
         flex: 2,
         width: "100%",
         flexDirection: "row",
-        justifyContent: "center"
+        justifyContent: "center",
+        alignItems: "center",
+        padding: 8,
     },
     dateContainer: {
         flex: 2,
@@ -110,12 +114,15 @@ const styles = StyleSheet.create({
     imageContainer: {
         flex: 2,
         marginLeft: 20,
+        height: 70,
+        width: 70,
+        justifyContent: "center",
+        alignItems: "center"
     },
     image: {
-        flex: 1,
-        width: undefined,
-        height: undefined,
-        resizeMode: "contain"
+        width: 70,
+        height: 70,
+        borderRadius: 70 / 2,
     },
     details: {
         flex: 4,

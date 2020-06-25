@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react'
+import React, { useState, useContext, createRef } from 'react'
 import { View, Text, StyleSheet, Dimensions, Platform, StatusBar, AsyncStorage, Alert } from 'react-native'
 import { TouchableOpacity, ScrollView, TextInput } from 'react-native-gesture-handler'
 
@@ -14,6 +14,9 @@ const Login = ({navigation}) => {
     const [password, setPassword] = useState("")
 
     const { signIn } = React.useContext(AuthContext);
+
+    const phoneInput = createRef();
+    const passwordInput = createRef();
 
     const validatePhone = () => {
         if (phone) {
@@ -54,6 +57,9 @@ const Login = ({navigation}) => {
                             keyboardType='numeric'
                             value={phone}
                             onChangeText={(value) => { setPhone(value) }}
+                            ref={phoneInput}
+                            onSubmitEditing={()=>{ passwordInput.current.focus() }}
+                            blurOnSubmit={false}
                         />
                         <TextInput
                             style={styles.textInput}
@@ -62,6 +68,8 @@ const Login = ({navigation}) => {
                             secureTextEntry
                             passwordRules
                             onChangeText={(value) => { setPassword(value) }}
+                            ref={passwordInput}
+                            onSubmitEditing={()=>{handleSubmit()}}
                         />
                     </View>
                     <View style={styles.buttonArea}>

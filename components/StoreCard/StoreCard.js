@@ -1,6 +1,6 @@
 import React from 'react'
 import { Text, View, StyleSheet, Image } from 'react-native'
-import { TouchableOpacity } from 'react-native-gesture-handler'
+import { TouchableOpacity, TouchableWithoutFeedback } from 'react-native-gesture-handler'
 
 import RatingBadge from '../Rating/RatingBadge'
 import BookButton from '../UXComponents/BookButton'
@@ -15,21 +15,30 @@ const StoreCard = (props) => {
                     <View style={styles.imageFiller}></View>
                 </View>
                 <View style={styles.cardContent}>
-                    <Text style={styles.heading}>
-                        {props.store.business.display_name} {props.store.name}
-                    </Text>
-                    <View style={styles.subheading}>
-                        <Text style={styles.subheadingText}>
-                            {props.store.business.category}
+                    <TouchableWithoutFeedback
+                        onPress={()=>{
+                            props.navigation.navigate("Store", { store: props.store._id })
+                        }}
+                    >
+                        <Text style={styles.heading}>
+                            {props.store.business.display_name} {props.store.name}
                         </Text>
-                        <Text style={styles.subheadingText}>
-                            {props.store.name}, {props.store.location_desc}
-                        </Text>
-                    </View>
+                        <View style={styles.subheading}>
+                            <Text style={styles.subheadingText}>
+                                {props.store.business.category}
+                            </Text>
+                            <Text style={styles.subheadingText}>
+                                {props.store.name}, {props.store.location_desc}
+                            </Text>
+                        </View>
+                    </TouchableWithoutFeedback>
                     {
                         props.noBookButton ? null
                             :
-                            <TouchableOpacity onPress={() => { props.navigation.navigate("Store", { store: props.store._id }) }}>
+                            <TouchableOpacity onPress={() => {
+                                props.navigation.navigate("Store", { store: props.store._id, bookSlot: true })
+                            }}
+                            >
                                 <BookButton />
                             </TouchableOpacity>
                     }

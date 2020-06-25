@@ -6,31 +6,51 @@ import {
     Image,
     TouchableOpacity,
     Dimensions,
+    PixelRatio,
 } from 'react-native';
 import BookButton from '../UXComponents/BookButton'
+import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 
 const DEVICE_WIDTH = Dimensions.get('window').width;
 
-const BigCard = () => {
+const BigCard = (props) => {
     return (
         <View style={styles.container}>
-            <View style={styles.card} setOutlineAmbientShadowColor="#f00">
+            <TouchableWithoutFeedback
+                onPress={() => {
+                    props.navigation.navigate("Store", { store: props.store._id, bookSlot: false })
+                }}
+                style={styles.card}
+                setOutlineAmbientShadowColor="#f00"
+            >
                 <View style={styles.cardRight}>
                     <View>
                         <Text style={styles.cardTitleSubtext}>hometown</Text>
                     </View>
                     <View style={styles.cardTitle}>
-                        <Text style={styles.cardTitleText}>New</Text>
-                        <Text style={styles.cardTitleTextBlack}>Collection</Text>
+                        <Text style={styles.cardTitleText} numberOfLines={1}>
+                            {props.store.business.display_name}
+                        </Text>
+                        <Text style={styles.cardTitleTextBlack} allowFontScaling={true} numberOfLines={1}>
+                            {props.store.name}
+                        </Text>
                     </View>
-                    <TouchableOpacity>
+                    <TouchableOpacity
+                        onPress={() => {
+                            props.navigation.navigate("Store", { store: props.store._id, bookSlot: true })
+                        }}
+                    >
                         <BookButton />
                     </TouchableOpacity>
                 </View>
                 <View style={styles.cardLeft}>
-                    <Image source={require('./store.png')} style={styles.cardImage} />
+                    <Image source={{
+                        uri: `data:image/gif;base64,${props.store.business.images[0] || props.store.business.logo}`
+                    }}
+                        style={styles.cardImage}
+                    />
                 </View>
-            </View>
+            </TouchableWithoutFeedback>
         </View>
     );
 };
@@ -55,7 +75,7 @@ const styles = StyleSheet.create({
         width: DEVICE_WIDTH - 40,
         flexDirection: 'row',
         justifyContent: 'space-between',
-        
+
         marginLeft: 10,
         marginVertical: 10,
     },
@@ -70,7 +90,7 @@ const styles = StyleSheet.create({
     },
     cardTitleText: {
         color: '#1162FB',
-        fontSize: 30,
+        fontSize: 24,
         fontWeight: "bold",
         margin: 0,
         padding: 0,
@@ -78,7 +98,7 @@ const styles = StyleSheet.create({
     },
     cardTitleTextBlack: {
         color: '#000',
-        fontSize: 30,
+        fontSize: 24,
         fontWeight: "bold",
         margin: 0,
         padding: 0,

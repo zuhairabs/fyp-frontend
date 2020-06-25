@@ -10,11 +10,14 @@ const Location = (props) => {
                 <Icon name="location-on" size={16} color='#666' />
                 <Text style={{ color: '#666', fontSize: 12 }}>
                     {
-                        props.location.lat ? <Text>
-                            Latitude: {props.location.lat}
-                            Longitude: {props.location.long}
+                        props.location.short ? <Text>
+                            {/* Latitude: {props.location.lat}
+                            Longitude: {props.location.long} */}
+                            {props.location.short}
                         </Text>
-                            : null
+                            : <Text>
+                                Powai, Mumbai
+                            </Text>
                     }
                 </Text>
             </View>

@@ -17,13 +17,6 @@ const Search = (props) => {
     const [brands, setBrands] = useState([]);
     const [stores, setStores] = useState([]);
 
-    // const searchBox = React.createRef()
-
-    // useEffect(() => {
-    //     if (searchBox.current && props.autoFocus)
-    //         searchBox.current.focus()
-    // }, [props.autoFocus, searchBox])
-
     const fullSearch = (query, model, id) => {
         const bootstrapper = async () => {
             let token = await AsyncStorage.getItem("jwt")
@@ -101,19 +94,20 @@ const Search = (props) => {
                 <View style={Styles.searchInputFull}>
                     <Icon name="search" size={16} color="#666" />
                     <TextInput
-                        // ref={searchBox}
-                        autoFocus={false}
                         style={Styles.searchInputText}
                         value={text}
-                        clearTextOnFocus
-                        onChangeText={(query) => { partialSearch(query); setText(query) }}
+                        autoFocus={true}
+                        onChangeText={(query) => { setText(query); partialSearch(query); }}
                         autoCompleteType='off'
                         placeholder={placeholder}
-                        onBlur={() => { setBrands([]); setStores([]); setCategories([]); setTags([]); setText("") }}
+                        onBlur={() => { setText(""); setBrands([]); setStores([]); setCategories([]); setTags([]); }}
                         placeholderTextColor="#707070"
                     />
                 </View>
-                <ScrollView style={Styles.searchResultContainer}>
+                <ScrollView
+                    keyboardDismissMode='on-drag'
+                    keyboardShouldPersistTaps='never'
+                    style={Styles.searchResultContainer}>
                     {stores.map(result => {
                         if (result.name)
                             return <TouchableWithoutFeedback onPress={() => {
@@ -173,13 +167,14 @@ const Search = (props) => {
             </View>
         )
     }
+
     else {
         return (
             <View style={Styles.search}>
                 <TouchableWithoutFeedback
                     style={Styles.searchInput}
                     onPress={() => {
-                        props.navigation.navigate("SearchFull", { autoFocus: true })
+                        props.navigation.navigate("SearchFull")
                     }}
                 >
                     <Icon

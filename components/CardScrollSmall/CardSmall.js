@@ -11,6 +11,7 @@ import Icon from 'react-native-vector-icons/dist/MaterialIcons'
 
 import RatingBadge from '../Rating/RatingBadge'
 import BookButton from '../UXComponents/BookButton'
+import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 
 const DEVICE_WIDTH = Dimensions.get('window').width;
 
@@ -21,10 +22,17 @@ const CardSmall = ({ store, navigation }) => {
             <View style={styles.card}>
                 <View style={styles.cardHeader}>
                     {/* <Image source={require('./cafe.png')} style={styles.cardImage} /> */}
-                    <Image source={{uri: `data:image/gif;base64,${store.business.logo}`}} style={styles.cardImage} />
+                    <Image source={{
+                        uri: `data:image/gif;base64,${store.business.images[0] || store.business.logo}`
+                    }}
+                        style={styles.cardImage} />
                 </View>
                 <View style={styles.cardContent}>
-                    <View>
+                    <TouchableWithoutFeedback
+                        onPress={() => {
+                            navigation.navigate("Store", { store: store._id })
+                        }}
+                    >
                         <Text style={styles.cardTitle}>{store.business.display_name}</Text>
                         <Text style={styles.cardTitle}>{store.name}</Text>
                         <View style={styles.cardSubtitle}>
@@ -34,8 +42,8 @@ const CardSmall = ({ store, navigation }) => {
                                 {store.location_desc}
                             </Text>
                         </View>
-                    </View>
-                    <TouchableOpacity onPress={ () => { navigation.navigate("Store", {store: store._id}) } }>
+                    </TouchableWithoutFeedback>
+                    <TouchableOpacity onPress={() => { navigation.navigate("Store", { store: store._id, bookSlot: true }) }}>
                         <BookButton />
                     </TouchableOpacity>
                 </View>
@@ -96,7 +104,6 @@ const styles = StyleSheet.create({
         flex: 1,
         borderTopLeftRadius: 15,
         borderTopRightRadius: 15,
-        resizeMode: "contain"
     },
     ratingBadge: {
         position: "absolute",

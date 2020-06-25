@@ -15,7 +15,9 @@ const SearchFull = (props) => {
             <StatusBarWhite />
             <Search type="full" setResults={setResults} setQuery={setQuery} />
 
-            <ScrollView style={styles.container}>
+            <ScrollView
+                style={styles.container}
+            >
                 <View style={styles.searchHeader}>
                     {
                         query
@@ -29,10 +31,11 @@ const SearchFull = (props) => {
                 </View>
                 <View style={styles.searchResult}>
                     {
-                        results &&
-                        results.map(item => {
-                            return <StoreCard key={item._id} store={item} navigation={props.navigation} />
-                        })
+                        results ?
+                            results.map(item => {
+                                return <StoreCard key={item._id} store={item} navigation={props.navigation} />
+                            })
+                            : null
                     }
                 </View>
             </ScrollView>

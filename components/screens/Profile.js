@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react'
-import { View, Text, StyleSheet, StatusBar, Dimensions, AsyncStorage } from 'react-native'
+import { View, Text, StyleSheet, StatusBar, Dimensions, Alert } from 'react-native'
 import { ScrollView, TouchableWithoutFeedback } from 'react-native-gesture-handler'
 import Icon from 'react-native-vector-icons/dist/MaterialIcons'
+import  AsyncStorage from '@react-native-community/async-storage'
 
 import { AuthContext } from '../../App'
 
@@ -84,7 +85,9 @@ const Profile = ({ navigation }) => {
                         </TouchableWithoutFeedback>
                         <TouchableWithoutFeedback
                             style={styles.button}
-                            onPress={() => { signOut() }}
+                            onPress={() => { 
+                                signOut()
+                             }}
                         >
                             <View style={styles.buttonIcon}>
                                 {/* <Calendar /> */}

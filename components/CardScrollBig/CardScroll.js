@@ -1,9 +1,17 @@
-import React from 'react';
-import { StyleSheet, Alert, ScrollView, View, FlatList } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, Alert, ScrollView, View, FlatList, ActivityIndicator } from 'react-native';
 
 import BigCard from './BigCard'
 
-const CardScroll = () => {
+const CardScroll = (props) => {
+
+    const [stores, setStore] = useState(props.stores)
+    const [loading, setLoading] = useState([])
+
+    useEffect(() => {
+        setLoading(false)
+    }, [props.stores])
+
     return (
         <View style={styles.container}>
             <ScrollView
@@ -11,10 +19,21 @@ const CardScroll = () => {
                 pagingEnabled
                 showsHorizontalScrollIndicator={false}
             >
-                <BigCard />
-                <BigCard />
-                <BigCard />
-                <BigCard />
+                {
+                    loading ? <View style={{
+                        justifyContent: "center",
+                        alignItems: "center"
+                    }}>
+                        <ActivityIndicator size="large" color="#0062FF" />
+                    </View>
+                        : [
+                            (
+                                stores.map(store => {
+                                    return <BigCard key={store._id} store={store} navigation={props.navigation} />
+                                })
+                            )
+                        ]
+                }
             </ScrollView>
         </View>
     );

@@ -3,34 +3,14 @@ import { StyleSheet, Text, ScrollView, View, ActivityIndicator } from 'react-nat
 
 import CardSmall from './CardSmall'
 
-const CardScrollSmall = ({ navigation }) => {
+const CardScrollSmall = (props) => {
 
-    const [stores, setStores] = useState([])
+    const [stores, setStores] = useState(props.stores)
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
-        fetch("https://shopout.herokuapp.com/store/all", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-        })
-            .then((res) => {
-                if (res.status === 200) {
-                    res.json()
-                        .then((result) => {
-                            setStores(result.stores);
-                            setLoading(false);
-                        })
-                }
-                else
-                    console.log("Can't load stores, error: ", res.status)
-            })
-
-            .catch(error => {
-                console.debug("Something went wrong")
-            })
-    }, [])
+        setLoading(false)
+    }, [props.stores])
 
     return (
         <View style={styles.container}>
@@ -44,7 +24,7 @@ const CardScrollSmall = ({ navigation }) => {
                         >
                             {
                                 stores.map(store => {
-                                    return <CardSmall key={store._id} store={store} navigation={navigation} />
+                                    return <CardSmall key={store._id} store={store} navigation={props.navigation} />
                                 })
                             }
                         </ScrollView>

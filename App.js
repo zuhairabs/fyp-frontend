@@ -1,7 +1,8 @@
 import * as React from 'react';
-import { AsyncStorage, Alert } from 'react-native';
+import { Alert } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
+import  AsyncStorage from '@react-native-community/async-storage'
 
 export const AuthContext = React.createContext();
 const Stack = createStackNavigator();
