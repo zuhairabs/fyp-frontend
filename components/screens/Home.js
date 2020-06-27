@@ -7,7 +7,7 @@ import MainBackground from '../UXComponents/MainBackground'
 import StatusBarWhite from '../UXComponents/StatusBar'
 
 import Navbar from '../Header/Navbar';
-import Search from '../Header/Search';
+import SearchBarIdle from '../Header/SearchBarIdle'
 import Location from '../Header/HeaderLocation'
 import CategoryScroll from '../Header/CategoryScroll'
 import CardScroll from '../CardScrollBig/CardScroll'
@@ -118,7 +118,8 @@ const Home = ({ navigation }) => {
                 showsVerticalScrollIndicator={false}
             >
                 <Navbar type="unlocked" navigation={navigation} />
-                <Search navigation={navigation} />
+                {/* <Search navigation={navigation} /> */}
+                <SearchBarIdle navigation={navigation} />
 
                 {
                     locationPermissionStatus ? [

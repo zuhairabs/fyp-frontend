@@ -12,9 +12,9 @@ const BookingCardSmall = (props) => {
     return (
         <View style={styles.card}>
             <View style={styles.container}>
-                <TouchableWithoutFeedback 
+                <TouchableWithoutFeedback
                     style={styles.mainCard}
-                    onPress={()=>{extended ? setExtended(false) : setExtended(true)}}
+                    onPress={() => { extended ? setExtended(false) : setExtended(true) }}
                 >
                     <View style={styles.dateContainer}>
                         <Text style={styles.date}>
@@ -26,12 +26,14 @@ const BookingCardSmall = (props) => {
                     </View>
                     <View style={styles.imageContainer}>
                         <Image
-                            source={{ uri: `data:image/gif;base64,${props.booking.store.business.logo}` }}
+                            source={{
+                                uri: `data:image/gif;base64,${props.booking.store.business.images[0] || props.booking.store.business.logo}`
+                            }}
                             style={styles.image}
                         />
                     </View>
                     <View style={styles.details}>
-                        <Text style={styles.header}>
+                        <Text style={styles.header} numberOfLines={1}>
                             {props.booking.store.business.display_name} {props.booking.store.name}
                         </Text>
 
@@ -81,7 +83,9 @@ const styles = StyleSheet.create({
         flex: 2,
         width: "100%",
         flexDirection: "row",
-        justifyContent: "center"
+        justifyContent: "center",
+        alignItems: "center",
+        padding: 8,
     },
     dateContainer: {
         flex: 2,
@@ -96,15 +100,18 @@ const styles = StyleSheet.create({
     imageContainer: {
         flex: 2,
         marginLeft: 20,
+        height: 70,
+        width: 70,
+        justifyContent: "center",
+        alignItems: "center"
     },
     image: {
-        flex: 1,
-        width: undefined,
-        height: undefined,
-        resizeMode: "contain"
+        width: 70,
+        height: 70,
+        borderRadius: 70 / 2,
     },
     details: {
-        flex: 4,
+        flex: 5,
         padding: 20,
         justifyContent: "space-between",
         alignItems: "flex-start",

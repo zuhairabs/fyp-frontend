@@ -4,7 +4,6 @@ import { ScrollView, TouchableWithoutFeedback } from 'react-native-gesture-handl
 import  AsyncStorage from '@react-native-community/async-storage'
 
 import StatusBarWhite from '../UXComponents/StatusBar'
-import NavbarBackButton from '../Header/NavbarBackButton'
 import NotificationCard from '../NotificationCard/NotificationCard'
 
 const NotificationsFull = ({ navigation }) => {
@@ -32,7 +31,6 @@ const NotificationsFull = ({ navigation }) => {
             <StatusBarWhite />
 
             <ScrollView style={styles.container}>
-                <NavbarBackButton header="Notifications" navigation={navigation} />
                 <View style={styles.contentContainer}>
                     {
                         loading
@@ -52,13 +50,16 @@ const NotificationsFull = ({ navigation }) => {
                                         ? <View style={{ justifyContent: "center", alignItems: "center", padding: 20 }}>
                                             <Text style={{ color: "#666", fontSize: 16 }}>No new notifications</Text>
                                         </View>
-                                        : <View>
+                                        : <ScrollView contentContainerStyle={{
+                                            justifyContent: "center",
+                                            alignItems: "center"
+                                        }}>
                                             {
                                                 notifications.map(notification => {
                                                     return <NotificationCard key={notification._id} notification={notification} />
                                                 })
                                             }
-                                        </View>
+                                        </ScrollView>
                                 }
                             </View>
                     }
@@ -72,14 +73,14 @@ const NotificationsFull = ({ navigation }) => {
 
 const styles = StyleSheet.create({
     screenContainer: {
-        paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
+        // paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
         backgroundColor: "#FFF",
     },
     container: {
-        height: Dimensions.get('window').height
+        height: Dimensions.get('window').height,
     },
     notifications: {
-        paddingVertical: 20,
+        marginTop: 20,
     },
     small: {
         color: "#6666666F",

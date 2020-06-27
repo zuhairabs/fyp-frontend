@@ -3,11 +3,51 @@ import { Text, View, StyleSheet, Image, Dimensions, Alert } from 'react-native'
 import { TouchableOpacity, TouchableWithoutFeedback } from 'react-native-gesture-handler'
 
 import Icon from 'react-native-vector-icons/dist/MaterialIcons'
+import AsyncStorage from '@react-native-community/async-storage'
 
 const BookingCard = (props) => {
     const mlist = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
     const [extended, setExtended] = useState(false)
+
+    const cancelBooking = () => {
+        const bootstrapper = async () => {
+            let token = await AsyncStorage.getItem("jwt")
+            let user = JSON.parse(await AsyncStorage.getItem("user"))
+            return ({ user, token })
+        }
+        bootstrapper()
+            .then(({ user, token }) => {
+                let bookId = props.booking._id;
+                fetch("https://shopout.herokuapp.com/user/booking/cancel", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        authorization: "Bearer " + token,
+                    },
+                    body: JSON.stringify({
+                        cred: {
+                            phone: user.phone,
+                        },
+                        bookingData: {
+                            _id: bookId,
+                            store: props.booking.store,
+                            user: user._id,
+                            visitors: props.booking.visitors,
+                            end: props.booking.end,
+                            start: props.booking.start
+                        },
+                    }),
+                }).then((res) => {
+                    if (res.status === 200) {
+                        Alert.alert("Booking deleted successfully")
+                    } else {
+                        Alert.alert(res.statusText);
+                    }
+                });
+            })
+
+    };
 
     return (
         <View style={styles.card}>
@@ -33,7 +73,7 @@ const BookingCard = (props) => {
                         />
                     </View>
                     <View style={styles.details}>
-                        <Text style={styles.header}>
+                        <Text style={styles.header} numberOfLines={1}>
                             {props.booking.store.business.display_name} {props.booking.store.name}
                         </Text>
 
@@ -68,7 +108,24 @@ const BookingCard = (props) => {
                             </TouchableOpacity>
                             <TouchableOpacity
                                 onPress={() => {
-                                    Alert.alert("Are you sure you want to delete this booking?")
+                                    Alert.alert(
+                                        "Are you sure you want to cancel this appointment?",
+                                        "",
+                                        [
+                                            {
+                                                text: "No, don't",
+                                                onPress: ()=>{},
+                                                style: "default"
+                                            },
+                                            {
+                                                text: "Yes, cancel",
+                                                onPress: ()=>{
+                                                    cancelBooking()
+                                                },
+                                                style: "destructive"
+                                            }
+                                        ]
+                                    )
                                 }}
                             >
                                 <Text style={styles.tabTextDelete}>Delete</Text>
@@ -92,6 +149,7 @@ const styles = StyleSheet.create({
         borderRadius: 15,
         backgroundColor: "#fff",
         elevation: 10,
+        zIndex: 0,
     },
     mainCard: {
         flex: 2,
@@ -125,7 +183,7 @@ const styles = StyleSheet.create({
         borderRadius: 70 / 2,
     },
     details: {
-        flex: 4,
+        flex: 5,
         padding: 20,
         justifyContent: "space-between",
         alignItems: "flex-start",

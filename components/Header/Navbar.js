@@ -56,8 +56,9 @@ const Styles = StyleSheet.create({
     navbarLinks: {
         flexDirection: 'row',
         flex: 1,
-        justifyContent: 'space-around',
+        justifyContent: 'space-between',
         alignItems: 'center',
+        paddingRight: 20,
     },
     navbarLogo: {
         flex: 4,

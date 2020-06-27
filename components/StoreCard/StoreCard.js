@@ -10,13 +10,16 @@ const StoreCard = (props) => {
         <View style={styles.container}>
             <View style={styles.details}>
                 <View style={styles.imageContainer}>
-                    <Image source={{ uri: `data:image/gif;base64,${props.store.business.logo}` }} style={styles.image} />
-                    {/* <Image source={require('./store.png')} style={styles.image} /> */}
+                    <Image source={{
+                        uri: `data:image/gif;base64,${props.store.business.images ? props.store.business.images[0] : props.store.business.logo}`
+                    }}
+                        style={styles.image}
+                    />
                     <View style={styles.imageFiller}></View>
                 </View>
                 <View style={styles.cardContent}>
                     <TouchableWithoutFeedback
-                        onPress={()=>{
+                        onPress={() => {
                             props.navigation.navigate("Store", { store: props.store._id })
                         }}
                     >

@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { Alert } from 'react-native';
+import { Alert, Text } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import  AsyncStorage from '@react-native-community/async-storage'
+import AsyncStorage from '@react-native-community/async-storage'
 
 export const AuthContext = React.createContext();
 const Stack = createStackNavigator();
@@ -20,6 +20,10 @@ import UpcomingBookings from './components/screens/UpcomingBookings';
 import PreviousBookings from './components/screens/PreviousBookings';
 import SingleBooking from './components/screens/SingleBooking';
 import NotificationsFull from './components/screens/NotificationsFull';
+import BackButton from './components/UXComponents/BackButton';
+import EditProfile from './components/screens/EditProfile';
+import Congratulations from './components/screens/misc/Congratulations';
+import { TouchableHighlight, TouchableOpacity } from 'react-native-gesture-handler';
 
 const App = () => {
   const [state, dispatch] = React.useReducer(
@@ -243,34 +247,91 @@ const App = () => {
                       component={Profile}
                     />
                     <Stack.Screen
+                      name="EditProfile"
+                      component={EditProfile}
+                    />
+                    <Stack.Screen
                       name="Store"
                       component={Store}
                     />
                     <Stack.Screen
                       name="SearchFull"
                       component={SearchFull}
-                      options={{
-                        animationEnabled: false
-                      }}
                     />
                     <Stack.Screen
                       name="UpcomingBookings"
                       component={UpcomingBookings}
+                      options={{
+                        title: "Appointments",
+                        headerShown: true,
+                        headerBackImage: () => {
+                          return <BackButton />
+                        },
+                        headerLeftContainerStyle: {
+                          padding: 20,
+                        },
+                      }}
                     />
                     <Stack.Screen
                       name="PreviousBookings"
                       component={PreviousBookings}
                       options={{
-                        animationEnabled: false
+                        animationEnabled: false,
+                        title: "Appointments",
+                        headerShown: true,
+                        headerBackImage: () => {
+                          return <BackButton />
+                        },
+                        headerLeftContainerStyle: {
+                          padding: 20,
+                        },
                       }}
                     />
-                    <Stack.Screen 
+                    <Stack.Screen
                       name="SingleBooking"
                       component={SingleBooking}
+                      options={{
+                        title: "Booking",
+                        headerShown: true,
+                        headerBackImage: () => {
+                          return <BackButton />
+                        },
+                        headerLeftContainerStyle: {
+                          padding: 20,
+                        },
+                      }}
                     />
-                    <Stack.Screen 
+                    <Stack.Screen
                       name="NotificationsFull"
                       component={NotificationsFull}
+                      options={{
+                        title: "Notifications",
+                        headerShown: true,
+                        headerBackImage: () => {
+                          return <BackButton />
+                        },
+                        headerLeftContainerStyle: {
+                          padding: 20,
+                        },
+                        headerRight: () => (
+                          <TouchableOpacity
+                            onPress={() => console.log("Pressed notification clear")}
+                          >
+                            <Text style={{
+                              color: "#6666666F"
+                            }}>
+                              MARK ALL AS SEEN
+                            </Text>
+                          </TouchableOpacity>
+                        ),
+                        headerRightContainerStyle: {
+                          padding: 20,
+                        }
+                      }}
+                    />
+                    <Stack.Screen
+                      name="Congratulations"
+                      component={Congratulations}
                     />
                   </>
                 )

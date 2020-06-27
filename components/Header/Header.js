@@ -2,7 +2,6 @@ import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
 import Navbar from './Navbar'
-import Search from './Search'
 import CategoryScroll from './CategoryScroll';
 
 const Header = (props) => {

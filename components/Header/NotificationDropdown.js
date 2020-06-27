@@ -1,16 +1,18 @@
 import React, { useState, useEffect } from 'react'
 import { View, Text, StyleSheet, Dimensions, ActivityIndicator } from 'react-native'
 import Icon from 'react-native-vector-icons/dist/Feather'
-import { TouchableWithoutFeedback, TouchableHighlight, TouchableOpacity } from 'react-native-gesture-handler'
-import  AsyncStorage from '@react-native-community/async-storage'
+import { TouchableWithoutFeedback, TouchableHighlight, TouchableOpacity, ScrollView } from 'react-native-gesture-handler'
+import AsyncStorage from '@react-native-community/async-storage'
 
 import NotificationCard from '../NotificationCard/NotificationCard'
+import NotificationBell from './notifications.svg'
 
 const NotificationDropdown = (props) => {
 
     const [expand, setExpand] = useState(false)
     const [notifications, setNotifications] = useState([])
     const [loading, setLoading] = useState(true)
+    const [unread, setUnread] = useState(false)
 
     useEffect(() => {
         const bootstrapper = async () => {
@@ -22,6 +24,9 @@ const NotificationDropdown = (props) => {
                 if (notifications) {
                     setNotifications(notifications)
                     setLoading(false)
+                    for (i = notifications.length - 1; i > -1 && !unread; --i)
+                        if (notifications[i].readStatus === false)
+                            setUnread(true);
                 }
                 else setNotifications([])
             })
@@ -34,9 +39,16 @@ const NotificationDropdown = (props) => {
             }}
                 style={styles.container}
             >
-                <Icon name="bell" size={24} color="#06369B" />
-                <View style={styles.notificationCountCircle}>
-                </View>
+                {/* <Icon name="bell" size={24} color="#06369B" /> */}
+                <NotificationBell height="90%" />
+                {
+                    unread
+                        ?
+                        <View style={styles.notificationCountCircle}>
+                        </View>
+                        : null
+                }
+
             </TouchableWithoutFeedback>
             {
                 expand ?
@@ -56,20 +68,20 @@ const NotificationDropdown = (props) => {
                                     </View>
                                     {
                                         notifications.length === 0
-                                            ? <View style={{justifyContent: "center", alignItems:"center", padding: 20}}>
+                                            ? <View style={{ justifyContent: "center", alignItems: "center", padding: 20 }}>
                                                 <Text style={{ color: "#666", fontSize: 16 }}>No new notifications</Text>
                                             </View>
-                                            : <View>
+                                            : <ScrollView style={{ height: "85%" }} scrollEnabled={false} showsVerticalScrollIndicator={false} >
                                                 {
                                                     notifications.map(notification => {
                                                         return <NotificationCard key={notification._id} notification={notification} />
                                                     })
                                                 }
-                                            </View>
+                                            </ScrollView>
                                     }
-                                    <TouchableOpacity 
+                                    <TouchableOpacity
                                         style={styles.footer}
-                                        onPress={()=>props.navigation.navigate("NotificationsFull")}
+                                        onPress={() => props.navigation.navigate("NotificationsFull")}
                                     >
                                         <Text>View All</Text>
                                     </TouchableOpacity>
@@ -95,8 +107,8 @@ const styles = StyleSheet.create({
         fontSize: 16,
         textAlign: "center",
         position: 'absolute',
-        top: 6,
-        right: 10,
+        top: 15,
+        right: 14,
         backgroundColor: "#EF1515",
         justifyContent: "center",
         alignItems: "center"

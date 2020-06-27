@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react'
-import { View, Text, StyleSheet, Dimensions, Platform, StatusBar, Alert, PermissionsAndroid } from 'react-native'
+import { View, Text, StyleSheet, Dimensions, Platform, StatusBar, Alert, PermissionsAndroid, KeyboardAvoidingView } from 'react-native'
 import { TouchableOpacity, ScrollView, TextInput } from 'react-native-gesture-handler'
 import Icon from 'react-native-vector-icons/dist/MaterialIcons'
 
@@ -58,88 +58,91 @@ const SignUp = ({ navigation }) => {
             <StatusBarWhite />
             <SecondaryBackground />
 
-            <ScrollView style={styles.container}
-                stickyHeaderIndices={[0]}
-            >
-                <Navbar type="locked" />
-                <View style={styles.contentContainer} contentContainerStyle={{ justifyContent: "center", alignItems: "center" }}>
-                    <View style={styles.tabNavigation}>
-                        <TouchableOpacity style={styles.tabNavigationObject} onPress={() => { navigation.navigate("Login") }}>
-                            <Text style={styles.tabNavigationText}>Login</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.tabNavigationObjectSelected}>
-                            <Text style={styles.tabNavigationText}>Register</Text>
-                        </TouchableOpacity>
-                    </View>
-                    <View style={styles.form}>
-                        <View style={styles.userPhotoContainer}>
-                            <View
-                                onPress={() => { savePicture() }}
-                                style={styles.photo}
-                            >
-                                <Icon name="person" size={80} color="#FFF" />
-                                <View style={styles.cameraContainer}>
-                                    <Icon name="camera-alt" size={20} color="#BDBDBD" />
+            <KeyboardAvoidingView behavior={Platform.OS == "ios" ? "padding" : "height"}>
+                <ScrollView style={styles.container}
+                    stickyHeaderIndices={[0]}
+                >
+                    <Navbar type="locked" />
+                    <View style={styles.contentContainer} contentContainerStyle={{ justifyContent: "center", alignItems: "center" }}>
+                        <View style={styles.tabNavigation}>
+                            <TouchableOpacity style={styles.tabNavigationObject} onPress={() => { navigation.navigate("Login") }}>
+                                <Text style={styles.tabNavigationText}>Login</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={styles.tabNavigationObjectSelected}>
+                                <Text style={styles.tabNavigationText}>Register</Text>
+                            </TouchableOpacity>
+                        </View>
+                        <View style={styles.form}>
+                            <View style={styles.userPhotoContainer}>
+                                <View
+                                    onPress={() => { savePicture() }}
+                                    style={styles.photo}
+                                >
+                                    <Icon name="person" size={80} color="#FFF" />
+                                    <View style={styles.cameraContainer}>
+                                        <Icon name="camera-alt" size={20} color="#BDBDBD" />
+                                    </View>
                                 </View>
                             </View>
+                            <TextInput
+                                style={styles.textInput}
+                                placeholder="First Name"
+                                value={firstName}
+                                onChangeText={(value) => { setFirstName(value) }}
+                            />
+                            <TextInput
+                                style={styles.textInput}
+                                placeholder="Last Name"
+                                value={lastName}
+                                onChangeText={(value) => { setLastName(value) }}
+                            />
+                            <TextInput
+                                style={styles.textInput}
+                                placeholder="Phone Number"
+                                keyboardType='numeric'
+                                value={phone}
+                                onChangeText={(value) => { setPhone(value) }}
+                            />
+                            <TextInput
+                                style={styles.textInput}
+                                placeholder="Email address"
+                                value={email}
+                                onChangeText={(value) => { setEmail(value) }}
+                            />
+                            <TextInput
+                                style={styles.textInput}
+                                placeholder="Create Password"
+                                autoCompleteType="password"
+                                secureTextEntry
+                                passwordRules
+                                value={password}
+                                onChangeText={(value) => { setPassword(value) }}
+                            />
+                            <TextInput
+                                style={styles.textInput}
+                                placeholder="Confrim Password"
+                                autoCompleteType="password"
+                                secureTextEntry
+                                passwordRules
+                                value={cnfPassword}
+                                onChangeText={(value) => { setCnfPassword(value) }}
+                            />
                         </View>
-                        <TextInput
-                            style={styles.textInput}
-                            placeholder="First Name"
-                            value={firstName}
-                            onChangeText={(value) => { setFirstName(value) }}
-                        />
-                        <TextInput
-                            style={styles.textInput}
-                            placeholder="Last Name"
-                            value={lastName}
-                            onChangeText={(value) => { setLastName(value) }}
-                        />
-                        <TextInput
-                            style={styles.textInput}
-                            placeholder="Phone Number"
-                            keyboardType='numeric'
-                            value={phone}
-                            onChangeText={(value) => { setPhone(value) }}
-                        />
-                        <TextInput
-                            style={styles.textInput}
-                            placeholder="Email address"
-                            value={email}
-                            onChangeText={(value) => { setEmail(value) }}
-                        />
-                        <TextInput
-                            style={styles.textInput}
-                            placeholder="Create Password"
-                            autoCompleteType="password"
-                            secureTextEntry
-                            passwordRules
-                            value={password}
-                            onChangeText={(value) => { setPassword(value) }}
-                        />
-                        <TextInput
-                            style={styles.textInput}
-                            placeholder="Confrim Password"
-                            autoCompleteType="password"
-                            secureTextEntry
-                            passwordRules
-                            value={cnfPassword}
-                            onChangeText={(value) => { setCnfPassword(value) }}
-                        />
+                        <View style={styles.buttonArea}>
+                            <TouchableOpacity style={styles.defaultButton} onPress={() => { handleSubmit() }}>
+                                <Text style={styles.defaultButtonText}>Register</Text>
+                            </TouchableOpacity>
+                        </View>
+                        <View style={styles.terms}>
+                            <Text style={styles.termsText}>
+                                By clicking Login, you acknowledge to reading & agreement to our
+                                <Text style={{ color: "#0062FF" }}> Terms of Use</Text> and
+                                <Text style={{ color: "#0062FF" }}> Privacy Policy</Text>.
+                            </Text>
+                        </View>
                     </View>
-                    <View style={styles.buttonArea}>
-                        <TouchableOpacity style={styles.defaultButton} onPress={() => { handleSubmit() }}>
-                            <Text style={styles.defaultButtonText}>Register</Text>
-                        </TouchableOpacity>
-                    </View>
-                    <View style={styles.terms}>
-                        <Text style={styles.termsText}>
-                            By tapping the button, you acknowledge that you have
-                            read and agreed to the Privacy Policy and Terms of Use.
-                        </Text>
-                    </View>
-                </View>
-            </ScrollView>
+                </ScrollView>
+            </KeyboardAvoidingView>
         </View>
     );
 }

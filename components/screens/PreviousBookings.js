@@ -1,15 +1,18 @@
 import React, { useState, useEffect } from 'react'
-import { View, Text, StyleSheet, Dimensions, Platform, StatusBar, AsyncStorage, Alert, ActivityIndicator } from 'react-native'
+import { View, Text, StyleSheet, Dimensions, Platform, StatusBar, Alert, ActivityIndicator } from 'react-native'
 import { ScrollView, TouchableWithoutFeedback } from 'react-native-gesture-handler'
+import AsyncStorage from '@react-native-community/async-storage'
+import Icon from 'react-native-vector-icons/dist/MaterialIcons'
 
 import StatusBarWhite from '../UXComponents/StatusBar'
-import NavbarBackButton from '../Header/NavbarBackButton'
 import BookingCardSmall from '../BookingCard/bookingCardSmall'
 
-const PreviousBookings = ({ navigation }) => {
+const UpcomingBookings = ({ navigation }) => {
 
     const [bookings, setBookings] = useState([])
     const [loading, setLoading] = useState(true)
+
+    const mlist = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
     useEffect(() => {
         const bootstrapper = async () => {
@@ -48,23 +51,51 @@ const PreviousBookings = ({ navigation }) => {
         <View style={styles.screenContainer}>
             <StatusBarWhite />
 
-            <ScrollView style={styles.container}>
-                <NavbarBackButton header="Appointments" navigation={navigation} />
-                <View style={styles.contentContainer}>
-                    <View style={styles.tabNavigation}>
-                        <View style={styles.tab}>
-                            <TouchableWithoutFeedback style={styles.tabNavigationObject}
-                                onPress={()=>{navigation.navigate("UpcomingBookings")}}
-                            >
-                                <Text style={styles.tabNavigationText}>Upcoming</Text>
-                            </TouchableWithoutFeedback>
-                        </View>
-                        <View style={styles.tab}>
-                            <TouchableWithoutFeedback style={styles.tabNavigationObjectSelected}>
-                                <Text style={styles.tabNavigationTextSelected}>Previous</Text>
-                            </TouchableWithoutFeedback>
+            <ScrollView
+                style={styles.container}
+            >
+
+                <View style={styles.tabNavigation}>
+                    <View style={styles.tab}>
+                        <TouchableWithoutFeedback
+                         onPress={() => {
+                            navigation.navigate("UpcomingBookings")
+                        }}
+                         style={styles.tabNavigationObject}>
+                            <Text style={styles.tabNavigationText}>Upcoming</Text>
+                        </TouchableWithoutFeedback>
+                    </View>
+                    <View style={styles.tab}>
+                        <TouchableWithoutFeedback style={styles.tabNavigationObjectSelected}>
+                            <Text style={styles.tabNavigationTextSelected}>Previous</Text>
+                        </TouchableWithoutFeedback>
+                    </View>
+                </View>
+
+                <View
+                    style={{
+                        backgroundColor: "#FFF",
+                    }}
+                >
+                    <View style={styles.monthSelectorContainer}>
+                        <Text style={styles.selectedMonth}>
+                            {mlist[new Date().getUTCMonth()]} {new Date().getUTCFullYear()}
+                        </Text>
+                        <View style={styles.monthSelector}>
+                            <Text style={styles.selectedMonth}>
+                                This Month
+                            </Text>
+                            <Icon name="arrow-drop-down" size={20} color="#666" />
+
                         </View>
                     </View>
+                </View>
+
+                <ScrollView style={styles.contentContainer} contentContainerStyle={{
+                    justifyContent: "center",
+                    alignItems: "center",
+                }}>
+
                     {
                         loading
                             ? <View style=
@@ -80,12 +111,12 @@ const PreviousBookings = ({ navigation }) => {
                             : <View style={styles.results}>
                                 {
                                     bookings.map(booking => {
-                                        return <BookingCardSmall key={booking._id} booking={booking} />
+                                        return <BookingCardSmall key={booking._id} booking={booking} navigation={navigation} />
                                     })
                                 }
                             </View>
                     }
-                </View>
+                </ScrollView>
 
             </ScrollView>
 
@@ -95,23 +126,24 @@ const PreviousBookings = ({ navigation }) => {
 
 const styles = StyleSheet.create({
     screenContainer: {
-        paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
+        // paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
         backgroundColor: "#FFF",
     },
     container: {
-        height: Dimensions.get('window').height
+        height: Dimensions.get('window').height,
+        marginBottom: 50,
     },
     contentContainer: {
-        paddingHorizontal: 20,
-        justifyContent: "center",
-        alignItems: "flex-start",
+        marginBottom: 100,
     },
     tabNavigation: {
         width: "100%",
         flexDirection: "row",
         justifyContent: "space-around",
         alignItems: "center",
+        paddingHorizontal: 20,
         marginTop: 20,
+        marginBottom: 10,
     },
     tab: {
         flex: 2,
@@ -142,9 +174,26 @@ const styles = StyleSheet.create({
         paddingBottom: 10,
         paddingHorizontal: 15,
     },
+    monthSelectorContainer: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        width: "100%",
+        paddingTop: 20,
+        paddingBottom: 20,
+        paddingHorizontal: 40,
+    },
+    monthSelector: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+    },
+    selectedMonth: {
+        color: "#666",
+    },
     results: {
         marginTop: 20,
     },
 });
 
-export default PreviousBookings;
+export default UpcomingBookings;

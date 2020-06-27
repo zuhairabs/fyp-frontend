@@ -10,8 +10,8 @@ import RatingBadge from '../Rating/RatingBadge'
 import MainBackground from '../UXComponents/MainBackground'
 import BookSlot from '../UXComponents/BookSlot'
 
-const DEVICE_HEIGHT = Dimensions.get('screen').height;
-const DEVICE_WIDTH = Dimensions.get('screen').width;
+const DEVICE_HEIGHT = Dimensions.get('window').height;
+const DEVICE_WIDTH = Dimensions.get('window').width;
 
 const Store = (props) => {
 
@@ -21,6 +21,7 @@ const Store = (props) => {
     const [headerImage, setHeaderImage] = useState("")
     const [images, setImages] = useState([])
     const [bookSlot, setBookSlot] = useState(props.route.params.bookSlot || false)
+    const [favourite, setFavourite] = useState(false)
 
     useEffect(() => {
         fetch("https://shopout.herokuapp.com/store/fetch", {
@@ -84,7 +85,12 @@ const Store = (props) => {
                                                         changeImage(img)
                                                     }}
                                                 >
-                                                    <Image source={{ uri: `data:image/gif;base64,${img}` }} style={styles.carouselImage} />
+                                                    <Image
+                                                        source={{ uri: `data:image/gif;base64,${img}` }}
+                                                        style={
+                                                            headerImage === img ? styles.carouselImageSelected : styles.carouselImage
+                                                        }
+                                                    />
                                                 </TouchableOpacity>
                                             </View>
                                         })
@@ -106,8 +112,17 @@ const Store = (props) => {
                                             }
                                         </View>
                                         <View style={styles.headingRight}>
-                                            <TouchableWithoutFeedback style={styles.favouriteIcon}>
-                                                <Icon name="favorite-border" size={16} color="#F30302" />
+                                            <TouchableWithoutFeedback
+                                                onPress={() => {
+                                                    setFavourite(!favourite)
+                                                }}
+                                                style={styles.favouriteIcon}
+                                            >
+                                                {
+                                                    favourite ? <Icon name="favorite" size={16} color="#F30302" />
+                                                        : <Icon name="favorite-border" size={16} color="#F30302" />
+
+                                                }
                                             </TouchableWithoutFeedback>
                                             <Text style={styles.reviewCountHeading}>45 Reviews</Text>
                                         </View>
@@ -160,7 +175,7 @@ const Store = (props) => {
                         </ScrollView>),
                         (
                             bookSlot
-                                ? <BookSlot setBookSlot={setBookSlot} storeData={storeData} />
+                                ? <BookSlot setBookSlot={setBookSlot} storeData={storeData} navigation={props.navigation} />
                                 : <TouchableNativeFeedback onPress={() => { setBookSlot(true) }} style={styles.button}>
                                     <Text style={styles.buttonText}>BOOK SLOT</Text>
                                 </TouchableNativeFeedback>
@@ -175,7 +190,7 @@ const styles = StyleSheet.create({
     screenContainer: {
         paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
         // backgroundColor: "#F8F9FD",
-        height: DEVICE_HEIGHT,
+        height: Dimensions.get("screen").height,
         backgroundColor: "#fff",
         justifyContent: "center"
     },
@@ -184,12 +199,13 @@ const styles = StyleSheet.create({
     contentContainer: {
         justifyContent: "center",
         alignItems: "center",
-        backgroundColor: "#fff",
+        backgroundColor: "#FEFEFE6F",
     },
     headerImageContainer: {
         height: Math.floor(DEVICE_HEIGHT / 3.4),
         width: "100%",
-        backgroundColor: "#6666662F"
+        // backgroundColor: "#6666662F"
+        backgroundColor: "#FEFEFE6F",
     },
     headerImage: {
         height: undefined,
@@ -224,7 +240,6 @@ const styles = StyleSheet.create({
         width: undefined,
         height: undefined,
         flex: 1,
-        resizeMode: "contain",
         borderRadius: 15
     },
     carouselImage: {
@@ -301,7 +316,7 @@ const styles = StyleSheet.create({
     button: {
         position: "relative",
         zIndex: 2,
-        bottom: 0,
+        top: 0,
         width: DEVICE_WIDTH,
         height: Math.floor(DEVICE_HEIGHT / 20),
         backgroundColor: "#0062FF",

@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from 'react'
-import { View, Text, StyleSheet, StatusBar, Dimensions, Alert } from 'react-native'
-import { ScrollView, TouchableWithoutFeedback } from 'react-native-gesture-handler'
+import { View, Text, StyleSheet, StatusBar, Dimensions, Image, Alert, TextInput } from 'react-native'
+import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler'
 import Icon from 'react-native-vector-icons/dist/MaterialIcons'
-import  AsyncStorage from '@react-native-community/async-storage'
+import AsyncStorage from '@react-native-community/async-storage'
 
 import { AuthContext } from '../../App'
 
-import Portrait from './menu-icons/portrait.svg'
-import Calendar from './shopout.svg'
 import StatusBarWhite from '../UXComponents/StatusBar'
 import MenuBackground from '../UXComponents/MenuBackground'
 
@@ -54,46 +52,64 @@ const Profile = ({ navigation }) => {
                         </View>
                     </View>
                     <View style={styles.buttonContainer}>
-                        <TouchableWithoutFeedback
+                        <TouchableOpacity
+                            onPress={() => {
+                                navigation.navigate("EditProfile");
+                            }}
                             style={styles.button}
                         >
                             <View style={styles.buttonIcon}>
-                                <Portrait />
+                                <Image source={require('./menu-icons/portrait-black-48dp.png')} style={styles.buttonIconImage} />
                             </View>
                             <Text style={styles.buttonText}>My Profile</Text>
-                        </TouchableWithoutFeedback>
-                        <TouchableWithoutFeedback
+                        </TouchableOpacity>
+                        <TouchableOpacity
                             style={styles.button}
                             onPress={() => { navigation.navigate("UpcomingBookings") }}
                         >
                             <View style={styles.buttonIcon}>
-                                <Calendar />
+                                <Image source={require('./menu-icons/date_range-black-48dp.png')} style={styles.buttonIconImage} />
                             </View>
                             <Text style={styles.buttonText}>Appointments</Text>
-                        </TouchableWithoutFeedback>
-                        <TouchableWithoutFeedback style={styles.button}>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.button}>
                             <View style={styles.buttonIcon}>
-                                <Calendar />
+                                <Image source={require('./menu-icons/favorite_border-black-48dp.png')} style={styles.buttonIconImage} />
                             </View>
                             <Text style={styles.buttonText}>Favourites</Text>
-                        </TouchableWithoutFeedback>
-                        <TouchableWithoutFeedback style={styles.button}>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.button}>
                             <View style={styles.buttonIcon}>
-                                <Calendar />
+                                <Image source={require('./menu-icons/help_outline-24px.png')} style={styles.buttonIconImage} />
                             </View>
                             <Text style={styles.buttonText}>Support</Text>
-                        </TouchableWithoutFeedback>
-                        <TouchableWithoutFeedback
+                        </TouchableOpacity>
+                        <TouchableOpacity
                             style={styles.button}
-                            onPress={() => { 
-                                signOut()
-                             }}
+                            onPress={() => {
+                                Alert.alert(
+                                    "Do you want to logout?",
+                                    "",
+                                    [
+                                        {
+                                            text: "NO",
+                                            onPress: () => { },
+                                            style: "cancel"
+                                        },
+                                        {
+                                            text: "YES",
+                                            onPress: () => { signOut() },
+                                            style: "default"
+                                        }
+                                    ]
+                                )
+                            }}
                         >
                             <View style={styles.buttonIcon}>
-                                {/* <Calendar /> */}
+                                <Image source={require('./menu-icons/logout-black-48dp.png')} style={styles.buttonIconImage} />
                             </View>
                             <Text style={styles.buttonText}>Logout</Text>
-                        </TouchableWithoutFeedback>
+                        </TouchableOpacity>
                     </View>
 
                 </View>
@@ -164,10 +180,11 @@ const styles = StyleSheet.create({
         resizeMode: "contain",
     },
     buttonContainer: {
-        flex: 1,
         marginTop: 50,
         justifyContent: "space-around",
         alignItems: "center",
+        width: Math.floor(Dimensions.get("window").width / 1.5),
+        // borderWidth: 1,
     },
     button: {
         marginVertical: 20,
@@ -180,10 +197,16 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: "center",
         alignItems: "center",
-        height: 36,
+        height: 24,
+        width: 24
+    },
+    buttonIconImage: {
+        width: 24,
+        height: 24,
+        resizeMode: "contain"
     },
     buttonText: {
-        flex: 7,
+        flex: 8,
         paddingHorizontal: 20,
         fontSize: 18,
     },

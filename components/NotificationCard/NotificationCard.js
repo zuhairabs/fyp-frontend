@@ -45,23 +45,25 @@ const NotificationCard = ({ notification }) => {
 
 const styles = StyleSheet.create({
     containerUnread: {
-        width: "100%",
         backgroundColor: "#0062FF05",
         padding: 20,
         flexDirection: "row",
         justifyContent: "flex-start",
-        alignItems: "center"
+        alignItems: "center",
+        borderColor: "#ECF0F4",
+        borderBottomWidth: 1,
     },
     container: {
-        width: "100%",
         backgroundColor: "#fff",
         padding: 20,
         flexDirection: "row",
         justifyContent: "flex-start",
-        alignItems: "center"
+        alignItems: "center",
+        borderColor: "#ECF0F4",
+        borderBottomWidth: 1,
     },
     imageContainer: {
-        // flex: 3,
+        flex: 2,
         marginRight: 20,
     },
     image: {
@@ -71,7 +73,7 @@ const styles = StyleSheet.create({
         overflow: "hidden",
     },
     contentContainer: {
-        // flex: 8,
+        flex: 8,
         justifyContent: "space-around",
         alignItems: "flex-start"
     },

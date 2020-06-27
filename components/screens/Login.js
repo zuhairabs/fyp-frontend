@@ -1,6 +1,6 @@
 import React, { useState, useContext, createRef } from 'react'
 import { View, Text, StyleSheet, Dimensions, Platform, StatusBar, AsyncStorage, Alert } from 'react-native'
-import { TouchableOpacity, ScrollView, TextInput } from 'react-native-gesture-handler'
+import { TouchableOpacity, ScrollView, TextInput, TouchableHighlight } from 'react-native-gesture-handler'
 
 import Navbar from '../Header/Navbar'
 import StatusBarWhite from '../UXComponents/StatusBar'
@@ -9,7 +9,7 @@ import SecondaryBackground from '../UXComponents/SecondaryBackground'
 import { AuthContext } from '../../App'
 
 
-const Login = ({navigation}) => {
+const Login = ({ navigation }) => {
     const [phone, setPhone] = useState()
     const [password, setPassword] = useState("")
 
@@ -46,7 +46,7 @@ const Login = ({navigation}) => {
                         <TouchableOpacity style={styles.tabNavigationObjectSelected}>
                             <Text style={styles.tabNavigationText}>Login</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.tabNavigationObject} onPress={()=>{navigation.navigate("SignUp")}}>
+                        <TouchableOpacity style={styles.tabNavigationObject} onPress={() => { navigation.navigate("SignUp") }}>
                             <Text style={styles.tabNavigationText}>Register</Text>
                         </TouchableOpacity>
                     </View>
@@ -58,8 +58,9 @@ const Login = ({navigation}) => {
                             value={phone}
                             onChangeText={(value) => { setPhone(value) }}
                             ref={phoneInput}
-                            onSubmitEditing={()=>{ passwordInput.current.focus() }}
+                            onSubmitEditing={() => { passwordInput.current.focus() }}
                             blurOnSubmit={false}
+                            returnKeyType="next"
                         />
                         <TextInput
                             style={styles.textInput}
@@ -69,7 +70,9 @@ const Login = ({navigation}) => {
                             passwordRules
                             onChangeText={(value) => { setPassword(value) }}
                             ref={passwordInput}
-                            onSubmitEditing={()=>{handleSubmit()}}
+                            onSubmitEditing={() => { handleSubmit() }}
+                            blurOnSubmit={true}
+                            returnKeyType="done"
                         />
                     </View>
                     <View style={styles.buttonArea}>
@@ -84,8 +87,9 @@ const Login = ({navigation}) => {
                     </View>
                     <View style={styles.terms}>
                         <Text style={styles.termsText}>
-                            By tapping the button, you acknowledge that you have
-                            read and agreed to the Privacy Policy and Terms of Use.
+                            By clicking Login, you acknowledge to reading & agreement to our
+                            <Text style={{ color: "#0062FF" }}> Terms of Use</Text> and
+                            <Text style={{ color: "#0062FF" }}> Privacy Policy</Text>.
                         </Text>
                     </View>
                 </View>

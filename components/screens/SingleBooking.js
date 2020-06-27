@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
-import { View, Text, StyleSheet, StatusBar, Dimensions, Platform, AsyncStorage, ActivityIndicator } from 'react-native'
+import { View, Text, StyleSheet, StatusBar, Dimensions, Platform, ActivityIndicator } from 'react-native'
+import AsyncStorage from '@react-native-community/async-storage'
 
 import StatusBarWhite from '../UXComponents/StatusBar'
 import NavbarBackButton from '../Header/NavbarBackButton'
@@ -58,7 +59,7 @@ const SingleBooking = (props) => {
             <StatusBarWhite />
 
             <ScrollView style={styles.container}>
-                <NavbarBackButton header="Booking" navigation={props.navigation} />
+                {/* <NavbarBackButton header="Booking" navigation={props.navigation} /> */}
 
                 {
                     loading
@@ -138,7 +139,6 @@ const styles = StyleSheet.create({
     },
     contentContainer: {
         paddingHorizontal: 20,
-        marginTop: 20,
         justifyContent: "center",
         alignItems: "flex-start",
     },
