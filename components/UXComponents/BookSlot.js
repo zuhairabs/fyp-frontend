@@ -21,8 +21,9 @@ LocaleConfig.locales['en'] = {
 };
 LocaleConfig.defaultLocale = 'en';
 
-const DEVICE_HEIGHT = Dimensions.get('window').height;
-const DEVICE_WIDTH = Dimensions.get('window').width;
+const WINDOW_HEIGHT = Dimensions.get('window').height;
+const WINDOW_WIDTH = Dimensions.get('window').width;
+const DEVICE_HEIGHT = Dimensions.get('screen').height;
 
 const BookSlot = (props) => {
     Date.prototype.addDays = function (days) {
@@ -401,10 +402,11 @@ const styles = StyleSheet.create({
         height: 200,
     },
     container: {
-        height: Math.floor(DEVICE_HEIGHT / 1.08),
+        height: Math.floor(WINDOW_HEIGHT / 1.08),
         backgroundColor: "#FFF",
         borderTopLeftRadius: 50,
         borderTopRightRadius: 50,
+        paddingBottom: DEVICE_HEIGHT - WINDOW_HEIGHT
     },
     header: {
         borderTopLeftRadius: 30,
@@ -437,7 +439,7 @@ const styles = StyleSheet.create({
         marginBottom: 20,
     },
     defaultButton: {
-        width: DEVICE_WIDTH - 40,
+        width: WINDOW_WIDTH - 40,
         justifyContent: "center",
         alignItems: "center",
         borderRadius: 12,

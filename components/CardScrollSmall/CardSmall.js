@@ -52,6 +52,7 @@ const CardSmall = ({ store, navigation }) => {
                     <RatingBadge value={store.avg_rating || (Math.floor(Math.random() * 4 * 10) / 10) + 1} />
                 </View>
             </View>
+
         </View>
     )
 }
@@ -108,8 +109,10 @@ const styles = StyleSheet.create({
     ratingBadge: {
         position: "absolute",
         bottom: 0,
-        right: Math.floor(DEVICE_WIDTH / 2.6) + 8,
-        bottom: "-6%"
+        // right: -Math.floor(DEVICE_WIDTH/2.6),
+        right: "-12%",
+        bottom: "-6%",
+        elevation: 5,
     }
 })
 

@@ -131,8 +131,6 @@ const SearchFull = (props) => {
 
                 {/* DROPDOWN FOR SUGGESTIONS */}
                 <ScrollView
-                    keyboardDismissMode='on-drag'
-                    keyboardShouldPersistTaps='never'
                     style={styles.suggestionDropdown}>
                     {stores.map(result => {
                         if (result.name)

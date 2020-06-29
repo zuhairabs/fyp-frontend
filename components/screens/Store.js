@@ -11,8 +11,9 @@ import MainBackground from '../UXComponents/MainBackground'
 import BookSlot from '../UXComponents/BookSlot'
 import AsyncStorage from '@react-native-community/async-storage'
 
-const DEVICE_HEIGHT = Dimensions.get('window').height;
-const DEVICE_WIDTH = Dimensions.get('window').width;
+const WINDOW_HEIGHT = Dimensions.get('window').height;
+const WINDOW_WIDTH = Dimensions.get('window').width;
+const DEVICE_HEIGHT = Dimensions.get('screen').height;
 
 const Store = (props) => {
 
@@ -296,7 +297,7 @@ const styles = StyleSheet.create({
         backgroundColor: "#FEFEFE6F",
     },
     headerImageContainer: {
-        height: Math.floor(DEVICE_HEIGHT / 3.4),
+        height: Math.floor(WINDOW_HEIGHT / 3.4),
         width: "100%",
         // backgroundColor: "#6666662F"
         backgroundColor: "#FEFEFE6F",
@@ -309,8 +310,8 @@ const styles = StyleSheet.create({
     },
     ratingBadge: {
         position: "absolute",
-        right: Math.floor((DEVICE_WIDTH / 25)),
-        top: -Math.floor(DEVICE_HEIGHT / 40),
+        right: Math.floor((WINDOW_WIDTH / 25)),
+        top: -Math.floor(WINDOW_HEIGHT / 40),
         zIndex: 2,
     },
     carousel: {
@@ -318,7 +319,7 @@ const styles = StyleSheet.create({
         justifyContent: "space-around",
         alignItems: "center",
         width: "100%",
-        height: Math.floor(DEVICE_HEIGHT / 9),
+        height: Math.floor(WINDOW_HEIGHT / 9),
         marginTop: 20,
     },
     carouselImageContainer: {
@@ -347,7 +348,7 @@ const styles = StyleSheet.create({
         marginTop: 30,
         width: "100%",
         paddingHorizontal: 20,
-        marginBottom: 30,
+        marginBottom: 50,
     },
     heading: {
         flexDirection: "row",
@@ -411,14 +412,15 @@ const styles = StyleSheet.create({
         position: "relative",
         zIndex: 2,
         top: 0,
-        width: DEVICE_WIDTH,
-        height: Math.floor(DEVICE_HEIGHT / 20),
+        width: WINDOW_WIDTH,
+        height: Math.floor(WINDOW_HEIGHT / 20),
         backgroundColor: "#0062FF",
         alignItems: "center",
         justifyContent: "center",
-        padding: 30,
+        padding: DEVICE_HEIGHT - WINDOW_HEIGHT > 0 ? 30 : 40,
         borderTopRightRadius: 50,
         borderTopLeftRadius: 50,
+        marginBottom: DEVICE_HEIGHT - WINDOW_HEIGHT - 30
     },
     buttonText: {
         color: "#fff"
