@@ -60,11 +60,11 @@ const NotificationDropdown = (props) => {
                                 : <View style={styles.notifications}>
                                     <View style={styles.header}>
                                         <Text style={styles.heading}>Notifications</Text>
-                                        <TouchableHighlight
+                                        <TouchableOpacity
                                             onPress={() => console.log("Pressed notification clear")}
                                         >
                                             <Text style={styles.small}>MARK ALL AS SEEN</Text>
-                                        </TouchableHighlight>
+                                        </TouchableOpacity>
                                     </View>
                                     {
                                         notifications.length === 0
@@ -87,6 +87,7 @@ const NotificationDropdown = (props) => {
                                     </TouchableOpacity>
                                 </View>
                         }
+
                     </View>
                     :
                     null
@@ -107,16 +108,18 @@ const styles = StyleSheet.create({
         fontSize: 16,
         textAlign: "center",
         position: 'absolute',
-        top: 15,
+        top: 14,
         right: 14,
-        backgroundColor: "#EF1515",
+        backgroundColor: "#EF1515F0",
         justifyContent: "center",
         alignItems: "center"
     },
     dropdown: {
         position: "absolute",
-        maxHeight: Math.floor(Dimensions.get("window").height / 1.5),
+
+        height: Math.floor(Dimensions.get("window").height / 1.5),
         width: Math.floor(Dimensions.get("window").width) - 40,
+
         backgroundColor: "#fff",
         zIndex: 10,
         elevation: 5,
@@ -126,15 +129,17 @@ const styles = StyleSheet.create({
         top: 50,
         borderRadius: 15,
         backgroundColor: "#fff",
+        paddingBottom: 20,
     },
     notifications: {
-        paddingVertical: 20,
+        paddingBottom: 20,
     },
     header: {
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
         paddingHorizontal: 10,
+        paddingVertical: 10,
     },
     heading: {
         fontSize: 20,
@@ -145,11 +150,12 @@ const styles = StyleSheet.create({
     },
     footer: {
         paddingTop: 20,
+        paddingBottom: 20,
         justifyContent: "center",
         alignItems: "center",
         borderTopWidth: 1,
         borderColor: "#6666662F",
-        fontSize: 18
+        fontSize: 18,
     }
 })
 

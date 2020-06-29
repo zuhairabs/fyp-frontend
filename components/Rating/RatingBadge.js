@@ -15,7 +15,7 @@ const RatingBadge = (props) => {
                     fontWeight: "bold",
                 }}
                 >
-                    {props.value}
+                    {props.value || null}
                 </Text>
                 <Icon name="bookmark" color="#FF9D00" size={props.size || 48} style={styles.ratingIcon} />
             </View>

@@ -1,6 +1,7 @@
 import React, { useState, useContext, createRef } from 'react'
-import { View, Text, StyleSheet, Dimensions, Platform, StatusBar, AsyncStorage, Alert } from 'react-native'
-import { TouchableOpacity, ScrollView, TextInput, TouchableHighlight } from 'react-native-gesture-handler'
+import { View, Text, StyleSheet, Dimensions, Platform, StatusBar, Alert, Linking, ActivityIndicator } from 'react-native'
+import { TouchableOpacity, ScrollView, TextInput } from 'react-native-gesture-handler'
+import Modal from 'react-native-modalbox';
 
 import Navbar from '../Header/Navbar'
 import StatusBarWhite from '../UXComponents/StatusBar'
@@ -8,12 +9,15 @@ import SecondaryBackground from '../UXComponents/SecondaryBackground'
 
 import { AuthContext } from '../../App'
 
-
 const Login = ({ navigation }) => {
     const [phone, setPhone] = useState()
     const [password, setPassword] = useState("")
 
-    const { signIn } = React.useContext(AuthContext);
+    const [error, setError] = useState("Unknown error")
+    const loadingModal = createRef();
+    const errorModal = createRef();
+
+    const { signIn } = useContext(AuthContext);
 
     const phoneInput = createRef();
     const passwordInput = createRef();
@@ -27,15 +31,50 @@ const Login = ({ navigation }) => {
         return false;
     }
 
-    const handleSubmit = () => {
-        if (validatePhone())
-            signIn({ phone: phone, password: password });
+    const handleSubmit = async () => {
+        if (validatePhone()) {
+            loadingModal.current.open();
+            let res = await signIn({ phone: phone, password: password });
+            if (res[0] === false) {
+                loadingModal.current.close();
+                setError(res[1]);
+                errorModal.current.open();
+            }
+        }
         else
             Alert.alert("Please enter a valid 10 digit mobile number")
     }
 
     return (
         <View style={styles.screenContainer}>
+
+            <Modal
+                ref={loadingModal}
+                useNativeDriver={false}
+                style={styles.bottomModal}
+                position={"bottom"}
+                swipeToClose={false}
+                backdropPressToClose={false}
+            >
+                <View style={{ flexDirection: "row", justifyContent: "space-around", alignItems: "center" }}>
+                    <Text style={{ fontSize: 20, marginHorizontal: 20 }}>Logging In</Text>
+                    <ActivityIndicator size="large" color="#0062FF" />
+                </View>
+            </Modal>
+
+            <Modal
+                ref={errorModal}
+                useNativeDriver={false}
+                style={styles.bottomModal}
+                position={"bottom"}
+            >
+                <View style={{ flexDirection: "row", justifyContent: "space-around", alignItems: "center" }}>
+                    <Text style={{ fontSize: 20, marginHorizontal: 20 }}>
+                        {error}
+                    </Text>
+                </View>
+            </Modal>
+
             <StatusBarWhite />
             <SecondaryBackground />
 
@@ -88,7 +127,9 @@ const Login = ({ navigation }) => {
                     <View style={styles.terms}>
                         <Text style={styles.termsText}>
                             By clicking Login, you acknowledge to reading & agreement to our
-                            <Text style={{ color: "#0062FF" }}> Terms of Use</Text> and
+                            <Text style={{ color: "#0062FF" }}
+                                onPress={() => { Linking.openURL("https://www.github.com") }}
+                            > Terms of Use</Text> and
                             <Text style={{ color: "#0062FF" }}> Privacy Policy</Text>.
                         </Text>
                     </View>
@@ -99,6 +140,11 @@ const Login = ({ navigation }) => {
 }
 
 const styles = StyleSheet.create({
+    bottomModal: {
+        justifyContent: "center",
+        alignItems: "center",
+        height: 200,
+    },
     screenContainer: {
         paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
         // backgroundColor: "#F8F9FD",

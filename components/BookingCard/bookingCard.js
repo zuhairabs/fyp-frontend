@@ -121,6 +121,8 @@ const BookingCard = (props) => {
                                                 text: "Yes, cancel",
                                                 onPress: ()=>{
                                                     cancelBooking()
+                                                    props.removeBooking(props.booking._id);
+                                                    
                                                 },
                                                 style: "destructive"
                                             }

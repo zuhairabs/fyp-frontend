@@ -35,11 +35,11 @@ const UpcomingBookings = ({ navigation }) => {
                     }),
                 }
                 console.log(requestOptions)
-                fetch("https://shopout.herokuapp.com/user/bookings", requestOptions)
+                fetch("https://shopout.herokuapp.com/user/archivedbookings", requestOptions)
                     .then((res) => {
                         if (res.status === 200)
                             res.json()
-                                .then(data => { setBookings(data.bookings); setLoading(false) })
+                                .then(data => { setBookings(data.archivedBookings); setLoading(false) })
                         else {
                             Alert.alert("Something went wrong ", res.statusText)
                         }

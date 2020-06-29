@@ -1,10 +1,8 @@
 import React from 'react'
-import { View, Text, StyleSheet, Dimensions } from 'react-native'
+import { View, Text, StyleSheet } from 'react-native'
 import Icon from 'react-native-vector-icons/dist/MaterialIcons'
 
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
-
-const DEVICE_HEIGHT = Dimensions.get('window').height;
 
 const SearchBarIdle = (props) => {
     const placeholder = "Where do you want to visit today..."
@@ -49,6 +47,7 @@ const Styles = StyleSheet.create({
         borderColor: '#666',
         borderRadius: 8,
         elevation: 10,
+        zIndex: 0,
     },
     dummyText: {
         padding: 15,

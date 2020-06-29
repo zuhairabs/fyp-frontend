@@ -81,6 +81,7 @@ const styles = StyleSheet.create({
     },
     notifications: {
         marginTop: 20,
+        marginBottom: 100,
     },
     small: {
         color: "#6666666F",

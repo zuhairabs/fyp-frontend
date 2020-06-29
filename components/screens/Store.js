@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { View, Text, StyleSheet, Dimensions, Platform, StatusBar, Image, Alert, ActivityIndicator } from 'react-native'
+import { View, Text, StyleSheet, Dimensions, Platform, StatusBar, Image, Alert, ActivityIndicator, ToastAndroid } from 'react-native'
 import { ScrollView, TouchableNativeFeedback, TouchableOpacity, TouchableWithoutFeedback } from 'react-native-gesture-handler'
 import Icon from 'react-native-vector-icons/dist/MaterialIcons'
 
@@ -9,6 +9,7 @@ import StatusBarWhite from '../UXComponents/StatusBar'
 import RatingBadge from '../Rating/RatingBadge'
 import MainBackground from '../UXComponents/MainBackground'
 import BookSlot from '../UXComponents/BookSlot'
+import AsyncStorage from '@react-native-community/async-storage'
 
 const DEVICE_HEIGHT = Dimensions.get('window').height;
 const DEVICE_WIDTH = Dimensions.get('window').width;
@@ -24,33 +25,122 @@ const Store = (props) => {
     const [favourite, setFavourite] = useState(false)
 
     useEffect(() => {
-        fetch("https://shopout.herokuapp.com/store/fetch", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                storeData: {
-                    _id: store
-                }
+        const checkFavourite = async () => {
+            let user = JSON.parse(await (AsyncStorage.getItem("user")))
+            if (user.favouriteStores && user.favouriteStores.indexOf(store) > -1) setFavourite(1);
+        }
+        checkFavourite().then(
+            fetch("https://shopout.herokuapp.com/store/fetch", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    storeData: {
+                        _id: store
+                    }
+                })
             })
-        })
-            .then(res => {
-                if (res.status === 200) {
-                    res.json().then(data => {
-                        setStoreData(data.store)
-                        setImages(data.store.business.images)
-                        setHeaderImage(data.store.business.images[0])
-                        setLoading(false)
-                    })
-                }
-                else
-                    Alert.alert("Something went wrong", res.status)
-            })
+                .then(res => {
+                    if (res.status === 200) {
+                        res.json().then(data => {
+                            setStoreData(data.store)
+                            setImages(data.store.business.images)
+                            setHeaderImage(data.store.business.images[0])
+                            setLoading(false)
+                        })
+                    }
+                    else
+                        Alert.alert("Something went wrong", res.status)
+                }))
     }, [store])
 
     const changeImage = (image) => {
         setHeaderImage(image)
+    }
+
+    const toggleFavourite = () => {
+        const bootstrapper = async () => {
+            let user = JSON.parse(await AsyncStorage.getItem("user"));
+            let token = await AsyncStorage.getItem("jwt");
+
+            return { user, token }
+        }
+        const addToStorage = async (favs) => {
+            let user = JSON.parse(await AsyncStorage.getItem("user"));
+            user.favouriteStores = favs
+            user = JSON.stringify(user);
+            await AsyncStorage.setItem("user", user)
+        }
+
+        if (!favourite) {
+            setFavourite(true)
+            bootstrapper().then(({ user, token }) => {
+                fetch('https://shopout.herokuapp.com/user/addfavouritestore', {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": "Bearer " + token
+                    },
+                    body: JSON.stringify({
+                        storeData: {
+                            _id: store
+                        },
+                        cred: {
+                            phone: user.phone
+                        }
+                    })
+                }).then(res => {
+                    if (res.status === 200) {
+                        ToastAndroid.show("Added to favourites", ToastAndroid.SHORT)
+                        res.json().then(data => { addToStorage(data.favouriteStores) })
+                    }
+                })
+            })
+
+        }
+        else {
+            Alert.alert(
+                "Do you want to remove the store from your favourites?",
+                "",
+                [
+                    {
+                        text: "NO",
+                        onPress: () => { },
+                        style: "cancel"
+                    },
+                    {
+                        text: "YES",
+                        onPress: () => {
+                            setFavourite(false);
+                            bootstrapper().then(({ user, token }) => {
+                                fetch('https://shopout.herokuapp.com/user/removefavouritestore', {
+                                    method: "POST",
+                                    headers: {
+                                        "Content-Type": "application/json",
+                                        "Authorization": "Bearer " + token
+                                    },
+                                    body: JSON.stringify({
+                                        storeData: {
+                                            _id: store
+                                        },
+                                        cred: {
+                                            phone: user.phone
+                                        }
+                                    })
+                                }).then(res => {
+                                    if (res.status === 200) {
+                                        ToastAndroid.show("Removed from favourites", ToastAndroid.SHORT)
+                                        res.json().then(data => { addToStorage(data.favouriteStores) })
+                                    }
+                                })
+                            })
+                        },
+                        style: "default"
+                    }
+                ]
+            )
+        }
     }
 
     return (
@@ -62,16 +152,14 @@ const Store = (props) => {
                 loading
                     ? <ActivityIndicator size="large" color="#0062FF" />
                     : [
-                        (<ScrollView
-                            style={styles.container}
-                        // stickyHeaderIndices={[0]}
-                        >
+                        (<ScrollView style={styles.container}>
+
                             <NavbarBackButton navigation={props.navigation} />
                             <View style={styles.contentContainer} contentContainerStyle={{ justifyContent: "center", alignItems: "center" }}>
 
                                 <View style={styles.headerImageContainer}>
                                     <View style={styles.ratingBadge}>
-                                        <RatingBadge color="orange" value={storeData.avg_rating || (Math.floor(Math.random() * 4 * 10) / 10) + 1} />
+                                        <RatingBadge color="orange" value={storeData.avg_rating} />
                                     </View>
                                     <Image source={{ uri: `data:image/gif;base64,${headerImage}` }} style={styles.headerImage} />
                                 </View>
@@ -114,7 +202,7 @@ const Store = (props) => {
                                         <View style={styles.headingRight}>
                                             <TouchableWithoutFeedback
                                                 onPress={() => {
-                                                    setFavourite(!favourite)
+                                                    toggleFavourite()
                                                 }}
                                                 style={styles.favouriteIcon}
                                             >
@@ -165,7 +253,13 @@ const Store = (props) => {
 
                                     <View style={styles.detailsContainer}>
                                         <Text style={styles.details}>
-                                            Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero
+                                            {
+                                                storeData.description ?
+                                                    storeData.description
+                                                    : <Text style={{color: "#666"}}>
+                                                        No description available
+                                                        </Text>
+                                            }
                                         </Text>
                                     </View>
 
@@ -211,7 +305,7 @@ const styles = StyleSheet.create({
         height: undefined,
         width: undefined,
         flex: 1,
-        resizeMode: "contain"
+        // resizeMode: "contain"
     },
     ratingBadge: {
         position: "absolute",

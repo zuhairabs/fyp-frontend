@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react'
-import { Dimensions, View, StyleSheet, Text, Alert, TimePickerAndroid } from 'react-native'
+import React, { useState, useEffect, createRef } from 'react'
+import { Dimensions, View, StyleSheet, Text, Alert, TimePickerAndroid, ActivityIndicator } from 'react-native'
 import { TouchableWithoutFeedback, TouchableOpacity } from 'react-native-gesture-handler';
 import AsyncStorage from '@react-native-community/async-storage'
 import Icon from 'react-native-vector-icons/dist/MaterialIcons'
 import DateTimePicker from '@react-native-community/datetimepicker';
+import Modal from 'react-native-modalbox';
 
 import { Calendar, LocaleConfig } from 'react-native-calendars'
 
@@ -50,6 +51,10 @@ const BookSlot = (props) => {
     const [maxTime, setMaxTime] = useState();
     const [showTimeDialog, setShowTimeDialog] = useState(false);
     const [showTimeDialogEnd, setShowTimeDialogEnd] = useState(false);
+
+    const [modalText, setModalText] = useState("");
+    const [errorModal, setErrorModal] = useState(false);
+    const loadingModal = createRef();
 
     const onChange = (event, selectedTime) => {
         setShowTimeDialog(false);
@@ -115,6 +120,10 @@ const BookSlot = (props) => {
     }
 
     const submitBooking = () => {
+        setModalText("Waiting for approval")
+        setErrorModal(false)
+        loadingModal.current.open();
+
         const bootstrapper = async () => {
             let user = JSON.parse(await AsyncStorage.getItem("user"))
             let token = await AsyncStorage.getItem("jwt")
@@ -154,7 +163,7 @@ const BookSlot = (props) => {
                                 if (resp[0] === false) tempApp = false;
                             });
                             if (tempApp === true) {
-                                console.log("Booking approved, sending request to book")
+                                setModalText("Booking your slot")
                                 bootstrapper().then(({ bookingData, token, user }) => {
                                     fetch('https://shopout.herokuapp.com/user/book', {
                                         method: "POST",
@@ -171,21 +180,54 @@ const BookSlot = (props) => {
                                     })
                                         .then(res => {
                                             if (res.status === 200) props.navigation.navigate("Congratulations", { text: "Your booking has been successfully created" })
-                                            else Alert.alert("Something went wrong")
+                                            else {
+                                                setErrorModal(true);
+                                                setModalText("Something went wrong");
+                                            }
                                         })
                                 })
                             }
-                            else if (tempApp === false) Alert.alert("Slots not available for selected time");
+                            else {
+                                setErrorModal(true)
+                                setModalText("Slots not available for selected time and visitors")
+                            }
                         })
                     }
-                    else if (res.status === 404) Alert.alert("Slots not available for selected time")
-                    else Alert.alert("Something went wrong. Please try again")
+                    else if (res.status === 404) {
+                        setErrorModal(true)
+                        setModalText("Slots not available for selected time and visitors")
+                    }
+                    else {
+                        setErrorModal(true)
+                        setModalText("Something went wrong please try again later")
+                    }
                 })
         })
     }
 
     return (
         <View style={styles.container}>
+
+            <Modal
+                ref={loadingModal}
+                useNativeDriver={false}
+                style={styles.bottomModal}
+                position={"bottom"}
+                swipeToClose={errorModal}
+                backdropPressToClose={errorModal}
+            >
+                <View style={{ flexDirection: "row", justifyContent: "space-around", alignItems: "center" }}>
+                    <Text style={{ fontSize: 20, marginHorizontal: 20 }}>
+                        {modalText}
+                    </Text>
+                    {
+                        !errorModal ?
+                            <ActivityIndicator size="large" color="#0062FF" />
+                            : null
+                    }
+                </View>
+            </Modal>
+
             <View style={styles.header}>
                 <Text style={styles.dummyText}>
                     0
@@ -312,7 +354,7 @@ const BookSlot = (props) => {
                                             <View style={styles.visitorsContainer}>
                                                 <Text style={styles.visitorsText}>{visitors}</Text>
                                             </View>
-                                            <TouchableOpacity onPress={() => setVisitors(visitors + 1 < 5 ? visitors + 1 : visitors)}>
+                                            <TouchableOpacity onPress={() => setVisitors(visitors < 4 ? visitors + 1 : visitors)}>
                                                 <Add />
                                             </TouchableOpacity>
                                         </View>
@@ -325,7 +367,7 @@ const BookSlot = (props) => {
                                                     assistance ? <Text style={styles.checkbox}>
 
                                                     </Text>
-                                                    : <CheckBox />
+                                                        : <CheckBox />
                                                 }
                                             </TouchableOpacity>
                                         </View>
@@ -353,6 +395,11 @@ const BookSlot = (props) => {
 }
 
 const styles = StyleSheet.create({
+    bottomModal: {
+        justifyContent: "center",
+        alignItems: "center",
+        height: 200,
+    },
     container: {
         height: Math.floor(DEVICE_HEIGHT / 1.08),
         backgroundColor: "#FFF",

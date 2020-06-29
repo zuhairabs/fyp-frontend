@@ -7,8 +7,6 @@ import AsyncStorage from '@react-native-community/async-storage'
 export const AuthContext = React.createContext();
 const Stack = createStackNavigator();
 
-import * as StorageService from './storageService'
-
 import Home from './components/screens/Home'
 import Login from './components/screens/Login'
 import Splash from './components/screens/Splash'
@@ -26,6 +24,8 @@ import Congratulations from './components/screens/misc/Congratulations';
 import { TouchableHighlight, TouchableOpacity } from 'react-native-gesture-handler';
 
 const App = () => {
+  console.disableYellowBox = true;
+
   const [state, dispatch] = React.useReducer(
     (prevState, action) => {
       switch (action.type) {
@@ -89,7 +89,7 @@ const App = () => {
                 },
               }),
             }
-            console.log(requestOptions.headers);
+            console.log(user.favourites);
             fetch('https://shopout.herokuapp.com/user/verify', requestOptions)
               .then(response => {
                 if (response.status === 200)
@@ -125,43 +125,46 @@ const App = () => {
   const authContext = React.useMemo(
     () => ({
       signIn: async (userData) => {
-        const requestOptions = {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            cred: {
-              phone: userData.phone,
-              password: userData.password
-            },
-          }),
-        };
+        return new Promise(resolve => {
+          const requestOptions = {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              cred: {
+                phone: userData.phone,
+                password: userData.password
+              },
+            }),
+          };
 
-        try {
-          fetch("https://shopout.herokuapp.com/user/login", requestOptions).then((response) => {
-            if (response.status === 200) {
-              response
-                .json()
-                .then((data) => {
-                  AsyncStorage.setItem("jwt", data.token.toString());
-                  AsyncStorage.setItem("user", JSON.stringify(data.user))
-                  console.log(data.user.notifications)
-                  dispatch({ type: 'SIGN_IN', token: data.token.toString(), user: data.user });
-                })
-            } else {
-              if (response.status === 500) Alert.alert("Internal Server Error");
-              else if (response.status === 404) {
-                response.json()
-                  .then(data => {
-                    Alert.alert(data.error);
+          try {
+            fetch("https://shopout.herokuapp.com/user/login", requestOptions).then((response) => {
+              if (response.status === 200) {
+                response
+                  .json()
+                  .then((data) => {
+                    AsyncStorage.setItem("jwt", data.token.toString());
+                    AsyncStorage.setItem("user", JSON.stringify(data.user))
+                    dispatch({ type: 'SIGN_IN', token: data.token.toString(), user: data.user });
+                    resolve(true);
                   })
+              } else {
+                if (response.status === 500)
+                  resolve([false, "Internal Server Error"]);
+                else if (response.status === 404) {
+                  resolve([false, "Invalid phone number or password"]);
+                }
+                else {
+                  resolve([false, "Server error please try again later"]);
+                }
               }
-              else Alert.alert("Unknown server error");
-            }
-          });
-        }
-        catch (e) {
-          Alert.alert("Something went wrong")
-        }
+            });
+          }
+          catch (e) {
+            resolve([false, "Can not login right now, please check your internet connection and try again"]);
+          }
+        })
+
       },
 
       signOut: () => dispatch({ type: 'SIGN_OUT' }),
@@ -203,6 +206,17 @@ const App = () => {
         }
       }
     }), [])
+
+  const clearNotifications = async() =>{
+    const markRead = async()=>{
+      let user = JSON.parse(await AsyncStorage.getItem("user"));
+      user.notificaitons.forEach(notification => {notification.readStatus = true});
+      return user
+    }
+    markRead().then(user=>{
+      AsyncStorage.setItem("user", user)
+    })
+  }
 
   return (
     <AuthContext.Provider value={authContext}>
@@ -315,7 +329,7 @@ const App = () => {
                         },
                         headerRight: () => (
                           <TouchableOpacity
-                            onPress={() => console.log("Pressed notification clear")}
+                            onPress={() => clearNotifications()}
                           >
                             <Text style={{
                               color: "#6666666F"

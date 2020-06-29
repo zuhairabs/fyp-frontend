@@ -41,8 +41,12 @@ const SignUp = ({ navigation }) => {
     }
 
     const validatePassword = () => {
-        if (password === cnfPassword) return true;
-        Alert.alert("Passwords do not match")
+        if (password.length < 8) {
+            Alert.alert("Password must be atleast 8 character long")
+            return false
+        }
+        else if (password === cnfPassword) return true;
+        Alert.alert("Passwords do not match");
         return false;
     }
 
@@ -52,6 +56,7 @@ const SignUp = ({ navigation }) => {
         Alert.alert("Enter a valid name")
         return false;
     }
+
 
     return (
         <View style={styles.screenContainer}>

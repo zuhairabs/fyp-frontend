@@ -47,6 +47,15 @@ const UpcomingBookings = ({ navigation }) => {
             })
     }, [])
 
+    const removeBooking = (_id) =>{
+        let temp = bookings
+        let i = temp.indexOf(_id)
+        if(i > -1)
+            temp.splice(i)
+        console.log("Removed booking", _id)
+        setBookings(temp)
+    }
+
     return (
         <View style={styles.screenContainer}>
             <StatusBarWhite />
@@ -111,7 +120,7 @@ const UpcomingBookings = ({ navigation }) => {
                             : <View style={styles.results}>
                                 {
                                     bookings.map(booking => {
-                                        return <BookingCard key={booking._id} booking={booking} navigation={navigation} />
+                                        return <BookingCard key={booking._id} booking={booking} navigation={navigation} removeBooking={removeBooking} />
                                     })
                                 }
                             </View>

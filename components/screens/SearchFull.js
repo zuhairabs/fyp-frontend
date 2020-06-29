@@ -21,6 +21,13 @@ const SearchFull = (props) => {
     const [brands, setBrands] = useState([]);
     const [stores, setStores] = useState([]);
 
+    const shuffleArray = async (array)=> {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+    }
 
     const fullSearch = (query, model, id) => {
         const bootstrapper = async () => {
@@ -44,8 +51,14 @@ const SearchFull = (props) => {
             }).then((res) => {
                 if (res.status === 200) {
                     res.json().then((data) => {
-                        console.log(data)
-                        setResults(data.response[0])
+                        let temp = []
+                        data.response.forEach(resp => {
+                            temp = temp.concat(resp)
+                        });
+                        shuffleArray(temp)
+                        .then((array)=>{
+                            setResults(array)
+                        })
                         setQuery(query)
                     });
                 }
@@ -110,6 +123,7 @@ const SearchFull = (props) => {
                         autoCompleteType='off'
                         placeholder={placeholder}
                         onBlur={() => { setText(""); setBrands([]); setStores([]); setCategories([]); setTags([]); }}
+                        blurOnSubmit={true}
                         placeholderTextColor="#707070"
                         autoFocus={true}
                     />
@@ -264,8 +278,8 @@ const styles = StyleSheet.create({
         color: "#666"
     },
     searchHeaderText: {
-        fontSize: 12,
-        color: "#666"
+        marginTop: 15,
+        color: "#000"
     },
     searchResult: {
         paddingHorizontal: 20,
