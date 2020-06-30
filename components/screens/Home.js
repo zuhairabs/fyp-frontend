@@ -61,6 +61,67 @@ const Home = ({ navigation }) => {
         }
     }
 
+    const getCategories = (options) => {
+        try {
+            fetch('https://shopout.herokuapp.com/user/home/categories', options)
+                .then(res => {
+                    if (res.status === 200) {
+                        res.json().then(data => {
+                            setCategories(data.response)
+                        })
+                    }
+                    else {
+                        console.log(res.statusText)
+                    }
+                })
+        }
+        catch (e) {
+            console.log(e)
+        }
+    }
+
+    const getFeaturedStores = (options) => {
+        try {
+            fetch('https://shopout.herokuapp.com/user/home/featured', options)
+                .then(res => {
+                    if (res.status === 200) {
+                        res.json().then(data => {
+                            setDataBigCard(data.response.slice(0, 5))
+                            setDataSmallCard(data.response.slice(5, 10))
+                            getLatestStores(options)
+                        })
+                    }
+                    else {
+                        console.log(res.statusText)
+                    }
+                })
+        }
+        catch (e) {
+            console.log(e)
+        }
+    }
+
+    const getLatestStores = (options) => {
+        try {
+            fetch('https://shopout.herokuapp.com/user/home/new', options)
+                .then(res => {
+                    if (res.status === 200) {
+                        res.json().then(data => {
+                            setDataNewStores(data.response)
+                            setLoading(false);
+                        })
+                    }
+                    else {
+                        setLoading(false);
+                        console.log(res.statusText)
+                    }
+                })
+        }
+        catch (e) {
+            console.log(e)
+        }
+    }
+
     useEffect(() => {
         locationPermission();
 
@@ -71,38 +132,52 @@ const Home = ({ navigation }) => {
         }
 
         getUserFromStorage().then(({ user, token }) => {
-            console.log({ user, token })
-            try {
-                fetch('https://shopout.herokuapp.com/user/home', {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": "Bearer " + token
+            const requestOptions = {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": "Bearer " + token
+                },
+                body: JSON.stringify({
+                    "cred": {
+                        "phone": user.phone
                     },
-                    body: JSON.stringify({
-                        "cred": {
-                            "phone": user.phone
-                        },
-                        "city": "Mumbai"
-                    })
+                    "city": "Mumbai"
                 })
-                    .then(res => {
-                        if (res.status === 200)
-                            res.json().then(data => {
-                                setCategories(data.category)
-                                setDataBigCard(data.stores.slice(0, 5))
-                                setDataSmallCard(data.stores.slice(5))
-                                setDataNewStores(data.recentStores)
-                                setLoading(false);
-                            })
-                        else
-                            console.log(res.statusText)
-                    })
             }
-            catch (e) {
-                console.log(e)
-                Alert.alert("Something went wrong")
-            }
+            getFeaturedStores(requestOptions)
+            getCategories(requestOptions)
+            // try {
+            //     fetch('https://shopout.herokuapp.com/user/home', {
+            //         method: "POST",
+            //         headers: {
+            //             "Content-Type": "application/json",
+            //             "Authorization": "Bearer " + token
+            //         },
+            //         body: JSON.stringify({
+            //             "cred": {
+            //                 "phone": user.phone
+            //             },
+            //             "city": "Mumbai"
+            //         })
+            //     })
+            //         .then(res => {
+            //             if (res.status === 200)
+            //                 res.json().then(data => {
+            //                     setCategories(data.category)
+            //                     setDataBigCard(data.stores.slice(0, 5))
+            //                     setDataSmallCard(data.stores.slice(5))
+            //                     setDataNewStores(data.recentStores)
+            //                     setLoading(false);
+            //                 })
+            //             else
+            //                 console.log(res.statusText)
+            //         })
+            // }
+            // catch (e) {
+            //     console.log(e)
+            //     Alert.alert("Something went wrong")
+            // }
         })
     }, [])
 
@@ -133,7 +208,7 @@ const Home = ({ navigation }) => {
                         </View> :
                             <>
                                 <Location location={location} />
-                                <CategoryScroll categories={categories}/>
+                                <CategoryScroll categories={categories} />
                                 <CardScroll navigation={navigation} stores={dataBigCard} />
                                 <Text style={styles.mainSubHeading}>Near Me</Text>
                                 <CardScrollSmall navigation={navigation} stores={dataSmallCard} />

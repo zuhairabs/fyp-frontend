@@ -11,6 +11,7 @@ import Home from './components/screens/Home'
 import Login from './components/screens/Login'
 import Splash from './components/screens/Splash'
 import Profile from './components/screens/Profile'
+import Favourites from './components/screens/Favourites'
 import SignUp from './components/screens/SignUp'
 import Store from './components/screens/Store'
 import SearchFull from './components/screens/SearchFull'
@@ -89,7 +90,6 @@ const App = () => {
                 },
               }),
             }
-            console.log(user.favourites);
             fetch('https://shopout.herokuapp.com/user/verify', requestOptions)
               .then(response => {
                 if (response.status === 200)
@@ -259,6 +259,20 @@ const App = () => {
                     <Stack.Screen
                       name="Profile"
                       component={Profile}
+                    />
+                    <Stack.Screen 
+                      name="Favourites"
+                      component={Favourites}
+                      options={{
+                        title: "Favourites",
+                        headerShown: true,
+                        headerBackImage: () => {
+                          return <BackButton />
+                        },
+                        headerLeftContainerStyle: {
+                          padding: 20,
+                        },
+                      }}
                     />
                     <Stack.Screen
                       name="EditProfile"

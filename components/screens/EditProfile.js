@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { View, StyleSheet, StatusBar, Dimensions, Text, Keyboard, KeyboardAvoidingView } from 'react-native'
+import { View, StyleSheet, StatusBar, Dimensions, Text, Keyboard, KeyboardAvoidingView, ToastAndroid } from 'react-native'
 import AsyncStorage from '@react-native-community/async-storage'
 import { ScrollView, TouchableWithoutFeedback, TextInput, TouchableOpacity } from 'react-native-gesture-handler'
 import Svg, { Circle } from 'react-native-svg'
@@ -34,6 +34,46 @@ const EditProfile = ({ navigation }) => {
             })
     }, [])
 
+    const save = () => {
+        const saveToAsync = async (user) => {
+            await AsyncStorage.setItem("user", JSON.stringify(user))
+        }
+        const bootstrapper = async () => {
+            let token = await AsyncStorage.getItem("jwt")
+            let user = JSON.parse(await AsyncStorage.getItem("user"))
+            fetch("https://shopout.herokuapp.com/user/updateprofile", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    authorization: "Bearer " + token,
+                },
+                body: JSON.stringify({
+                    cred: {
+                        phone: user.phone,
+                    },
+                    userData: {
+                        firstName: firstName,
+                        lastName: lastName,
+                        email: email
+                    }
+                }),
+            }).then((res) => {
+                if (res.status === 200) {
+                    user.firstName = firstName
+                    user.lastName = lastName
+                    user.email = email
+                    saveToAsync(user)
+                        .then(() => {
+                            ToastAndroid.show("Profile updated!", ToastAndroid.LONG)
+                        })
+                }
+                else
+                    Alert.alert(res.statusText)
+            });
+        }
+        bootstrapper();
+    }
+
 
     return (
         <KeyboardAvoidingView
@@ -52,7 +92,7 @@ const EditProfile = ({ navigation }) => {
 
             <ScrollView
                 style={styles.container}
-                // stickyHeaderIndices={[0]}
+            // stickyHeaderIndices={[0]}
             >
                 <NavbarBackButton color="white" navigation={navigation} />
 
@@ -151,7 +191,10 @@ const EditProfile = ({ navigation }) => {
                         </View>
 
                         <View style={styles.buttonArea}>
-                            <TouchableOpacity style={styles.defaultButton}>
+                            <TouchableOpacity
+                                style={styles.defaultButton}
+                                onPress={() => { save() }}
+                            >
                                 <Text style={styles.defaultButtonText}>
                                     Save Profile
                                 </Text>

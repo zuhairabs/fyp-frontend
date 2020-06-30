@@ -72,7 +72,10 @@ const Profile = ({ navigation }) => {
                             </View>
                             <Text style={styles.buttonText}>Appointments</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.button}>
+                        <TouchableOpacity 
+                            style={styles.button}
+                            onPress={()=>{ navigation.navigate("Favourites") }}
+                        >
                             <View style={styles.buttonIcon}>
                                 <Image source={require('./menu-icons/favorite_border-black-48dp.png')} style={styles.buttonIconImage} />
                             </View>

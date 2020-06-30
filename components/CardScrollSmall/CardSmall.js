@@ -23,7 +23,7 @@ const CardSmall = ({ store, navigation }) => {
                 <View style={styles.cardHeader}>
                     {/* <Image source={require('./cafe.png')} style={styles.cardImage} /> */}
                     <Image source={{
-                        uri: `data:image/gif;base64,${store.business.images[0] || store.business.logo}`
+                        uri: `data:image/gif;base64,${store.business.title_image || store.business.logo}`
                     }}
                         style={styles.cardImage} />
                 </View>

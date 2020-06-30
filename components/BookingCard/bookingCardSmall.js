@@ -27,7 +27,7 @@ const BookingCardSmall = (props) => {
                     <View style={styles.imageContainer}>
                         <Image
                             source={{
-                                uri: `data:image/gif;base64,${props.booking.store.business.images[0] || props.booking.store.business.logo}`
+                                uri: `data:image/gif;base64,${props.booking.store.business.title_image || props.booking.store.business.logo}`
                             }}
                             style={styles.image}
                         />

@@ -11,7 +11,7 @@ const StoreCard = (props) => {
             <View style={styles.details}>
                 <View style={styles.imageContainer}>
                     <Image source={{
-                        uri: `data:image/gif;base64,${props.store.business.images ? props.store.business.images[0] : props.store.business.logo}`
+                        uri: `data:image/gif;base64,${props.store.business.title_image || props.store.business.logo}`
                     }}
                         style={styles.image}
                     />

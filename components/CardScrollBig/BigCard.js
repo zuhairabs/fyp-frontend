@@ -45,7 +45,7 @@ const BigCard = (props) => {
                 </View>
                 <View style={styles.cardLeft}>
                     <Image source={{
-                        uri: `data:image/gif;base64,${props.store.business.images[0] || props.store.business.logo}`
+                        uri: `data:image/gif;base64,${props.store.business.title_image || props.store.business.logo}`
                     }}
                         style={styles.cardImage}
                     />

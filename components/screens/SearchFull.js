@@ -1,17 +1,18 @@
 import React, { useEffect, useState } from 'react'
-import { View, Text, ScrollView, StyleSheet, Platform, StatusBar, Dimensions, TextInput } from 'react-native'
+import { View, Text, ScrollView, StyleSheet, Platform, StatusBar, Dimensions, TextInput, ActivityIndicator } from 'react-native'
 import Icon from 'react-native-vector-icons/dist/MaterialIcons'
 import AsyncStorage from '@react-native-community/async-storage'
 
 import StatusBarWhite from '../UXComponents/StatusBar'
 import StoreCard from '../StoreCard/StoreCard'
-import { TouchableWithoutFeedback } from 'react-native-gesture-handler'
+import { TouchableWithoutFeedback, TouchableOpacity } from 'react-native-gesture-handler'
 
 const DEVICE_HEIGHT = Dimensions.get('window').height;
 
 const SearchFull = (props) => {
     const [results, setResults] = useState([])
     const [query, setQuery] = useState()
+    const [loading, setLoading] = useState(false)
 
     const placeholder = "Where do you want to visit today..."
 
@@ -21,7 +22,7 @@ const SearchFull = (props) => {
     const [brands, setBrands] = useState([]);
     const [stores, setStores] = useState([]);
 
-    const shuffleArray = async (array)=> {
+    const shuffleArray = async (array) => {
         for (let i = array.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
             [array[i], array[j]] = [array[j], array[i]];
@@ -30,6 +31,7 @@ const SearchFull = (props) => {
     }
 
     const fullSearch = (query, model, id) => {
+        setLoading(true)
         const bootstrapper = async () => {
             let token = await AsyncStorage.getItem("jwt")
             let user = JSON.parse(await AsyncStorage.getItem("user"))
@@ -49,6 +51,7 @@ const SearchFull = (props) => {
                     _id: id,
                 }),
             }).then((res) => {
+                setLoading(false)
                 if (res.status === 200) {
                     res.json().then((data) => {
                         let temp = []
@@ -56,9 +59,9 @@ const SearchFull = (props) => {
                             temp = temp.concat(resp)
                         });
                         shuffleArray(temp)
-                        .then((array)=>{
-                            setResults(array)
-                        })
+                            .then((array) => {
+                                setResults(array)
+                            })
                         setQuery(query)
                     });
                 }
@@ -134,7 +137,7 @@ const SearchFull = (props) => {
                     style={styles.suggestionDropdown}>
                     {stores.map(result => {
                         if (result.name)
-                            return <TouchableWithoutFeedback
+                            return <TouchableOpacity
                                 key={result._id}
                                 onPress={() => {
                                     props.navigation.navigate("Store", { store: result._id })
@@ -144,11 +147,11 @@ const SearchFull = (props) => {
                                 >
                                     {result.business.display_name} {result.name}
                                 </Text>
-                            </TouchableWithoutFeedback>
+                            </TouchableOpacity>
                     })}
                     {brands.map(result => {
                         if (result.name)
-                            return <TouchableWithoutFeedback onPress={() => {
+                            return <TouchableOpacity onPress={() => {
                                 fullSearch(result.name, 'brand', result._id)
                             }}
                                 key={result._id}
@@ -160,11 +163,11 @@ const SearchFull = (props) => {
                                 >
                                     {result.name}
                                 </Text>
-                            </TouchableWithoutFeedback>
+                            </TouchableOpacity>
                     })}
                     {categories.map(result => {
                         if (result.name)
-                            return <TouchableWithoutFeedback onPress={() => {
+                            return <TouchableOpacity onPress={() => {
                                 fullSearch(result.name, 'category', result._id)
                             }}
                                 key={result._id}
@@ -175,11 +178,11 @@ const SearchFull = (props) => {
                                 >
                                     {result.name}
                                 </Text>
-                            </TouchableWithoutFeedback>
+                            </TouchableOpacity>
                     })}
                     {tags.map(result => {
                         if (result.name)
-                            return <TouchableWithoutFeedback onPress={() => {
+                            return <TouchableOpacity onPress={() => {
                                 fullSearch(result.name, 'tag', result._id)
                             }}
                                 key={result._id}
@@ -190,7 +193,7 @@ const SearchFull = (props) => {
                                 >
                                     {result.name}
                                 </Text>
-                            </TouchableWithoutFeedback>
+                            </TouchableOpacity>
                     })}
                 </ScrollView>
             </View>
@@ -198,26 +201,40 @@ const SearchFull = (props) => {
             <ScrollView
                 style={styles.container}
             >
-                <View style={styles.searchHeader}>
-                    {
-                        query
-                            ? <Text style={styles.searchHeaderText}>Search results for '{query}'</Text>
-                            :
-                            <Text style={styles.searchHeaderText}>
-                                Your recent searches
+                {
+                    loading ? <View
+                        style={{
+                            justifyContent: "center",
+                            alignItems: "center",
+                            height: DEVICE_HEIGHT - 80,
+                            width: "100%"
+                        }}>
+                        <ActivityIndicator size="large" color="#0062FF" />
+                    </View>
+                        :
+                        <>
+                            <View style={styles.searchHeader}>
+                                {
+                                    query
+                                        ? <Text style={styles.searchHeaderText}>Search results for '{query}'</Text>
+                                        :
+                                        <Text style={styles.searchHeaderText}>
+                                            Your recent searches
                             </Text>
-                    }
+                                }
 
-                </View>
-                <View style={styles.searchResult}>
-                    {
-                        results ?
-                            results.map(item => {
-                                return <StoreCard key={item._id} store={item} navigation={props.navigation} />
-                            })
-                            : null
-                    }
-                </View>
+                            </View>
+                            <View style={styles.searchResult}>
+                                {
+                                    results ?
+                                        results.map(item => {
+                                            return <StoreCard key={item._id} store={item} navigation={props.navigation} />
+                                        })
+                                        : null
+                                }
+                            </View>
+                        </>
+                }
             </ScrollView>
         </View>
     )
