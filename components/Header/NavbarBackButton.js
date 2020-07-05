@@ -38,24 +38,19 @@ const NavbarBackButton = (props) => {
 
 const Styles = StyleSheet.create({
     navbar: {
-        height: 70,
-        flex: 1,
+        height: 50,
+        // flex: 1,
         flexDirection: 'row',
         justifyContent: 'flex-start',
-        alignItems: 'center',
+        alignItems: 'flex-start',
         paddingHorizontal: 20,
-        backgroundColor: "#ffffff00",
-    },
-    navbarLinks: {
-        flexDirection: 'row',
-        flex: 1,
-        justifyContent: 'flex-start',
-        alignItems: 'center',
+        // backgroundColor: "#ffffff00",
     },
     navbarLogo: {
         flex: 4,
         flexDirection: 'row',
-        justifyContent: 'flex-start',
+        justifyContent: 'center',
+        alignItems: "center",
         marginLeft: Dimensions.get("screen").width / 20,
     },
     navbarHeaderText: {

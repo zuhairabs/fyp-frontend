@@ -7,7 +7,7 @@ const Splash = () =>{
     return (
         <View style={Styles.screenContainer}>
             <View style={Styles.container}>
-                <ShopOutLogo />
+                <ShopOutLogo height="100%" width="100%" />
             </View>
         </View>
     )
@@ -21,7 +21,7 @@ const Styles = StyleSheet.create({
         alignItems: "center",
     },
     container: {
-        width: Dimensions.get('window').width/1.5,
+        width: Dimensions.get('window').width/1.2,
         justifyContent: "center",
         alignItems: "center"
     },

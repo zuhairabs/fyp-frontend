@@ -72,16 +72,19 @@ const Profile = ({ navigation }) => {
                             </View>
                             <Text style={styles.buttonText}>Appointments</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity 
+                        <TouchableOpacity
                             style={styles.button}
-                            onPress={()=>{ navigation.navigate("Favourites") }}
+                            onPress={() => { navigation.navigate("Favourites") }}
                         >
                             <View style={styles.buttonIcon}>
                                 <Image source={require('./menu-icons/favorite_border-black-48dp.png')} style={styles.buttonIconImage} />
                             </View>
                             <Text style={styles.buttonText}>Favourites</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.button}>
+                        <TouchableOpacity
+                            style={styles.button}
+                            onPress={() => { navigation.navigate("Support") }}
+                        >
                             <View style={styles.buttonIcon}>
                                 <Image source={require('./menu-icons/help_outline-24px.png')} style={styles.buttonIconImage} />
                             </View>

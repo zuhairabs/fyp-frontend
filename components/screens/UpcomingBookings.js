@@ -7,6 +7,7 @@ import Icon from 'react-native-vector-icons/dist/MaterialIcons'
 import StatusBarWhite from '../UXComponents/StatusBar'
 import BookingCard from '../BookingCard/bookingCard'
 
+
 const UpcomingBookings = ({ navigation }) => {
 
     const [bookings, setBookings] = useState([])
@@ -39,7 +40,12 @@ const UpcomingBookings = ({ navigation }) => {
                     .then((res) => {
                         if (res.status === 200)
                             res.json()
-                                .then(data => { setBookings(data.bookings); setLoading(false) })
+                                .then(data => {
+                                    setBookings(data.bookings);
+                                    sortBookings().then(() => {
+                                        setLoading(false);
+                                    })
+                                })
                         else {
                             Alert.alert("Something went wrong ", res.statusText)
                         }
@@ -47,13 +53,18 @@ const UpcomingBookings = ({ navigation }) => {
             })
     }, [])
 
-    const removeBooking = (_id) =>{
-        let temp = bookings
-        let i = temp.indexOf(_id)
-        if(i > -1)
-            temp.splice(i)
-        console.log("Removed booking", _id)
-        setBookings(temp)
+    const sortBookings = async () => {
+        setBookings(prev => {
+            return prev.sort((a, b) => {
+                return new Date(a.start).getTime() - new Date(b.start).getTime();
+            })
+        })
+    }
+
+    const removeBooking = (id) => {
+        setBookings(prev => {
+            return prev.filter(item => item._id != id)
+        })
     }
 
     return (
@@ -81,51 +92,40 @@ const UpcomingBookings = ({ navigation }) => {
                     </View>
                 </View>
 
-                <View
-                    style={{
-                        backgroundColor: "#FFF",
-                    }}
-                >
-                    <View style={styles.monthSelectorContainer}>
-                        <Text style={styles.selectedMonth}>
-                            {mlist[new Date().getUTCMonth()]} {new Date().getUTCFullYear()}
-                        </Text>
-                        <View style={styles.monthSelector}>
-                            <Text style={styles.selectedMonth}>
-                                This Month
-                            </Text>
-                            <Icon name="arrow-drop-down" size={20} color="#666" />
-
-                        </View>
-                    </View>
-                </View>
-
-                <ScrollView style={styles.contentContainer} contentContainerStyle={{
-                    justifyContent: "center",
-                    alignItems: "center",
-                }}>
-
-                    {
-                        loading
-                            ? <View style=
-                                {{
-                                    justifyContent: "center",
-                                    alignItems: "center",
-                                    height: Dimensions.get('window').height - 100,
-                                    width: "100%"
-                                }}
-                            >
-                                <ActivityIndicator size="large" color="#0062FF" />
+                {
+                    loading
+                        ? <View style=
+                            {{
+                                justifyContent: "center",
+                                alignItems: "center",
+                                height: Dimensions.get('window').height - 100,
+                                width: "100%"
+                            }}
+                        >
+                            <ActivityIndicator size="large" color="#0062FF" />
+                        </View> :
+                        <>
+                            <View style={styles.monthSelectorContainer}>
+                                <Text style={styles.selectedMonth}>
+                                    {mlist[new Date(bookings[0].start).getUTCMonth()]} - {mlist[new Date(bookings[bookings.length - 1].start).getUTCMonth()]} {new Date().getUTCFullYear()}
+                                </Text>
                             </View>
-                            : <View style={styles.results}>
-                                {
-                                    bookings.map(booking => {
-                                        return <BookingCard key={booking._id} booking={booking} navigation={navigation} removeBooking={removeBooking} />
-                                    })
-                                }
-                            </View>
-                    }
-                </ScrollView>
+
+                            <ScrollView style={styles.contentContainer} contentContainerStyle={{
+                                justifyContent: "center",
+                                alignItems: "center",
+                            }}>
+                                <View style={styles.results}>
+                                    {
+                                        bookings.map(booking => {
+                                            return <BookingCard key={booking._id} booking={booking} navigation={navigation} removeBooking={removeBooking} />
+                                        })
+                                    }
+                                </View>
+                            </ScrollView>
+                        </>
+                }
+
 
             </ScrollView>
 
@@ -191,11 +191,6 @@ const styles = StyleSheet.create({
         paddingTop: 20,
         paddingBottom: 20,
         paddingHorizontal: 40,
-    },
-    monthSelector: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
     },
     selectedMonth: {
         color: "#666",

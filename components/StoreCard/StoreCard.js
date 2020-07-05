@@ -62,7 +62,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
         borderBottomWidth: 1,
         borderColor: "#ECF0F4",
-        paddingVertical: 10,
+        // paddingVertical: 10,
     },
     rating: {
         flex: 1,

@@ -10,7 +10,7 @@ const BookingCard = (props) => {
 
     const [extended, setExtended] = useState(false)
 
-    const cancelBooking = () => {
+    const cancelBooking = async () => {
         const bootstrapper = async () => {
             let token = await AsyncStorage.getItem("jwt")
             let user = JSON.parse(await AsyncStorage.getItem("user"))
@@ -41,8 +41,9 @@ const BookingCard = (props) => {
                 }).then((res) => {
                     if (res.status === 200) {
                         Alert.alert("Booking deleted successfully")
+                        props.removeBooking(props.booking._id);
                     } else {
-                        Alert.alert(res.statusText);
+                        Alert.alert("Can not delete booking. Please try again later");
                     }
                 });
             })
@@ -114,15 +115,13 @@ const BookingCard = (props) => {
                                         [
                                             {
                                                 text: "No, don't",
-                                                onPress: ()=>{},
+                                                onPress: () => { },
                                                 style: "default"
                                             },
                                             {
                                                 text: "Yes, cancel",
-                                                onPress: ()=>{
+                                                onPress: () => {
                                                     cancelBooking()
-                                                    props.removeBooking(props.booking._id);
-                                                    
                                                 },
                                                 style: "destructive"
                                             }

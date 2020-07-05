@@ -1,14 +1,12 @@
-import React, { useState, useContext } from 'react'
-import { View, Text, StyleSheet, Dimensions, Platform, StatusBar, Alert, PermissionsAndroid, KeyboardAvoidingView } from 'react-native'
+import React, { useState, createRef } from 'react'
+import { View, Text, StyleSheet, Dimensions, Platform, StatusBar, Alert, KeyboardAvoidingView, ActivityIndicator } from 'react-native'
 import { TouchableOpacity, ScrollView, TextInput } from 'react-native-gesture-handler'
 import Icon from 'react-native-vector-icons/dist/MaterialIcons'
+import Modal from 'react-native-modalbox';
 
 import Navbar from '../Header/Navbar'
 import StatusBarWhite from '../UXComponents/StatusBar'
 import SecondaryBackground from '../UXComponents/SecondaryBackground'
-
-import { AuthContext } from '../../App'
-
 
 
 const SignUp = ({ navigation }) => {
@@ -19,12 +17,44 @@ const SignUp = ({ navigation }) => {
     const [lastName, setLastName] = useState("")
     const [email, setEmail] = useState("")
 
-    const { signUp } = React.useContext(AuthContext);
 
+    const [loading, setLoading] = useState(false)
+    const [modalText, setModalText] = useState("Registering")
+    const loadingModal = createRef();
 
-    const handleSubmit = () => {
-        if (validateForm())
-            signUp({ phone, password, firstName, lastName, email });
+    const input1 = createRef();
+    const input2 = createRef();
+    const input3 = createRef();
+    const input4 = createRef();
+    const input5 = createRef();
+    const input6 = createRef();
+
+    const handleSubmit = async () => {
+        if (validateForm()) {
+            setLoading(true)
+            loadingModal.current.open()
+            setModalText("Registering")
+            fetch("https://shopout.herokuapp.com/user/verification/phoneregistered", {
+                "method": "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    phone: phone
+                })
+            })
+                .then(res => {
+                    if (res.status === 200) {
+                        setLoading(false);
+                        navigation.navigate("Verification", {phone, password, firstName, lastName, email});
+                        loadingModal.current.close();
+                    }
+                    else {
+                        setLoading(false)
+                        setModalText("Phone number already registered")
+                    }
+                })
+        }
     }
 
     const validateForm = () => {
@@ -60,6 +90,27 @@ const SignUp = ({ navigation }) => {
 
     return (
         <View style={styles.screenContainer}>
+
+            <Modal
+                ref={loadingModal}
+                useNativeDriver={false}
+                style={styles.bottomModal}
+                position={"bottom"}
+                swipeToClose={!loading}
+                backdropPressToClose={!loading}
+            >
+                <View style={{ flexDirection: "row", justifyContent: "space-around", alignItems: "center" }}>
+                    <Text style={{ fontSize: 20, marginHorizontal: 20 }}>
+                        {modalText}
+                    </Text>
+                    {
+                        loading ?
+                            <ActivityIndicator size="large" color="#0062FF" />
+                            : null
+                    }
+                </View>
+            </Modal>
+
             <StatusBarWhite />
             <SecondaryBackground />
 
@@ -90,33 +141,48 @@ const SignUp = ({ navigation }) => {
                                 </View>
                             </View>
                             <TextInput
+                                ref={input1}
+                                returnKeyType="next"
+                                onSubmitEditing={() => { input2.current.focus() }}
                                 style={styles.textInput}
-                                placeholder="First Name"
+                                placeholder="First Name (required)"
                                 value={firstName}
                                 onChangeText={(value) => { setFirstName(value) }}
                             />
                             <TextInput
+                                ref={input2}
+                                returnKeyType="next"
+                                onSubmitEditing={() => { input3.current.focus() }}
                                 style={styles.textInput}
                                 placeholder="Last Name"
                                 value={lastName}
                                 onChangeText={(value) => { setLastName(value) }}
                             />
                             <TextInput
+                                ref={input3}
+                                returnKeyType="next"
+                                onSubmitEditing={() => { input4.current.focus() }}
                                 style={styles.textInput}
-                                placeholder="Phone Number"
+                                placeholder="Phone Number (required)"
                                 keyboardType='numeric'
                                 value={phone}
                                 onChangeText={(value) => { setPhone(value) }}
                             />
                             <TextInput
+                                ref={input4}
+                                returnKeyType="next"
+                                onSubmitEditing={() => { input5.current.focus() }}
                                 style={styles.textInput}
                                 placeholder="Email address"
                                 value={email}
                                 onChangeText={(value) => { setEmail(value) }}
                             />
                             <TextInput
+                                ref={input5}
+                                returnKeyType="next"
+                                onSubmitEditing={() => { input6.current.focus() }}
                                 style={styles.textInput}
-                                placeholder="Create Password"
+                                placeholder="Create Password (required)"
                                 autoCompleteType="password"
                                 secureTextEntry
                                 passwordRules
@@ -124,8 +190,12 @@ const SignUp = ({ navigation }) => {
                                 onChangeText={(value) => { setPassword(value) }}
                             />
                             <TextInput
+                                ref={input6}
+                                returnKeyType="send"
+                                blurOnSubmit={true}
+                                onSubmitEditing={() => { handleSubmit() }}
                                 style={styles.textInput}
-                                placeholder="Confrim Password"
+                                placeholder="Confrim Password (required)"
                                 autoCompleteType="password"
                                 secureTextEntry
                                 passwordRules
@@ -153,9 +223,13 @@ const SignUp = ({ navigation }) => {
 }
 
 const styles = StyleSheet.create({
+    bottomModal: {
+        justifyContent: "center",
+        alignItems: "center",
+        height: 200,
+    },
     screenContainer: {
         paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
-        // backgroundColor: "#F8F9FD",
         backgroundColor: "#FFF",
         height: Dimensions.get('screen').height,
     },
@@ -168,7 +242,7 @@ const styles = StyleSheet.create({
         elevation: 0,
     },
     tabNavigation: {
-        marginTop: 20,
+        marginTop: 70,
         marginBottom: 20,
         paddingHorizontal: 20,
         marginLeft: 20,

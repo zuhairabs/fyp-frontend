@@ -20,19 +20,19 @@ const CardSmall = ({ store, navigation }) => {
         <View style={styles.container}>
 
             <View style={styles.card}>
-                <View style={styles.cardHeader}>
-                    {/* <Image source={require('./cafe.png')} style={styles.cardImage} /> */}
-                    <Image source={{
-                        uri: `data:image/gif;base64,${store.business.title_image || store.business.logo}`
+                <TouchableWithoutFeedback
+                    onPress={() => {
+                        navigation.navigate("Store", { store: store._id })
                     }}
-                        style={styles.cardImage} />
-                </View>
-                <View style={styles.cardContent}>
-                    <TouchableWithoutFeedback
-                        onPress={() => {
-                            navigation.navigate("Store", { store: store._id })
+                >
+                    <View style={styles.cardHeader}>
+                        {/* <Image source={require('./cafe.png')} style={styles.cardImage} /> */}
+                        <Image source={{
+                            uri: `data:image/gif;base64,${store.business.title_image || store.business.logo}`
                         }}
-                    >
+                            style={styles.cardImage} />
+                    </View>
+                    <View style={styles.cardContent}>
                         <Text style={styles.cardTitle}>{store.business.display_name}</Text>
                         <Text style={styles.cardTitle}>{store.name}</Text>
                         <View style={styles.cardSubtitle}>
@@ -42,12 +42,12 @@ const CardSmall = ({ store, navigation }) => {
                                 {store.location_desc}
                             </Text>
                         </View>
-                    </TouchableWithoutFeedback>
-                    <TouchableOpacity onPress={() => { navigation.navigate("Store", { store: store._id, bookSlot: true }) }}>
-                        <BookButton />
-                    </TouchableOpacity>
-                </View>
+                        <TouchableOpacity onPress={() => { navigation.navigate("Store", { store: store._id, bookSlot: true }) }}>
+                            <BookButton />
+                        </TouchableOpacity>
+                    </View>
 
+                </TouchableWithoutFeedback>
                 <View style={styles.ratingBadge}>
                     <RatingBadge value={store.avg_rating || (Math.floor(Math.random() * 4 * 10) / 10) + 1} />
                 </View>

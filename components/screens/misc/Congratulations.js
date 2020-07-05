@@ -4,8 +4,11 @@ import { TouchableOpacity } from 'react-native-gesture-handler'
 
 import CongratulationsImage from './congratulations.svg'
 
+const DEVICE_HEIGHT = Dimensions.get("screen").height
+const WINDOW_HEIGHT = Dimensions.get("window").height
+
 const Congratulations = (props) => {
-    const [text, setText] = useState(props.route.params.text || "")
+    const [text] = useState(props.route.params.text || "")
 
     return (
         <View style={{
@@ -54,7 +57,7 @@ const styles = StyleSheet.create({
         justifyContent: "flex-end",
         alignItems: "center",
         width: "100%",
-        marginTop: 20,
+        marginBottom: DEVICE_HEIGHT - WINDOW_HEIGHT,
     },
     defaultButton: {
         width: Dimensions.get("window").width - 40,

@@ -90,11 +90,9 @@ const EditProfile = ({ navigation }) => {
                     fill="#0062FF" />
             </Svg>
 
-            <ScrollView
-                style={styles.container}
-            // stickyHeaderIndices={[0]}
-            >
-                <NavbarBackButton color="white" navigation={navigation} />
+            <NavbarBackButton color="white" navigation={navigation} />
+
+            <ScrollView style={styles.container}>
 
                 <View style={styles.header}>
                     <View style={styles.userPhotoContainer}>
@@ -221,11 +219,13 @@ const styles = StyleSheet.create({
     },
     container: {
         height: Dimensions.get('window').height,
+        marginTop: 20,
     },
     contentContainer: {
         paddingHorizontal: 20,
         paddingVertical: 0,
         marginTop: 20,
+        marginBottom: 100,
         justifyContent: "center",
         alignItems: "center",
         backgroundColor: "#FFF"

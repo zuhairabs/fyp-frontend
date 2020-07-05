@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" viewBox="0 0 35 35">
+  <g id="Group_11989" data-name="Group 11989" transform="translate(2831 -3013)">
+    <g id="Rectangle_1764" data-name="Rectangle 1764" transform="translate(-2796 3013) rotate(90)" fill="#0062ff" stroke="#0062ff" stroke-width="2">
+      <rect width="35" height="35" rx="10" stroke="none"/>
+      <rect x="1" y="1" width="33" height="33" rx="9" fill="none"/>
+    </g>
+    <g id="done-black-48dp_1_" data-name="done-black-48dp (1)" transform="translate(-2825 3019)">
+      <path id="Path_30967" data-name="Path 30967" d="M0,0H24V24H0Z" fill="none"/>
+      <path id="Path_30968" data-name="Path 30968" d="M9,16.2,5.5,12.7a.99.99,0,1,0-1.4,1.4l4.19,4.19a1,1,0,0,0,1.41,0L20.3,7.7a.99.99,0,0,0-1.4-1.4Z" fill="#fff"/>
+    </g>
+  </g>
+</svg>

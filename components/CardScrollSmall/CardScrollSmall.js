@@ -9,15 +9,60 @@ const CardScrollSmall = (props) => {
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
-        setLoading(false)
+        if (props.url) {
+            const getUserFromStorage = async () => {
+                const user = JSON.parse(await AsyncStorage.getItem("user"))
+                const token = await AsyncStorage.getItem("jwt")
+                return { user, token }
+            }
+            getUserFromStorage()
+                .then(({ user, token }) => {
+                    const requestOptions = {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "Authorization": "Bearer " + token
+                        },
+                        body: JSON.stringify({
+                            "cred": {
+                                "phone": user.phone
+                            },
+                            "city": "Mumbai"
+                        })
+                    }
+                    try {
+                        fetch(`https://shopout.herokuapp.com/user/category/${url}`, requestOptions)
+                            .then(res => {
+                                if (res.status === 200) {
+                                    res.json().then(data => {
+                                        setDataNewStores(data.response)
+                                        setLoading(false);
+                                    })
+                                }
+                                else {
+                                    setLoading(false);
+                                    console.log(res.statusText)
+                                }
+                            })
+                    }
+                    catch (e) {
+                        console.log(e)
+                    }
+                })
+
+        }
+        else {
+            setLoading(false)
+        }
+
     }, [props.stores])
 
     return (
         <View style={styles.container}>
             {
-                loading ? 
-                    <ActivityIndicator size="large" color="#0062FF"/>
-                : (
+                loading ?
+                    <ActivityIndicator size="large" color="#0062FF" />
+                    : (
                         <ScrollView
                             horizontal
                         // showsHorizontalScrollIndicator={false}

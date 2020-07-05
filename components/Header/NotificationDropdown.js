@@ -60,20 +60,20 @@ const NotificationDropdown = (props) => {
                                 : <View style={styles.notifications}>
                                     <View style={styles.header}>
                                         <Text style={styles.heading}>Notifications</Text>
-                                        <TouchableOpacity
+                                        {/* <TouchableOpacity
                                             onPress={() => console.log("Pressed notification clear")}
                                         >
                                             <Text style={styles.small}>MARK ALL AS SEEN</Text>
-                                        </TouchableOpacity>
+                                        </TouchableOpacity> */}
                                     </View>
                                     {
                                         notifications.length === 0
-                                            ? <View style={{ justifyContent: "center", alignItems: "center", padding: 20 }}>
+                                            ? <View style={{ height: "80%", justifyContent: "center", alignItems: "center", padding: 20 }}>
                                                 <Text style={{ color: "#666", fontSize: 16 }}>No new notifications</Text>
                                             </View>
                                             : <ScrollView style={{ height: "85%" }} scrollEnabled={false} showsVerticalScrollIndicator={false} >
                                                 {
-                                                    notifications.map(notification => {
+                                                    notifications.reverse().map(notification => {
                                                         return <NotificationCard key={notification._id} notification={notification} />
                                                     })
                                                 }
@@ -138,7 +138,7 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
-        paddingHorizontal: 10,
+        paddingHorizontal: 20,
         paddingVertical: 10,
     },
     heading: {

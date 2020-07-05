@@ -1,4 +1,4 @@
-import React, { useState, useContext, createRef } from 'react'
+import React, { useState, useContext, createRef, useEffect } from 'react'
 import { View, Text, StyleSheet, Dimensions, Platform, StatusBar, Linking, ActivityIndicator } from 'react-native'
 import { TouchableOpacity, ScrollView, TextInput } from 'react-native-gesture-handler'
 import Modal from 'react-native-modalbox';
@@ -9,44 +9,110 @@ import SecondaryBackground from '../UXComponents/SecondaryBackground'
 
 import { AuthContext } from '../../App'
 
-const Login = ({ navigation }) => {
-    const [phone, setPhone] = useState()
-    const [password, setPassword] = useState("")
+const Login = (props) => {
+    const { phone, password, firstName, lastName, email } = props.route.params;
+    const { signUp } = useContext(AuthContext);
 
-    const [modalText, setModalText] = useState("Unknown error")
+    const [otp, setOtp] = useState()
+    const [session, setSession] = useState("")
+
     const [loading, setLoading] = useState(false)
+    const [modalText, setModalText] = useState("Verifying")
     const loadingModal = createRef();
 
-    const { signIn } = useContext(AuthContext);
-
-    const phoneInput = createRef();
-    const passwordInput = createRef();
-
-    const validatePhone = () => {
-        if (phone) {
-            let phoneno = /^\d{10}$/;
-            if (phone.match(phoneno))
-                return true;
-        }
-        return false;
+    const sendOtpRequest = async () => {
+        fetch(`https://2factor.in/API/V1/01300eab-b6d0-11ea-9fa5-0200cd936042/SMS/${phone}/AUTOGEN`, {
+            "method": "GET",
+            "port": null,
+            "async": true,
+            "crossDomain": true,
+            "headers": {
+                "content-type": "application/x-www-form-urlencoded"
+            },
+            "data": {}
+        })
+            .then(res => {
+                if (res.status === 200) {
+                    res.json()
+                        .then(data => {
+                            if (data.Status === "Success") {
+                                console.log(data)
+                                setSession(data.Details)
+                            }
+                            else {
+                                setLoading(false)
+                                loadingModal.current.open();
+                                setModalText(data.Details)
+                            }
+                        })
+                }
+                else {
+                    setLoading(false)
+                    loadingModal.current.open();
+                    res.json()
+                        .then(data => {
+                            setModalText(data.error)
+                        })
+                }
+            })
     }
 
-    const handleSubmit = async () => {
-        setLoading(true);
-        loadingModal.current.open();
-        setModalText("Logging In")
-        if (validatePhone()) {
-            let res = await signIn({ phone: phone, password: password });
-            if (res[0] === false) {
-                setLoading(false);
-                setModalText(res[1]);
-            }
+    
+
+    const verifyOtpRequest = async () => {
+        if (otp.length === 6) {
+            loadingModal.current.open();
+            setModalText("Verifying OTP");
+            setLoading(true);
+            fetch(`https://2factor.in/API/V1/01300eab-b6d0-11ea-9fa5-0200cd936042/SMS/VERIFY/${session}/${otp}`, {
+                "method": "GET",
+                "port": null,
+                "async": true,
+                "crossDomain": true,
+                "headers": {
+                    "content-type": "application/x-www-form-urlencoded"
+                },
+                "data": {}
+            })
+                .then(res => {
+                    if (res.status === 200) {
+                        res.json()
+                            .then(data => {
+                                if (data.Status === "Success" && data.Details === "OTP Matched") {
+                                    console.log(data)
+                                    callSignUp();
+                                }
+                                else {
+                                    setLoading(false)
+                                    setModalText(data.Details)
+                                }
+                            })
+                    }
+                    else {
+                        res.json()
+                            .then(data => {
+                                setLoading(false)
+                                setModalText(data.Details)
+                            })
+                    }
+                })
         }
-        else {
-            setLoading(false);
-            setModalText("Please enter a valid mobile number");
+
+    }
+
+    const callSignUp = async () => {
+        setLoading(true)
+        setModalText("Loggin in")
+        let result = await signUp({ phone, password, firstName, lastName, email });
+        if (result[0] === false) {
+            setLoading(false)
+            setModalText(result[1])
         }
     }
+
+    useEffect(() => {
+        sendOtpRequest()
+    }, [])
 
     return (
         <View style={styles.screenContainer}>
@@ -71,6 +137,7 @@ const Login = ({ navigation }) => {
                 </View>
             </Modal>
 
+
             <StatusBarWhite />
             <SecondaryBackground />
 
@@ -79,46 +146,36 @@ const Login = ({ navigation }) => {
                 <View style={styles.contentContainer} contentContainerStyle={{ justifyContent: "center", alignItems: "center" }}>
                     <View style={styles.tabNavigation}>
                         <TouchableOpacity style={styles.tabNavigationObjectSelected}>
-                            <Text style={styles.tabNavigationText}>Login</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.tabNavigationObject} onPress={() => { navigation.navigate("SignUp") }}>
-                            <Text style={styles.tabNavigationText}>Register</Text>
+                            <Text style={styles.tabNavigationText}>
+                                Verification Code
+                            </Text>
                         </TouchableOpacity>
                     </View>
                     <View style={styles.form}>
                         <TextInput
-                            style={styles.textInput}
-                            placeholder="Phone Number"
-                            keyboardType='numeric'
-                            value={phone}
-                            onChangeText={(value) => { setPhone(value) }}
-                            ref={phoneInput}
-                            onSubmitEditing={() => { passwordInput.current.focus() }}
-                            blurOnSubmit={false}
-                            returnKeyType="next"
-                        />
-                        <TextInput
-                            style={styles.textInput}
-                            placeholder="Password"
-                            autoCompleteType="password"
-                            secureTextEntry
-                            passwordRules
-                            textContentType="password"
-                            onChangeText={(value) => { setPassword(value) }}
-                            ref={passwordInput}
-                            onSubmitEditing={() => { handleSubmit() }}
-                            blurOnSubmit={true}
                             returnKeyType="send"
+                            blurOnSubmit={true}
+                            onSubmitEditing={() => { verifyOtpRequest() }}
+                            style={styles.textInput}
+                            placeholder="OTP"
+                            keyboardType='numeric'
+                            value={otp}
+                            onChangeText={(value) => { setOtp(value) }}
                         />
                     </View>
                     <View style={styles.buttonArea}>
-                        <TouchableOpacity style={styles.defaultButton} onPress={() => { handleSubmit() }}>
-                            <Text style={styles.defaultButtonText}>Login</Text>
+                        <TouchableOpacity style={styles.defaultButton} onPress={() => { verifyOtpRequest() }}>
+                            <Text style={styles.defaultButtonText}>
+                                Verify OTP
+                            </Text>
                         </TouchableOpacity>
                     </View>
                     <View style={styles.forgotPassword}>
+                        <Text style={{color: "#666"}}>Didn't recieve OTP? </Text>
                         <TouchableOpacity>
-                            <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
+                            <Text style={styles.forgotPasswordText}>
+                                Resend OTP
+                            </Text>
                         </TouchableOpacity>
                     </View>
                     <View style={styles.terms}>
@@ -151,7 +208,7 @@ const styles = StyleSheet.create({
     container: {
     },
     contentContainer: {
-        justifyContent: "center",
+        justifyContent: "flex-start",
         alignItems: "center"
     },
     tabNavigation: {
@@ -185,7 +242,8 @@ const styles = StyleSheet.create({
         width: "100%",
         paddingHorizontal: 20,
         justifyContent: "center",
-        alignItems: "center"
+        alignItems: "center",
+        marginTop: 20
     },
     textInput: {
         width: "100%",
@@ -201,7 +259,7 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
         width: "100%",
-        marginTop: 20,
+        marginTop: 100,
     },
     defaultButton: {
         width: Math.floor(Dimensions.get('window').width / 2),
@@ -218,12 +276,14 @@ const styles = StyleSheet.create({
     },
     forgotPassword: {
         marginVertical: 20,
+        justifyContent: "center",
+        alignItems: "center"
     },
     forgotPasswordText: {
         color: "#0062FF",
     },
     terms: {
-        marginTop: 20,
+        marginTop: 50,
         marginBottom: 160,
         paddingHorizontal: 45,
     },

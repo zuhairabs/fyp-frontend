@@ -1,8 +1,9 @@
 import * as React from 'react';
-import { Alert, Text } from 'react-native';
+import { Text } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import AsyncStorage from '@react-native-community/async-storage'
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 export const AuthContext = React.createContext();
 const Stack = createStackNavigator();
@@ -13,7 +14,8 @@ import Splash from './components/screens/Splash'
 import Profile from './components/screens/Profile'
 import Favourites from './components/screens/Favourites'
 import SignUp from './components/screens/SignUp'
-import Store from './components/screens/Store'
+import Verification from './components/screens/Verification'
+import Store from './components/screens/store-page/Store'
 import SearchFull from './components/screens/SearchFull'
 import UpcomingBookings from './components/screens/UpcomingBookings';
 import PreviousBookings from './components/screens/PreviousBookings';
@@ -22,10 +24,11 @@ import NotificationsFull from './components/screens/NotificationsFull';
 import BackButton from './components/UXComponents/BackButton';
 import EditProfile from './components/screens/EditProfile';
 import Congratulations from './components/screens/misc/Congratulations';
-import { TouchableHighlight, TouchableOpacity } from 'react-native-gesture-handler';
+import Support from './components/screens/Support';
+import Welcome from './components/screens/Welcome';
 
 const App = () => {
-  console.disableYellowBox = true;
+  // console.disableYellowBox = true;
 
   const [state, dispatch] = React.useReducer(
     (prevState, action) => {
@@ -35,7 +38,8 @@ const App = () => {
             ...prevState,
             token: action.token,
             user: action.user,
-            isLoading: false,
+            welcomeShown: action.welcomeShown,
+            isLoading: false
           };
         case 'SIGN_IN':
           return {
@@ -58,6 +62,11 @@ const App = () => {
             token: null,
             user: null
           };
+        case 'WELCOME_SHOWN':
+          return {
+            ...prevState,
+            welcomeShown: true
+          }
       }
     },
     {
@@ -73,6 +82,7 @@ const App = () => {
       try {
         let token = await AsyncStorage.getItem("jwt");
         let user = await AsyncStorage.getItem("user");
+        let welcomeShown = await AsyncStorage.getItem("welcomeShown") ? true : false;
 
         if (user) user = JSON.parse(user)
 
@@ -92,13 +102,15 @@ const App = () => {
             }
             fetch('https://shopout.herokuapp.com/user/verify', requestOptions)
               .then(response => {
-                if (response.status === 200)
-                  dispatch({ type: 'RESTORE_TOKEN', token: token, user: user });
+                if (response.status === 200) {
+                  dispatch({ type: 'RESTORE_TOKEN', token: token, user: user, welcomeShown: true });
+                  console.log(welcomeShown);
+                }
                 else {
                   response.json()
                     .then(data => {
                       console.log(data)
-                      dispatch({ type: 'RESTORE_TOKEN', token: null, user: null })
+                      dispatch({ type: 'RESTORE_TOKEN', token: null, user: null, welcomeShown: welcomeShown })
                     })
                 }
               })
@@ -109,7 +121,8 @@ const App = () => {
         }
         else {
           console.log("No user in async storage")
-          dispatch({ type: 'RESTORE_TOKEN', token: null, user: null })
+          console.log(welcomeShown)
+          dispatch({ type: 'RESTORE_TOKEN', token: null, user: null, welcomeShown: welcomeShown })
         }
 
       }
@@ -167,53 +180,64 @@ const App = () => {
 
       },
 
+      setWelcomeShown: async () => {
+        AsyncStorage.setItem("welcomeShown", "true")
+        dispatch({ type: 'WELCOME_SHOWN' })
+      },
+
       signOut: () => dispatch({ type: 'SIGN_OUT' }),
       signUp: async userData => {
-        const requestOptions = {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            userData: {
-              firstName: userData.firstName,
-              lastName: userData.lastName,
-              phone: userData.phone,
-              password: userData.password,
-              email: userData.email
-            },
-          }),
-        };
+        return new Promise(resolve => {
+          const requestOptions = {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              userData: {
+                firstName: userData.firstName,
+                lastName: userData.lastName,
+                phone: userData.phone,
+                password: userData.password,
+                email: userData.email
+              },
+            }),
+          };
 
-        try {
-          fetch("https://shopout.herokuapp.com/user/signup", requestOptions)
-            .then(response => {
-              if (response.status === 200) {
-                response
-                  .json()
-                  .then((data) => {
-                    AsyncStorage.setItem("jwt", data.token.toString());
-                    AsyncStorage.setItem("user", JSON.stringify(data.user))
-                    dispatch({ type: 'SIGN_IN', token: data.token.toString(), user: data.user });
-                  })
-              } else {
-                if (response.status === 500) Alert.alert("Internal Server Error");
-                else if (response.status === 404) Alert.alert("Try logging in")
-                else Alert.alert("Unknown server error");
-              }
-            });
-        }
-        catch (e) {
-          Alert.alert("Something went wrong")
-        }
+          try {
+            fetch("https://shopout.herokuapp.com/user/signup", requestOptions)
+              .then(response => {
+                if (response.status === 200) {
+                  response
+                    .json()
+                    .then((data) => {
+                      AsyncStorage.setItem("jwt", data.token.toString());
+                      AsyncStorage.setItem("user", JSON.stringify(data.user))
+                      dispatch({ type: 'SIGN_IN', token: data.token.toString(), user: data.user });
+                      resolve(true)
+                    })
+                } else {
+                  if (response.status === 500)
+                    resolve([false, "Internal server error"]);
+                  else if (response.status === 404)
+                    resolve([false, "Not found"])
+                  else
+                    resolve([false, "Unkown server error"])
+                }
+              });
+          }
+          catch (e) {
+            resolve([false, "Can not login right now, please check your internet connection and try again"])
+          }
+        })
       }
     }), [])
 
-  const clearNotifications = async() =>{
-    const markRead = async()=>{
+  const clearNotifications = async () => {
+    const markRead = async () => {
       let user = JSON.parse(await AsyncStorage.getItem("user"));
-      user.notificaitons.forEach(notification => {notification.readStatus = true});
+      user.notificaitons.forEach(notification => { notification.readStatus = true });
       return user
     }
-    markRead().then(user=>{
+    markRead().then(user => {
       AsyncStorage.setItem("user", user)
     })
   }
@@ -236,6 +260,10 @@ const App = () => {
               state.token === null ? (
                 <>
                   <Stack.Screen
+                    name="Welcome"
+                    component={state.welcomeShown ? Login : Welcome}
+                  />
+                  <Stack.Screen
                     name="Login"
                     component={Login}
                     options={{
@@ -246,8 +274,12 @@ const App = () => {
                     name="SignUp"
                     component={SignUp}
                     options={{
-                      animationEnabled: false
+                      animationTypeForReplace: state.loggedIn ? 'push' : 'pop',
                     }}
+                  />
+                  <Stack.Screen
+                    name="Verification"
+                    component={Verification}
                   />
                 </>
               ) : (
@@ -260,11 +292,25 @@ const App = () => {
                       name="Profile"
                       component={Profile}
                     />
-                    <Stack.Screen 
+                    <Stack.Screen
                       name="Favourites"
                       component={Favourites}
                       options={{
                         title: "Favourites",
+                        headerShown: true,
+                        headerBackImage: () => {
+                          return <BackButton />
+                        },
+                        headerLeftContainerStyle: {
+                          padding: 20,
+                        },
+                      }}
+                    />
+                    <Stack.Screen
+                      name="Support"
+                      component={Support}
+                      options={{
+                        title: "Support",
                         headerShown: true,
                         headerBackImage: () => {
                           return <BackButton />

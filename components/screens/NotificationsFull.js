@@ -55,7 +55,7 @@ const NotificationsFull = ({ navigation }) => {
                                             alignItems: "center"
                                         }}>
                                             {
-                                                notifications.map(notification => {
+                                                notifications.reverse().map(notification => {
                                                     return <NotificationCard key={notification._id} notification={notification} />
                                                 })
                                             }

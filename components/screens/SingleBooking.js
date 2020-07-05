@@ -135,12 +135,13 @@ const styles = StyleSheet.create({
         backgroundColor: "#FFF",
     },
     container: {
-        height: Dimensions.get('window').height
+        height: Dimensions.get('window').height,
     },
     contentContainer: {
         paddingHorizontal: 20,
         justifyContent: "center",
         alignItems: "flex-start",
+        marginBottom: 100,
     },
     bookingData: {
         flex: 1,

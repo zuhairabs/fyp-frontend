@@ -13,6 +13,12 @@ const MainBackground = () => {
                     r="250"
                     fill="#0062FF" />
             </Svg>
+            {/* <Svg viewBox="0 0 500 500" height="81%" width="81%" style={styles.circleTopShadow}>
+                <Circle cx="250"
+                    cy="250"
+                    r="250"
+                    fill="#00000010" />
+            </Svg> */}
             <Svg viewBox="0 0 500 500" height="30%" width="30%" style={styles.circleBottom}>
                 <Circle cx="250"
                     cy="250"
@@ -33,6 +39,11 @@ const MainBackground = () => {
 const styles = StyleSheet.create({
     circleTop: {
         zIndex: 2,
+        position: "absolute",
+        right: "-30%",
+        top: "-40%",
+    },
+    circleTopShadow: {
         position: "absolute",
         right: "-30%",
         top: "-40%",

@@ -11,6 +11,7 @@ import { Calendar, LocaleConfig } from 'react-native-calendars'
 import Add from './Add.svg'
 import Minus from './Minus.svg'
 import CheckBox from './CheckBox.svg'
+import CheckBoxFilled from './CheckBoxFilled.svg'
 
 LocaleConfig.locales['en'] = {
     monthNames: ['JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUNE', 'JULY', 'AUGUST', 'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER'],
@@ -365,10 +366,7 @@ const BookSlot = (props) => {
                                         <View style={styles.iconBox}>
                                             <TouchableOpacity onPress={() => { setAssistance(!assistance) }}>
                                                 {
-                                                    assistance ? <Text style={styles.checkbox}>
-
-                                                    </Text>
-                                                        : <CheckBox />
+                                                    assistance ? <CheckBoxFilled /> : <CheckBox />
                                                 }
                                             </TouchableOpacity>
                                         </View>

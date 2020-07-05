@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from 'react'
-import { View, Text, StyleSheet, Dimensions, Platform, StatusBar, Image, Alert, ActivityIndicator, ToastAndroid } from 'react-native'
-import { ScrollView, TouchableNativeFeedback, TouchableOpacity, TouchableWithoutFeedback } from 'react-native-gesture-handler'
+import { View, Text, StyleSheet, Dimensions, Platform, StatusBar, Alert, ActivityIndicator, ToastAndroid } from 'react-native'
+import { ScrollView, TouchableNativeFeedback, TouchableWithoutFeedback } from 'react-native-gesture-handler'
+import AsyncStorage from '@react-native-community/async-storage'
 import Icon from 'react-native-vector-icons/dist/MaterialIcons'
 
 
-import NavbarBackButton from '../Header/NavbarBackButton'
-import StatusBarWhite from '../UXComponents/StatusBar'
-import RatingBadge from '../Rating/RatingBadge'
-import MainBackground from '../UXComponents/MainBackground'
-import BookSlot from '../UXComponents/BookSlot'
-import AsyncStorage from '@react-native-community/async-storage'
+import NavbarBackButton from '../../Header/NavbarBackButton'
+import StatusBarWhite from '../../UXComponents/StatusBar'
+import MainBackground from '../../UXComponents/MainBackground'
+import BookSlot from '../../UXComponents/BookSlot'
+import RatingBadge from '../../Rating/RatingBadge';
+import ImageHeader from './ImageHeader'
 
 const WINDOW_HEIGHT = Dimensions.get('window').height;
 const WINDOW_WIDTH = Dimensions.get('window').width;
@@ -21,9 +22,9 @@ const Store = (props) => {
     const [loading, setLoading] = useState(true)
     const [storeData, setStoreData] = useState({})
 
-    const [headerImage, setHeaderImage] = useState("")
+    
     const [images, setImages] = useState([])
-    const [currentImage, setCurrentImage] = useState(0)
+    const [headerHeight, setHeaderHeight] = useState(Math.floor(WINDOW_HEIGHT / 2.8))
 
     const [bookSlot, setBookSlot] = useState(props.route.params.bookSlot || false)
     const [favourite, setFavourite] = useState(false)
@@ -50,7 +51,6 @@ const Store = (props) => {
                         res.json().then(data => {
                             setStoreData(data.store)
                             setImages(data.store.business.images)
-                            setHeaderImage(data.store.business.images[0])
                             setLoading(false)
                         })
                     }
@@ -59,10 +59,6 @@ const Store = (props) => {
                 }))
     }, [store])
 
-    const changeImage = (image) => {
-        setHeaderImage(image)
-        setCurrentImage(images.indexOf(image))
-    }
 
     const toggleFavourite = () => {
         const bootstrapper = async () => {
@@ -152,43 +148,33 @@ const Store = (props) => {
         <View style={styles.screenContainer}>
             <MainBackground />
             <StatusBarWhite />
+            <NavbarBackButton navigation={props.navigation} />
+
 
             {
                 loading
-                    ? <ActivityIndicator size="large" color="#0062FF" />
+                    ? <View
+                        style={{
+                            height: DEVICE_HEIGHT - StatusBar.currentHeight - 50,
+                            justifyContent: "center",
+                            alignItems: "center"
+                        }} >
+                        <ActivityIndicator size="large" color="#0062FF" />
+                    </View>
                     : [
                         (<ScrollView style={styles.container}>
 
-                            <NavbarBackButton navigation={props.navigation} />
                             <View style={styles.contentContainer} contentContainerStyle={{ justifyContent: "center", alignItems: "center" }}>
 
-                                <View style={styles.headerImageContainer}>
-                                    <View style={styles.ratingBadge}>
-                                        <RatingBadge color="orange" value={storeData.avg_rating} />
-                                    </View>
-                                    <Image source={{ uri: `data:image/gif;base64,${headerImage}` }} style={styles.headerImage} />
+                                <View style={styles.ratingBadge}>
+                                    <RatingBadge color="orange" value={storeData.avg_rating} />
                                 </View>
-                                <View style={styles.carousel}>
-                                    {
-                                        images.map((img, index) => {
-                                            return <View key={index} style={styles.carouselImageContainer}>
-                                                <TouchableOpacity
-                                                    style={styles.carouselTouchable}
-                                                    onPress={() => {
-                                                        changeImage(img)
-                                                    }}
-                                                >
-                                                    <Image
-                                                        source={{ uri: `data:image/gif;base64,${img}` }}
-                                                        style={
-                                                            headerImage === img ? styles.carouselImageSelected : styles.carouselImage
-                                                        }
-                                                    />
-                                                </TouchableOpacity>
-                                            </View>
-                                        })
-                                    }
-                                </View>
+
+                                <ImageHeader
+                                    images={images}
+                                    height={headerHeight}
+                                />
+
                                 <ScrollView style={styles.storeDetails}
                                     contentContainerStyle={{ justifyContent: "center", alignItems: "flex-start" }}>
                                     <View style={styles.heading}>
@@ -299,54 +285,14 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
         backgroundColor: "#FEFEFE6F",
-    },
-    headerImageContainer: {
-        height: Math.floor(WINDOW_HEIGHT / 2.8),
-        width: "100%",
-        // backgroundColor: "#6666662F"
-        backgroundColor: "#FEFEFE6F",
-    },
-    headerImage: {
-        height: undefined,
-        width: undefined,
-        flex: 1,
-        // resizeMode: "contain"
+        marginTop: 20,
     },
     ratingBadge: {
         position: "absolute",
         right: Math.floor((WINDOW_WIDTH / 25)),
         top: -Math.floor(WINDOW_HEIGHT / 40),
         zIndex: 2,
-    },
-    carousel: {
-        flexDirection: "row",
-        justifyContent: "space-around",
-        alignItems: "center",
-        width: "100%",
-        height: Math.floor(WINDOW_HEIGHT / 9),
-        marginTop: 20,
-    },
-    carouselImageContainer: {
-        marginHorizontal: 10,
-        borderColor: "#66666666",
-        borderRadius: 15,
-        flex: 1,
-    },
-    carouselTouchable: {
-        height: "100%"
-    },
-    carouselImageSelected: {
-        width: undefined,
-        height: undefined,
-        flex: 1,
-        borderRadius: 15
-    },
-    carouselImage: {
-        width: undefined,
-        height: undefined,
-        flex: 1,
-        opacity: 0.3,
-        borderRadius: 15
+        elevation: 2,
     },
     storeDetails: {
         marginTop: 30,

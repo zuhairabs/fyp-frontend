@@ -147,37 +147,6 @@ const Home = ({ navigation }) => {
             }
             getFeaturedStores(requestOptions)
             getCategories(requestOptions)
-            // try {
-            //     fetch('https://shopout.herokuapp.com/user/home', {
-            //         method: "POST",
-            //         headers: {
-            //             "Content-Type": "application/json",
-            //             "Authorization": "Bearer " + token
-            //         },
-            //         body: JSON.stringify({
-            //             "cred": {
-            //                 "phone": user.phone
-            //             },
-            //             "city": "Mumbai"
-            //         })
-            //     })
-            //         .then(res => {
-            //             if (res.status === 200)
-            //                 res.json().then(data => {
-            //                     setCategories(data.category)
-            //                     setDataBigCard(data.stores.slice(0, 5))
-            //                     setDataSmallCard(data.stores.slice(5))
-            //                     setDataNewStores(data.recentStores)
-            //                     setLoading(false);
-            //                 })
-            //             else
-            //                 console.log(res.statusText)
-            //         })
-            // }
-            // catch (e) {
-            //     console.log(e)
-            //     Alert.alert("Something went wrong")
-            // }
         })
     }, [])
 
