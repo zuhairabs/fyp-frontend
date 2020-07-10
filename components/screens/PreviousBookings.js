@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react'
-import { View, Text, StyleSheet, Dimensions, Platform, StatusBar, Alert, ActivityIndicator } from 'react-native'
+import { View, Text, StyleSheet, Dimensions, Platform, StatusBar, Alert, ActivityIndicator, Image } from 'react-native'
 import { ScrollView, TouchableWithoutFeedback } from 'react-native-gesture-handler'
 import AsyncStorage from '@react-native-community/async-storage'
-import Icon from 'react-native-vector-icons/dist/MaterialIcons'
 
 import StatusBarWhite from '../UXComponents/StatusBar'
 import BookingCardSmall from '../BookingCard/bookingCardSmall'
@@ -13,6 +12,9 @@ const UpcomingBookings = ({ navigation }) => {
     const [loading, setLoading] = useState(true)
 
     const mlist = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+    const startMonth = bookings.length > 0 ? new Date(bookings[0].start).getUTCMonth() : null;
+    const endMonth = bookings.length > 0 ? new Date(bookings[bookings.length - 1].start).getUTCMonth() : null;
 
     useEffect(() => {
         const bootstrapper = async () => {
@@ -39,13 +41,26 @@ const UpcomingBookings = ({ navigation }) => {
                     .then((res) => {
                         if (res.status === 200)
                             res.json()
-                                .then(data => { setBookings(data.archivedBookings); setLoading(false) })
+                                .then(data => {
+                                    setBookings(data.archivedBookings);
+                                    sortBookings().then(() => {
+                                        setLoading(false)
+                                    })
+                                })
                         else {
                             Alert.alert("Something went wrong ", res.statusText)
                         }
                     })
             })
     }, [])
+
+    const sortBookings = async () => {
+        setBookings(prev => {
+            return prev.sort((a, b) => {
+                return new Date(a.start).getTime() - new Date(b.start).getTime();
+            })
+        })
+    }
 
     return (
         <View style={styles.screenContainer}>
@@ -58,10 +73,10 @@ const UpcomingBookings = ({ navigation }) => {
                 <View style={styles.tabNavigation}>
                     <View style={styles.tab}>
                         <TouchableWithoutFeedback
-                         onPress={() => {
-                            navigation.navigate("UpcomingBookings")
-                        }}
-                         style={styles.tabNavigationObject}>
+                            onPress={() => {
+                                navigation.navigate("UpcomingBookings")
+                            }}
+                            style={styles.tabNavigationObject}>
                             <Text style={styles.tabNavigationText}>Upcoming</Text>
                         </TouchableWithoutFeedback>
                     </View>
@@ -72,24 +87,6 @@ const UpcomingBookings = ({ navigation }) => {
                     </View>
                 </View>
 
-                <View
-                    style={{
-                        backgroundColor: "#FFF",
-                    }}
-                >
-                    <View style={styles.monthSelectorContainer}>
-                        <Text style={styles.selectedMonth}>
-                            {mlist[new Date().getUTCMonth()]} {new Date().getUTCFullYear()}
-                        </Text>
-                        <View style={styles.monthSelector}>
-                            <Text style={styles.selectedMonth}>
-                                This Month
-                            </Text>
-                            <Icon name="arrow-drop-down" size={20} color="#666" />
-
-                        </View>
-                    </View>
-                </View>
 
                 <ScrollView style={styles.contentContainer} contentContainerStyle={{
                     justifyContent: "center",
@@ -108,13 +105,67 @@ const UpcomingBookings = ({ navigation }) => {
                             >
                                 <ActivityIndicator size="large" color="#0062FF" />
                             </View>
-                            : <View style={styles.results}>
-                                {
-                                    bookings.map(booking => {
-                                        return <BookingCardSmall key={booking._id} booking={booking} navigation={navigation} />
-                                    })
-                                }
-                            </View>
+                            :
+                            <>
+                                <View
+                                    style={{
+                                        backgroundColor: "#FFF",
+                                    }}
+                                >
+                                    <View style={styles.monthSelectorContainer}>
+                                        <View>
+                                            {
+                                                bookings.length > 0
+                                                    ?
+                                                    <Text style={styles.monthSelector}>
+                                                        {
+                                                            startMonth === endMonth ?
+                                                                <Text>{mlist[endMonth]} {new Date().getUTCFullYear()}</Text>
+                                                                :
+                                                                <Text>{mlist[startMonth]} - {mlist[endMonth]} {new Date().getUTCFullYear()}</Text>
+                                                        }
+                                                    </Text>
+                                                    :
+                                                    <View style={{
+                                                        width: Dimensions.get('window').width,
+                                                        height: Dimensions.get('window').height - 480,
+                                                        justifyContent: "center",
+                                                        flex: 1,
+                                                        marginTop: 120,
+                                                    }}>
+                                                        <Image
+                                                            source={require('../UXComponents/EmptyPage.png')}
+                                                            style={{
+                                                                width: undefined,
+                                                                height: undefined,
+                                                                flex: 1,
+                                                                resizeMode: "contain"
+                                                            }}
+                                                        />
+                                                        <Text style={{
+                                                            color: "#666",
+                                                            alignSelf: "center",
+                                                            textAlign: "center",
+                                                            marginTop: 20,
+                                                            paddingHorizontal: 40,
+                                                            fontSize: 16
+                                                        }}
+                                                        >
+                                                            Nothing here!
+                                        </Text>
+                                                    </View>
+                                            }
+                                        </View>
+                                    </View>
+                                </View>
+                                <View style={styles.results}>
+                                    {
+                                        bookings.map((booking, index) => {
+                                            return <BookingCardSmall key={index} booking={booking} navigation={navigation} />
+                                        })
+                                    }
+                                </View>
+                            </>
                     }
                 </ScrollView>
 

@@ -71,7 +71,9 @@ const NotificationDropdown = (props) => {
                                             ? <View style={{ height: "80%", justifyContent: "center", alignItems: "center", padding: 20 }}>
                                                 <Text style={{ color: "#666", fontSize: 16 }}>No new notifications</Text>
                                             </View>
-                                            : <ScrollView style={{ height: "85%" }} scrollEnabled={false} showsVerticalScrollIndicator={false} >
+                                            : <ScrollView style={{ height: "85%" }}
+                                            // scrollEnabled={false} showsVerticalScrollIndicator={false} 
+                                            >
                                                 {
                                                     notifications.reverse().map(notification => {
                                                         return <NotificationCard key={notification._id} notification={notification} />
@@ -140,6 +142,8 @@ const styles = StyleSheet.create({
         alignItems: "center",
         paddingHorizontal: 20,
         paddingVertical: 10,
+        borderBottomWidth: 1,
+        borderColor: "#6666662F"
     },
     heading: {
         fontSize: 20,

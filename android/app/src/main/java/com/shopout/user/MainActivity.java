@@ -1,4 +1,4 @@
-package com.user;
+package com.shopout.user;
 
 import com.facebook.react.ReactActivity;
 

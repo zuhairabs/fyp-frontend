@@ -145,7 +145,7 @@ const SignUp = ({ navigation }) => {
                                 returnKeyType="next"
                                 onSubmitEditing={() => { input2.current.focus() }}
                                 style={styles.textInput}
-                                placeholder="First Name (required)"
+                                placeholder="First Name"
                                 value={firstName}
                                 onChangeText={(value) => { setFirstName(value) }}
                             />
@@ -154,7 +154,7 @@ const SignUp = ({ navigation }) => {
                                 returnKeyType="next"
                                 onSubmitEditing={() => { input3.current.focus() }}
                                 style={styles.textInput}
-                                placeholder="Last Name"
+                                placeholder="Last Name (optional)"
                                 value={lastName}
                                 onChangeText={(value) => { setLastName(value) }}
                             />
@@ -163,8 +163,9 @@ const SignUp = ({ navigation }) => {
                                 returnKeyType="next"
                                 onSubmitEditing={() => { input4.current.focus() }}
                                 style={styles.textInput}
-                                placeholder="Phone Number (required)"
+                                placeholder="Phone Number"
                                 keyboardType='numeric'
+                                autoCompleteType="tel"
                                 value={phone}
                                 onChangeText={(value) => { setPhone(value) }}
                             />
@@ -173,8 +174,9 @@ const SignUp = ({ navigation }) => {
                                 returnKeyType="next"
                                 onSubmitEditing={() => { input5.current.focus() }}
                                 style={styles.textInput}
-                                placeholder="Email address"
+                                placeholder="Email address (optional)"
                                 value={email}
+                                autoCompleteType="email"
                                 onChangeText={(value) => { setEmail(value) }}
                             />
                             <TextInput
@@ -182,7 +184,7 @@ const SignUp = ({ navigation }) => {
                                 returnKeyType="next"
                                 onSubmitEditing={() => { input6.current.focus() }}
                                 style={styles.textInput}
-                                placeholder="Create Password (required)"
+                                placeholder="Create Password"
                                 autoCompleteType="password"
                                 secureTextEntry
                                 passwordRules
@@ -195,7 +197,7 @@ const SignUp = ({ navigation }) => {
                                 blurOnSubmit={true}
                                 onSubmitEditing={() => { handleSubmit() }}
                                 style={styles.textInput}
-                                placeholder="Confrim Password (required)"
+                                placeholder="Confrim Password"
                                 autoCompleteType="password"
                                 secureTextEntry
                                 passwordRules
@@ -327,9 +329,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
         borderRadius: 30,
         backgroundColor: "#0062FF",
-        padding: 10,
-        borderWidth: 1,
-        borderColor: "#CAD0D8"
+        padding: 10
     },
     defaultButtonText: {
         color: "#FFF"

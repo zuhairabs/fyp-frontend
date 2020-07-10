@@ -1,7 +1,7 @@
 import React, { useState, createRef } from 'react'
-import { View, StyleSheet, StatusBar, Dimensions, Text, KeyboardAvoidingView, ToastAndroid } from 'react-native'
+import { View, StyleSheet, StatusBar, Dimensions, Text, KeyboardAvoidingView, ToastAndroid, Alert } from 'react-native'
 import AsyncStorage from '@react-native-community/async-storage'
-import { TextInput, ScrollView, TouchableOpacity } from 'react-native-gesture-handler'
+import { TextInput, TouchableOpacity } from 'react-native-gesture-handler'
 
 import StatusBarWhite from '../UXComponents/StatusBar'
 
@@ -34,7 +34,9 @@ const Support = ({ navigation }) => {
                     Alert.alert(res.statusText)
             });
         }
-        bootstrapper();
+        if(title.length > 0 && text.length > 0)
+            bootstrapper();
+        else ToastAndroid.show("All fields are required", ToastAndroid.SHORT)
     }
 
     const textField = createRef()
@@ -64,7 +66,6 @@ const Support = ({ navigation }) => {
                         value={text}
                         onChangeText={(val) => setText(val)}
                         placeholder="Please explain your issue"
-                        onSubmitEditing={() => { sendRequest() }}
                         multiline={true}
                         numberOfLines={10}
                         textBreakStrategy="highQuality"

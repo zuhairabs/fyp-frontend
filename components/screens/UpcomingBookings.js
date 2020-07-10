@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from 'react'
-import { View, Text, StyleSheet, Dimensions, Platform, StatusBar, Alert, ActivityIndicator } from 'react-native'
+import { View, Text, StyleSheet, Dimensions, Alert, ActivityIndicator, Image } from 'react-native'
 import { ScrollView, TouchableWithoutFeedback } from 'react-native-gesture-handler'
 import AsyncStorage from '@react-native-community/async-storage'
-import Icon from 'react-native-vector-icons/dist/MaterialIcons'
 
 import StatusBarWhite from '../UXComponents/StatusBar'
 import BookingCard from '../BookingCard/bookingCard'
-
 
 const UpcomingBookings = ({ navigation }) => {
 
@@ -14,6 +12,9 @@ const UpcomingBookings = ({ navigation }) => {
     const [loading, setLoading] = useState(true)
 
     const mlist = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+    const startMonth = bookings.length > 0 ? new Date(bookings[0].start).getUTCMonth() : null;
+    const endMonth = bookings.length > 0 ? new Date(bookings[bookings.length - 1].start).getUTCMonth() : null;
 
     useEffect(() => {
         const bootstrapper = async () => {
@@ -106,9 +107,47 @@ const UpcomingBookings = ({ navigation }) => {
                         </View> :
                         <>
                             <View style={styles.monthSelectorContainer}>
-                                <Text style={styles.selectedMonth}>
-                                    {mlist[new Date(bookings[0].start).getUTCMonth()]} - {mlist[new Date(bookings[bookings.length - 1].start).getUTCMonth()]} {new Date().getUTCFullYear()}
-                                </Text>
+                                {
+                                    bookings.length > 0
+                                        ?
+                                        <Text style={styles.selectedMonth}>
+                                            {
+                                                startMonth === endMonth ?
+                                                    <Text>{mlist[endMonth]} {new Date().getUTCFullYear()}</Text>
+                                                    :
+                                                    <Text>{mlist[startMonth]} - {mlist[endMonth]} {new Date().getUTCFullYear()}</Text>
+                                            }
+                                        </Text>
+                                        :
+                                        <View style={{
+                                            width: Dimensions.get('window').width,
+                                            height: Dimensions.get('window').height - 480,
+                                            justifyContent: "center",
+                                            flex: 1,
+                                            marginTop: 120,
+                                        }}>
+                                            <Image
+                                                source={require('../UXComponents/EmptyPage.png')}
+                                                style={{
+                                                    width: undefined,
+                                                    height: undefined,
+                                                    flex: 1,
+                                                    resizeMode: "contain"
+                                                }}
+                                            />
+                                            <Text style={{
+                                                color: "#666",
+                                                alignSelf: "center",
+                                                textAlign: "center",
+                                                marginTop: 20,
+                                                paddingHorizontal: 40,
+                                                fontSize: 16
+                                            }}
+                                            >
+                                                Nothing here!
+                                            </Text>
+                                        </View>
+                                }
                             </View>
 
                             <ScrollView style={styles.contentContainer} contentContainerStyle={{
@@ -117,8 +156,8 @@ const UpcomingBookings = ({ navigation }) => {
                             }}>
                                 <View style={styles.results}>
                                     {
-                                        bookings.map(booking => {
-                                            return <BookingCard key={booking._id} booking={booking} navigation={navigation} removeBooking={removeBooking} />
+                                        bookings.map((booking, index) => {
+                                            return <BookingCard key={index} booking={booking} navigation={navigation} removeBooking={removeBooking} />
                                         })
                                     }
                                 </View>

@@ -15,6 +15,7 @@ import ImageHeader from './ImageHeader'
 const WINDOW_HEIGHT = Dimensions.get('window').height;
 const WINDOW_WIDTH = Dimensions.get('window').width;
 const DEVICE_HEIGHT = Dimensions.get('screen').height;
+const NAVIGATION_HEIGHT = DEVICE_HEIGHT - WINDOW_HEIGHT - (StatusBar.currentHeight || 0);
 
 const Store = (props) => {
     const { store } = props.route.params;
@@ -366,8 +367,8 @@ const styles = StyleSheet.create({
         height: Math.floor(WINDOW_HEIGHT / 20),
         backgroundColor: "#0062FF",
         alignItems: "center",
-        justifyContent: "flex-end",
-        padding: DEVICE_HEIGHT - WINDOW_HEIGHT > 0 ? DEVICE_HEIGHT - WINDOW_HEIGHT + 30 : 40,
+        justifyContent: "center",
+        padding: NAVIGATION_HEIGHT > 0 ? 30 : 40,
         borderTopRightRadius: 50,
         borderTopLeftRadius: 50,
         marginBottom: DEVICE_HEIGHT - WINDOW_HEIGHT - 30

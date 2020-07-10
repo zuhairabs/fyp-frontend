@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Text, View, StyleSheet, Image, Dimensions, Alert } from 'react-native'
+import { Text, View, StyleSheet, Image, Dimensions, Alert, ToastAndroid } from 'react-native'
 import { TouchableOpacity, TouchableWithoutFeedback } from 'react-native-gesture-handler'
 
 import Icon from 'react-native-vector-icons/dist/MaterialIcons'
@@ -31,7 +31,7 @@ const BookingCard = (props) => {
                         },
                         bookingData: {
                             _id: bookId,
-                            store: props.booking.store,
+                            store: props.booking.store._id,
                             user: user._id,
                             visitors: props.booking.visitors,
                             end: props.booking.end,
@@ -40,7 +40,7 @@ const BookingCard = (props) => {
                     }),
                 }).then((res) => {
                     if (res.status === 200) {
-                        Alert.alert("Booking deleted successfully")
+                        ToastAndroid.show("Booking deleted successfully", ToastAndroid.LONG)
                         props.removeBooking(props.booking._id);
                     } else {
                         Alert.alert("Can not delete booking. Please try again later");

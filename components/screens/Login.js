@@ -53,7 +53,6 @@ const Login = ({ navigation }) => {
 
             <Modal
                 ref={loadingModal}
-                useNativeDriver={false}
                 style={styles.bottomModal}
                 position={"bottom"}
                 swipeToClose={!loading}
@@ -90,11 +89,10 @@ const Login = ({ navigation }) => {
                             style={styles.textInput}
                             placeholder="Phone Number"
                             keyboardType='numeric'
+                            autoCompleteType="tel"
                             value={phone}
                             onChangeText={(value) => { setPhone(value) }}
-                            ref={phoneInput}
                             onSubmitEditing={() => { passwordInput.current.focus() }}
-                            blurOnSubmit={false}
                             returnKeyType="next"
                         />
                         <TextInput
@@ -144,7 +142,6 @@ const styles = StyleSheet.create({
     },
     screenContainer: {
         paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
-        // backgroundColor: "#F8F9FD",
         height: Dimensions.get('screen').height,
         backgroundColor: "#fff"
     },
@@ -209,9 +206,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
         borderRadius: 30,
         backgroundColor: "#0062FF",
-        padding: 10,
-        borderWidth: 1,
-        borderColor: "#CAD0D8",
+        padding: 10
     },
     defaultButtonText: {
         color: "#FFF"

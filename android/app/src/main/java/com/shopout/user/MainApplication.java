@@ -1,4 +1,4 @@
-package com.user;
+package com.shopout.user;
 
 import android.app.Application;
 import android.content.Context;

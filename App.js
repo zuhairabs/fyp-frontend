@@ -1,12 +1,15 @@
 import * as React from 'react';
-import { Text } from 'react-native';
+import { Text, Alert } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import AsyncStorage from '@react-native-community/async-storage'
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
+import messaging from '@react-native-firebase/messaging';
+
 export const AuthContext = React.createContext();
 const Stack = createStackNavigator();
+const navigationRef = React.createRef();
 
 import Home from './components/screens/Home'
 import Login from './components/screens/Login'
@@ -26,6 +29,7 @@ import EditProfile from './components/screens/EditProfile';
 import Congratulations from './components/screens/misc/Congratulations';
 import Support from './components/screens/Support';
 import Welcome from './components/screens/Welcome';
+
 
 const App = () => {
   // console.disableYellowBox = true;
@@ -78,6 +82,7 @@ const App = () => {
   );
 
   React.useEffect(() => {
+    // Token retrival and auth route
     const bootstrapAsync = async () => {
       try {
         let token = await AsyncStorage.getItem("jwt");
@@ -133,49 +138,79 @@ const App = () => {
       }
     };
     bootstrapAsync();
+    notificationHandler();
   }, []);
+
+  const notificationHandler = () => {
+    // Handler to control notification interaction
+    messaging().onNotificationOpenedApp(remoteMessage => {
+      console.log(
+        'Notification caused app to open from background state:',
+        remoteMessage.notification,
+      );
+      console.log(remoteMessage.data)
+
+      if (remoteMessage.data?.booking)
+        navigationRef.current?.navigate("SingleBooking", { booking: remoteMessage.data.booking });
+      else if (remoteMessage.data?.store)
+        navigationRef.current?.navigate("Store", { store: remoteMessage.data.store })
+    });
+
+    // foreground message handler
+    messaging().onMessage(async remoteMessage => {
+      console.log('A new FCM message arrived!', JSON.stringify(remoteMessage));
+      let user = JSON.parse(await AsyncStorage.getItem("user"));
+      user.notifications?.push(remoteMessage.notification);
+      await AsyncStorage.setItem("user", JSON.stringify(user));
+    });
+  }
 
   const authContext = React.useMemo(
     () => ({
       signIn: async (userData) => {
         return new Promise(resolve => {
-          const requestOptions = {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              cred: {
-                phone: userData.phone,
-                password: userData.password
-              },
-            }),
-          };
+          messaging()
+            .getToken()
+            .then(firebaseToken => {
+              const requestOptions = {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  cred: {
+                    phone: userData.phone,
+                    password: userData.password,
+                    firebaseToken: firebaseToken
+                  },
+                }),
+              };
 
-          try {
-            fetch("https://shopout.herokuapp.com/user/login", requestOptions).then((response) => {
-              if (response.status === 200) {
-                response
-                  .json()
-                  .then((data) => {
-                    AsyncStorage.setItem("jwt", data.token.toString());
-                    AsyncStorage.setItem("user", JSON.stringify(data.user))
-                    dispatch({ type: 'SIGN_IN', token: data.token.toString(), user: data.user });
-                    resolve(true);
-                  })
-              } else {
-                if (response.status === 500)
-                  resolve([false, "Internal Server Error"]);
-                else if (response.status === 404) {
-                  resolve([false, "Invalid phone number or password"]);
-                }
-                else {
-                  resolve([false, "Server error please try again later"]);
-                }
+              try {
+                fetch("https://shopout.herokuapp.com/user/login", requestOptions).then((response) => {
+                  if (response.status === 200) {
+                    response
+                      .json()
+                      .then((data) => {
+                        AsyncStorage.setItem("jwt", data.token.toString());
+                        AsyncStorage.setItem("user", JSON.stringify(data.user))
+                        dispatch({ type: 'SIGN_IN', token: data.token.toString(), user: data.user });
+                        resolve(true);
+                      })
+                  } else {
+                    if (response.status === 500)
+                      resolve([false, "Internal Server Error"]);
+                    else if (response.status === 404) {
+                      resolve([false, "Invalid phone number or password"]);
+                    }
+                    else {
+                      resolve([false, "Server error please try again later"]);
+                    }
+                  }
+                });
+              }
+              catch (e) {
+                resolve([false, "Can not login right now, please check your internet connection and try again"]);
               }
             });
-          }
-          catch (e) {
-            resolve([false, "Can not login right now, please check your internet connection and try again"]);
-          }
         })
 
       },
@@ -185,7 +220,18 @@ const App = () => {
         dispatch({ type: 'WELCOME_SHOWN' })
       },
 
-      signOut: () => dispatch({ type: 'SIGN_OUT' }),
+      signOut: () => {
+        messaging().deleteToken()
+          .then(() => {
+            console.log("FCM token deleted")
+            messaging().registerDeviceForRemoteMessages()
+              .then(() => {
+                console.log("FCM token refreshed")
+                dispatch({ type: 'SIGN_OUT' });
+              })
+          })
+      },
+
       signUp: async userData => {
         return new Promise(resolve => {
           const requestOptions = {
@@ -234,17 +280,17 @@ const App = () => {
   const clearNotifications = async () => {
     const markRead = async () => {
       let user = JSON.parse(await AsyncStorage.getItem("user"));
-      user.notificaitons.forEach(notification => { notification.readStatus = true });
+      user.notifications.forEach(notification => { notification.readStatus = true });
       return user
     }
     markRead().then(user => {
-      AsyncStorage.setItem("user", user)
+      AsyncStorage.setItem("user", JSON.stringify(user))
     })
   }
 
   return (
     <AuthContext.Provider value={authContext}>
-      <NavigationContainer>
+      <NavigationContainer ref={navigationRef}>
         <Stack.Navigator
           screenOptions={{
             headerShown: false

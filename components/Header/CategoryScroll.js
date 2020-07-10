@@ -1,17 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, FlatList, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, FlatList, TouchableOpacity, Image, View } from 'react-native';
+
+import Other from './svg/other'
+import Apparels from './svg/apparels'
+import Cafe from './svg/cafe'
 
 const CategoryScroll = (props) => {
-    // const data = [
-    //     { id: 1, text: "Apparels" },
-    //     { id: 2, text: "Electronics" },
-    //     { id: 3, text: "Furniture" },
-    //     { id: 4, text: "Beauty Products" },
-    //     { id: 5, text: "Showrooms" }
-    // ];
-
     const [categories, setCategories] = useState([])
-
     useEffect(() => {
         const formatData = async () => {
             let data = []
@@ -27,7 +22,11 @@ const CategoryScroll = (props) => {
 
     const renderItem = (item) => {
         return (
-            <TouchableOpacity style={styles.categoryScrollCard}>
+            <TouchableOpacity style={styles.scrollCardContainer}>
+                <View style={styles.categoryScrollCard}>
+                    {/* <Image source={require(`./svg/${item.name.toLowerCase()}.svg`)} height={12} width={12} /> */}
+                    <Other />
+                </View>
                 <Text style={styles.CategoryScrollText}>
                     {item.name.toLowerCase()}
                 </Text>
@@ -53,20 +52,25 @@ const styles = StyleSheet.create({
         padding: 5,
         flexDirection: "row",
     },
+    scrollCardContainer: {
+        margin: 2,
+        marginHorizontal: 20,
+        marginBottom: 5,
+        justifyContent: "center",
+        alignItems: "center"
+    },
     CategoryScrollText: {
         color: "#666",
-        paddingHorizontal: 5,
-        marginHorizontal: 10,
         fontSize: 10,
         textTransform: "capitalize",
     },
     categoryScrollCard: {
-        padding: 5,
-        margin: 2,
-        marginHorizontal: 10,
-        borderRadius: 15,
+        paddingVertical: 8,
+        marginBottom: 5,
+        borderRadius: 12 / 2,
+        width: 48,
         backgroundColor: "#fff",
-        elevation: 3,
+        elevation: 10,
         justifyContent: "center",
         alignItems: "center"
     }
