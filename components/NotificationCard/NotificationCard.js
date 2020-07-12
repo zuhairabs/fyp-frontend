@@ -3,56 +3,34 @@ import { Text, View, StyleSheet, Image, Dimensions } from 'react-native'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 
 const NotificationCard = ({ notification }) => {
+
+    const logo = notification.store ? notification.store.business.logo : null;
+
     return (
-        <>
-            {
-                notification.readStatus
-                    ? <View style={styles.container}>
-                        <View style={styles.imageContainer}>
-                            <Image source={require('./cafe.png')} style={styles.image} />
-                        </View>
-                        <View style={styles.contentContainer}>
-                            <Text style={styles.title}>
-                                {notification.text}
-                            </Text>
-                            <Text style={styles.date}>
-                                {new Date(notification.generatedTime).toLocaleDateString()}
-                            </Text>
-                        </View>
-                    </View>
-                    :
-                    <View style={styles.containerUnread}>
-                        <View style={styles.imageContainer}>
-                            {
-                                notification.image
-                                    ? <Image source={require('./cafe.png')} style={styles.image} />
-                                    : <Image source={require('./shopout.png')} style={styles.image} />
-                            }
-                        </View>
-                        <View style={styles.contentContainer}>
-                            <Text style={styles.title}>
-                                {notification.text}
-                            </Text>
-                            <Text style={styles.date}>
-                                {new Date(notification.generatedTime).toLocaleDateString()}
-                            </Text>
-                        </View>
-                    </View>
-            }
-        </>
+        <TouchableOpacity style={{
+            ...styles.container,
+            backgroundColor: notification.readStatus ? "#FFF" : "#0062FF05"
+        }}>
+            <View style={styles.imageContainer}>
+                {
+                    logo
+                        ? <Image source={{ uri: `data:image/gif;base64,${logo}` }} />
+                        : <Image source={require('./shopout.png')} style={styles.image} />
+                }
+            </View>
+            <View style={styles.contentContainer}>
+                <Text style={styles.title}>
+                    {notification.text}
+                </Text>
+                <Text style={styles.date}>
+                    {new Date(notification.generatedTime).toLocaleDateString()}
+                </Text>
+            </View>
+        </TouchableOpacity>
     )
 }
 
 const styles = StyleSheet.create({
-    containerUnread: {
-        backgroundColor: "#0062FF05",
-        padding: 20,
-        flexDirection: "row",
-        justifyContent: "flex-start",
-        alignItems: "center",
-        borderColor: "#ECF0F4",
-        borderBottomWidth: 1,
-    },
     container: {
         backgroundColor: "#fff",
         padding: 20,
@@ -61,6 +39,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
         borderColor: "#ECF0F4",
         borderBottomWidth: 1,
+        width: "100%"
     },
     imageContainer: {
         flex: 2,

@@ -181,7 +181,15 @@ const BookSlot = (props) => {
                                         })
                                     })
                                         .then(res => {
-                                            if (res.status === 200) props.navigation.navigate("Congratulations", { text: "Your booking has been successfully created" })
+                                            if (res.status === 200) {
+                                                res.json()
+                                                    .then(data => {
+                                                        props.navigation.navigate("Congratulations", {
+                                                            text: "Your booking has been successfully created",
+                                                            booking: data.booking
+                                                        })
+                                                    })
+                                            }
                                             else {
                                                 setErrorModal(true);
                                                 setModalText("Something went wrong");

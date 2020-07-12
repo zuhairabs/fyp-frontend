@@ -21,6 +21,7 @@ const NotificationsFull = ({ navigation }) => {
                 if (notifications) {
                     setNotifications(notifications)
                     setLoading(false)
+                    console.log(notifications)
                 }
                 else setNotifications([])
             })
@@ -55,8 +56,8 @@ const NotificationsFull = ({ navigation }) => {
                                             alignItems: "center"
                                         }}>
                                             {
-                                                notifications.reverse().map(notification => {
-                                                    return <NotificationCard key={notification._id} notification={notification} />
+                                                notifications.reverse().map((notification, index) => {
+                                                    return <NotificationCard key={index} notification={notification} />
                                                 })
                                             }
                                         </ScrollView>

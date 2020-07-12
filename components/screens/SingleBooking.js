@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { View, Text, StyleSheet, StatusBar, Dimensions, Platform, ActivityIndicator } from 'react-native'
+import { View, Text, StyleSheet, StatusBar, Dimensions, Platform, ActivityIndicator, Alert } from 'react-native'
 import AsyncStorage from '@react-native-community/async-storage'
 
 import StatusBarWhite from '../UXComponents/StatusBar'
@@ -13,6 +13,8 @@ const DEVICE_WIDTH = Dimensions.get("window").width;
 const SingleBooking = (props) => {
 
     const bookingId = props.route.params.booking
+    const archived = props.route.params.archived
+
     const [loading, setLoading] = useState(true)
     const [booking, setBooking] = useState({})
 
@@ -39,18 +41,23 @@ const SingleBooking = (props) => {
                         }
                     }),
                 }
-                console.log(requestOptions)
-                fetch("https://shopout.herokuapp.com/user/booking/fetchone", requestOptions)
+                fetch(`https://shopout.herokuapp.com/user/booking/${archived ? 'archived/' : ''}fetchone`, requestOptions)
                     .then((res) => {
                         if (res.status === 200)
                             res.json()
-                                .then(data => { setBooking(data.booking); setLoading(false) })
+                                .then(data => { 
+                                    setBooking(data.booking); 
+                                    setLoading(false)
+                                })
                         else {
-                            Alert.alert("Something went wrong ", res.statusText)
+                            res.json()
+                            .then(data =>{
+                                Alert.alert("Something went wrong ", data.error)
+                            })
                         }
                     })
             })
-    }, [bookingId])
+    }, [props.route.params])
 
 
     return (
@@ -58,7 +65,6 @@ const SingleBooking = (props) => {
             <StatusBarWhite />
 
             <ScrollView style={styles.container}>
-                {/* <NavbarBackButton header="Booking" navigation={props.navigation} /> */}
 
                 {
                     loading
@@ -125,8 +131,8 @@ const SingleBooking = (props) => {
                                     {
                                         booking.review ? null
                                             : <TouchableOpacity
-                                                style={!booking.completed ? styles.disabledButton : styles.defaultButton}
-                                                // disabled={!booking.completed}
+                                                style={booking.status !== "completed" ? styles.disabledButton : styles.defaultButton}
+                                                disabled={booking.status !== "completed"}
                                                 onPress={() => {
                                                     props.navigation.navigate("Rating", { booking: booking })
                                                 }}

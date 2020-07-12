@@ -1,5 +1,5 @@
 import React from 'react'
-import { Text, View, StyleSheet, Image, Dimensions } from 'react-native'
+import { Text, View, StyleSheet, Image } from 'react-native'
 import { TouchableOpacity, TouchableWithoutFeedback } from 'react-native-gesture-handler'
 
 import RatingBadge from '../Rating/RatingBadge'

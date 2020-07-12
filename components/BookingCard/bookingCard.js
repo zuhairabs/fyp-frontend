@@ -101,6 +101,7 @@ const BookingCard = (props) => {
                                 onPress={() => {
                                     props.navigation.navigate("SingleBooking", { booking: props.booking._id })
                                 }}
+                                style={styles.extensionTab}
                             >
                                 <Text style={styles.tabText}>View</Text>
                             </TouchableOpacity>
@@ -128,6 +129,7 @@ const BookingCard = (props) => {
                                         ]
                                     )
                                 }}
+                                style={styles.extensionTab}
                             >
                                 <Text style={styles.tabTextDelete}>Delete</Text>
                             </TouchableOpacity>
@@ -207,7 +209,6 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "space-around",
         alignItems: "center",
-        padding: 20,
         borderBottomLeftRadius: 15,
         borderBottomRightRadius: 15,
         borderTopWidth: 1,
@@ -216,6 +217,8 @@ const styles = StyleSheet.create({
     },
     extensionTab: {
         flex: 1,
+        paddingVertical: 20,
+        paddingHorizontal: 30,
     },
     tabText: {
         color: "#666"

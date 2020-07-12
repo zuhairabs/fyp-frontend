@@ -66,8 +66,9 @@ const BookingCardSmall = (props) => {
                         ? <View style={styles.extension}>
                             <TouchableOpacity
                                 onPress={()=>{
-                                    props.navigation.navigate("Booking", {archived: true, booking: props.booking})
+                                    props.navigation.navigate("SingleBooking", {archived: true, booking: props.booking._id})
                                 }}
+                                style={styles.extensionTab}
                             >
                                 <Text style={styles.tabText}>View</Text>
                             </TouchableOpacity>
@@ -146,7 +147,6 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "space-around",
         alignItems: "center",
-        padding: 20,
         borderBottomLeftRadius: 15,
         borderBottomRightRadius: 15,
         borderTopWidth: 1,
@@ -154,7 +154,8 @@ const styles = StyleSheet.create({
         width: "100%",
     },
     extensionTab: {
-        flex: 1,
+        paddingVertical: 20,
+        paddingHorizontal: 40
     },
     tabText: {
         color: "#666"

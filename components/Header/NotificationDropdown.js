@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { View, Text, StyleSheet, Dimensions, ActivityIndicator } from 'react-native'
 import Icon from 'react-native-vector-icons/dist/Feather'
-import { TouchableWithoutFeedback, TouchableHighlight, TouchableOpacity, ScrollView } from 'react-native-gesture-handler'
+import { TouchableWithoutFeedback, TouchableOpacity, ScrollView } from 'react-native-gesture-handler'
 import AsyncStorage from '@react-native-community/async-storage'
 
 import NotificationCard from '../NotificationCard/NotificationCard'
@@ -52,45 +52,47 @@ const NotificationDropdown = (props) => {
             </TouchableWithoutFeedback>
             {
                 expand ?
-                    <View style={styles.dropdown}>
-                        {
-                            loading ? <View style={{ justifyContent: "center", alignItems: "center", height: "100%", width: "100%" }}>
-                                <ActivityIndicator size="large" color="#0062FF" />
-                            </View>
-                                : <View style={styles.notifications}>
-                                    <View style={styles.header}>
-                                        <Text style={styles.heading}>Notifications</Text>
-                                        {/* <TouchableOpacity
+                    <>
+                        <View style={styles.dropdown}>
+                            {
+                                loading ? <View style={{ justifyContent: "center", alignItems: "center", height: "100%", width: "100%" }}>
+                                    <ActivityIndicator size="large" color="#0062FF" />
+                                </View>
+                                    : <View style={styles.notifications}>
+                                        <View style={styles.header}>
+                                            <Text style={styles.heading}>Notifications</Text>
+                                            {/* <TouchableOpacity
                                             onPress={() => console.log("Pressed notification clear")}
                                         >
                                             <Text style={styles.small}>MARK ALL AS SEEN</Text>
                                         </TouchableOpacity> */}
+                                        </View>
+                                        {
+                                            notifications.length === 0
+                                                ? <View style={{ height: "80%", justifyContent: "center", alignItems: "center", padding: 20 }}>
+                                                    <Text style={{ color: "#666", fontSize: 16 }}>No new notifications</Text>
+                                                </View>
+                                                : <ScrollView style={{ height: "85%" }}
+                                                // scrollEnabled={false} showsVerticalScrollIndicator={false} 
+                                                >
+                                                    {
+                                                        notifications.reverse().map(notification => {
+                                                            return <NotificationCard key={notification._id} notification={notification} />
+                                                        })
+                                                    }
+                                                </ScrollView>
+                                        }
+                                        <TouchableOpacity
+                                            style={styles.footer}
+                                            onPress={() => props.navigation.navigate("NotificationsFull")}
+                                        >
+                                            <Text>View All</Text>
+                                        </TouchableOpacity>
                                     </View>
-                                    {
-                                        notifications.length === 0
-                                            ? <View style={{ height: "80%", justifyContent: "center", alignItems: "center", padding: 20 }}>
-                                                <Text style={{ color: "#666", fontSize: 16 }}>No new notifications</Text>
-                                            </View>
-                                            : <ScrollView style={{ height: "85%" }}
-                                            // scrollEnabled={false} showsVerticalScrollIndicator={false} 
-                                            >
-                                                {
-                                                    notifications.reverse().map(notification => {
-                                                        return <NotificationCard key={notification._id} notification={notification} />
-                                                    })
-                                                }
-                                            </ScrollView>
-                                    }
-                                    <TouchableOpacity
-                                        style={styles.footer}
-                                        onPress={() => props.navigation.navigate("NotificationsFull")}
-                                    >
-                                        <Text>View All</Text>
-                                    </TouchableOpacity>
-                                </View>
-                        }
+                            }
 
-                    </View>
+                        </View>
+                    </>
                     :
                     null
             }

@@ -126,26 +126,26 @@ const Home = ({ navigation }) => {
         }
     }
 
-    const getStoreList = (options) => {
-        try {
-            fetch('https://shopout.herokuapp.com/user/home/list', options)
-                .then(res => {
-                    if (res.status === 200) {
-                        res.json().then(data => {
-                            // console.log(data)
-                            console.log("Store list fetched")
-                        })
-                    }
-                    else {
-                        console.log(res.statusText)
-                    }
-                })
-        }
-        catch (e) {
-            console.log("Here error")
-            console.log(e)
-        }
-    }
+    // const getStoreList = (options) => {
+    //     try {
+    //         fetch('https://shopout.herokuapp.com/user/home/list', options)
+    //             .then(res => {
+    //                 if (res.status === 200) {
+    //                     res.json().then(data => {
+    //                         // console.log(data)
+    //                         console.log("Store list fetched")
+    //                     })
+    //                 }
+    //                 else {
+    //                     console.log(res.statusText)
+    //                 }
+    //             })
+    //     }
+    //     catch (e) {
+    //         console.log("Here error")
+    //         console.log(e)
+    //     }
+    // }
 
     useEffect(() => {
         locationPermission();

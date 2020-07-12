@@ -9,15 +9,23 @@ const WINDOW_HEIGHT = Dimensions.get("window").height
 
 const Congratulations = (props) => {
     const [text] = useState(props.route.params.text || "")
+    const [booking] = useState(props.route.params.booking || null)
+
+    console.log("BOOKING ID:", booking)
 
     return (
         <View style={{
             justifyContent: "space-between",
             alignItems: "center",
             height: Dimensions.get('window').height,
-            width: Dimensions.get("window").width
+            width: Dimensions.get("window").width,
+            backgroundColor: "#FFF"
         }}>
-            <View></View>
+            <View
+                style={{
+                    height: 100
+                }}
+            ></View>
 
             <View style={{
                 justifyContent: "center",
@@ -41,10 +49,22 @@ const Congratulations = (props) => {
             <View style={styles.buttonArea}>
                 <TouchableOpacity
                     onPress={() => { props.navigation.navigate("Home") }}
+                    style={styles.secondaryButton}
+                >
+                    <Text style={styles.secondaryButtonText}>
+                        Back to Home
+                    </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                    onPress={() => { 
+                        props.navigation.navigate("SingleBooking", {
+                            bookingId: booking
+                        })
+                    }}
                     style={styles.defaultButton}
                 >
                     <Text style={styles.defaultButtonText}>
-                        Back to Home
+                        View Booking
                     </Text>
                 </TouchableOpacity>
             </View>
@@ -66,9 +86,27 @@ const styles = StyleSheet.create({
         borderRadius: 12,
         backgroundColor: "#0062FF",
         padding: 18,
+        marginVertical: 5,
+    },
+    secondaryButton: {
+        width: Dimensions.get("window").width - 40,
+        justifyContent: "center",
+        alignItems: "center",
+        borderRadius: 12,
+        backgroundColor: "#FFF",
+        padding: 16,
+        marginVertical: 5,
+        borderWidth: 2,
+        borderColor: "#0062FF"
     },
     defaultButtonText: {
         color: "#FFF",
+        fontSize: 20,
+        textTransform: "uppercase",
+        fontWeight: "bold"
+    },
+    secondaryButtonText: {
+        color: "#0062FF",
         fontSize: 20,
         textTransform: "uppercase",
         fontWeight: "bold"
