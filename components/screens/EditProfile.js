@@ -104,10 +104,11 @@ const EditProfile = ({ navigation }) => {
                                     <Icon name="person" size={80} color="#0062FF" />
                             }
                             <View style={styles.cameraContainer}>
-                                <Icon name="camera-alt" size={24} color="#BDBDBD" />
+                                <Icon name="camera-alt" size={18} color="#BDBDBD" />
                             </View>
                         </View>
                     </View>
+                    <Text style={styles.number}>+91 {user.phone}</Text>
                 </View>
 
                 <View style={styles.contentContainer}>
@@ -219,12 +220,11 @@ const styles = StyleSheet.create({
     },
     container: {
         height: Dimensions.get('window').height,
-        marginTop: 20,
     },
     contentContainer: {
         paddingHorizontal: 20,
         paddingVertical: 0,
-        marginTop: 20,
+        marginTop: 50,
         marginBottom: 100,
         justifyContent: "center",
         alignItems: "center",
@@ -240,27 +240,27 @@ const styles = StyleSheet.create({
         alignItems: "center",
     },
     userPhotoContainer: {
-        height: 140,
-        width: 140,
-        borderRadius: 140 / 2,
+        height: 120,
+        width: 120,
+        borderRadius: 120 / 2,
         padding: 20,
-        marginBottom: 20,
+        marginBottom: 10,
         backgroundColor: "#FFFFFF2F",
         justifyContent: "center",
         alignItems: "center",
     },
     photo: {
-        height: 120,
-        width: 120,
-        borderRadius: 120 / 2,
+        height: 100,
+        width: 100,
+        borderRadius: 100 / 2,
         backgroundColor: "#FFF",
         justifyContent: "center",
         alignItems: "center"
     },
     cameraContainer: {
-        height: 36,
-        width: 36,
-        borderRadius: 36 / 2,
+        height: 28,
+        width: 28,
+        borderRadius: 28 / 2,
         backgroundColor: "#fff",
         elevation: 2,
         position: "absolute",
@@ -274,6 +274,11 @@ const styles = StyleSheet.create({
         height: undefined,
         flex: 1,
         resizeMode: "contain",
+    },
+    number: {
+        color: "#FFF",
+        fontWeight: "bold",
+        fontSize: 20,
     },
     formContainer: {
         paddingTop: 20,

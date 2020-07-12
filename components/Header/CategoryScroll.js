@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, FlatList, TouchableOpacity, Image, View } from 'react-native';
+import { StyleSheet, Text, FlatList, Image, View } from 'react-native';
 
 import Other from './svg/other'
 import Apparels from './svg/apparels'
 import Cafe from './svg/cafe'
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 const CategoryScroll = (props) => {
     const [categories, setCategories] = useState([])
@@ -22,15 +23,17 @@ const CategoryScroll = (props) => {
 
     const renderItem = (item) => {
         return (
-            <TouchableOpacity style={styles.scrollCardContainer}>
-                <View style={styles.categoryScrollCard}>
+            <View style={styles.scrollCardContainer}>
+                <>
+                <TouchableOpacity style={styles.categoryScrollCard}>
                     {/* <Image source={require(`./svg/${item.name.toLowerCase()}.svg`)} height={12} width={12} /> */}
                     <Other />
-                </View>
+                </TouchableOpacity>
                 <Text style={styles.CategoryScrollText}>
                     {item.name.toLowerCase()}
                 </Text>
-            </TouchableOpacity>
+                </>
+            </View>
         );
     }
 
@@ -54,7 +57,7 @@ const styles = StyleSheet.create({
     },
     scrollCardContainer: {
         margin: 2,
-        marginHorizontal: 20,
+        marginHorizontal: 24,
         marginBottom: 5,
         justifyContent: "center",
         alignItems: "center"

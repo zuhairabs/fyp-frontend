@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, lazy, Suspense } from 'react';
 import { StyleSheet, Text, ScrollView, View, Platform, StatusBar, PermissionsAndroid, Alert, ActivityIndicator, Dimensions } from 'react-native';
 import Geolocation from 'react-native-geolocation-service';
 import AsyncStorage from '@react-native-community/async-storage'
@@ -13,6 +13,9 @@ import CategoryScroll from '../Header/CategoryScroll'
 import CardScroll from '../CardScrollBig/CardScroll'
 import CardScrollSmall from '../CardScrollSmall/CardScrollSmall'
 import { TouchableHighlight } from 'react-native-gesture-handler';
+
+// const Navbar = lazy(() => import('../Header/Navbar'))
+// const CardScrollSmall = lazy(() => import('../CardScrollSmall/CardScrollSmall'))
 
 const DEVICE_HEIGHT = Dimensions.get("window").height;
 
@@ -41,6 +44,7 @@ const Home = ({ navigation }) => {
                         long: info.coords.longitude
                     }
                     setLocation(locationInfo)
+                    console.log(location)
                 },
                     error => {
                         console.log(error)
@@ -122,6 +126,27 @@ const Home = ({ navigation }) => {
         }
     }
 
+    const getStoreList = (options) => {
+        try {
+            fetch('https://shopout.herokuapp.com/user/home/list', options)
+                .then(res => {
+                    if (res.status === 200) {
+                        res.json().then(data => {
+                            // console.log(data)
+                            console.log("Store list fetched")
+                        })
+                    }
+                    else {
+                        console.log(res.statusText)
+                    }
+                })
+        }
+        catch (e) {
+            console.log("Here error")
+            console.log(e)
+        }
+    }
+
     useEffect(() => {
         locationPermission();
 
@@ -142,11 +167,13 @@ const Home = ({ navigation }) => {
                     "cred": {
                         "phone": user.phone
                     },
-                    "city": "Mumbai"
+                    "city": "Mumbai",
+                    "number": 50,
                 })
             }
             getFeaturedStores(requestOptions)
             getCategories(requestOptions)
+            getStoreList(requestOptions)
         })
     }, [])
 

@@ -1,13 +1,23 @@
 import React from 'react'
-import { Text, View, StyleSheet, Image } from 'react-native'
+import { Text, View, StyleSheet, Image, Dimensions } from 'react-native'
 import { TouchableOpacity, TouchableWithoutFeedback } from 'react-native-gesture-handler'
 
 import RatingBadge from '../Rating/RatingBadge'
 import BookButton from '../UXComponents/BookButton'
 
 const StoreCard = (props) => {
+
+    const statusTextColor = props.status === "completed"
+        ? "#1AB542" : (props.status === "cancelled"
+            ? "#E50A17" : "#FCC225")
+
     return (
-        <View style={styles.container}>
+        <TouchableWithoutFeedback
+            style={styles.container}
+            onPress={() => {
+                props.navigation.navigate("Store", { store: props.store._id })
+            }}
+        >
             <View style={styles.details}>
                 <View style={styles.imageContainer}>
                     <Image source={{
@@ -18,11 +28,7 @@ const StoreCard = (props) => {
                     <View style={styles.imageFiller}></View>
                 </View>
                 <View style={styles.cardContent}>
-                    <TouchableWithoutFeedback
-                        onPress={() => {
-                            props.navigation.navigate("Store", { store: props.store._id })
-                        }}
-                    >
+                    <View>
                         <Text style={styles.heading}>
                             {props.store.business.display_name} {props.store.name}
                         </Text>
@@ -33,8 +39,14 @@ const StoreCard = (props) => {
                             <Text style={styles.subheadingText}>
                                 {props.store.name}, {props.store.location_desc}
                             </Text>
+                            {
+                                props.status &&
+                                <Text style={{ marginTop: 5, color: statusTextColor, textTransform: "capitalize" }}>
+                                    {props.status}
+                                </Text>
+                            }
                         </View>
-                    </TouchableWithoutFeedback>
+                    </View>
                     {
                         props.noBookButton ? null
                             :
@@ -51,18 +63,19 @@ const StoreCard = (props) => {
             <View style={styles.rating}>
                 <RatingBadge value={props.store.avg_rating || 4.5} />
             </View>
-        </View>
+        </TouchableWithoutFeedback>
     )
 }
 
 const styles = StyleSheet.create({
     container: {
+        width: "100%",
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
         borderBottomWidth: 1,
         borderColor: "#ECF0F4",
-        paddingVertical: 10,
+        paddingBottom: 20,
     },
     rating: {
         flex: 1,

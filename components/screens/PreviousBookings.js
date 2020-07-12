@@ -87,77 +87,75 @@ const UpcomingBookings = ({ navigation }) => {
                     </View>
                 </View>
 
-
-                <ScrollView style={styles.contentContainer} contentContainerStyle={{
-                    justifyContent: "center",
-                    alignItems: "center",
-                }}>
-
-                    {
-                        loading
-                            ? <View style=
-                                {{
-                                    justifyContent: "center",
-                                    alignItems: "center",
-                                    height: Dimensions.get('window').height - 100,
-                                    width: "100%"
+                {
+                    loading
+                        ? <View style=
+                            {{
+                                justifyContent: "center",
+                                alignItems: "center",
+                                height: Dimensions.get('window').height - 100,
+                                width: "100%"
+                            }}
+                        >
+                            <ActivityIndicator size="large" color="#0062FF" />
+                        </View>
+                        :
+                        <>
+                            <View
+                                style={{
+                                    backgroundColor: "#FFF",
                                 }}
                             >
-                                <ActivityIndicator size="large" color="#0062FF" />
-                            </View>
-                            :
-                            <>
-                                <View
-                                    style={{
-                                        backgroundColor: "#FFF",
-                                    }}
-                                >
-                                    <View style={styles.monthSelectorContainer}>
-                                        <View>
-                                            {
-                                                bookings.length > 0
-                                                    ?
-                                                    <Text style={styles.monthSelector}>
-                                                        {
-                                                            startMonth === endMonth ?
-                                                                <Text>{mlist[endMonth]} {new Date().getUTCFullYear()}</Text>
-                                                                :
-                                                                <Text>{mlist[startMonth]} - {mlist[endMonth]} {new Date().getUTCFullYear()}</Text>
-                                                        }
-                                                    </Text>
-                                                    :
-                                                    <View style={{
-                                                        width: Dimensions.get('window').width,
-                                                        height: Dimensions.get('window').height - 480,
-                                                        justifyContent: "center",
-                                                        flex: 1,
-                                                        marginTop: 120,
-                                                    }}>
-                                                        <Image
-                                                            source={require('../UXComponents/EmptyPage.png')}
-                                                            style={{
-                                                                width: undefined,
-                                                                height: undefined,
-                                                                flex: 1,
-                                                                resizeMode: "contain"
-                                                            }}
-                                                        />
-                                                        <Text style={{
-                                                            color: "#666",
-                                                            alignSelf: "center",
-                                                            textAlign: "center",
-                                                            marginTop: 20,
-                                                            paddingHorizontal: 40,
-                                                            fontSize: 16
+                                <View style={styles.monthSelectorContainer}>
+                                    <View>
+                                        {
+                                            bookings.length > 0
+                                                ?
+                                                <Text style={styles.selectedMonth}>
+                                                    {
+                                                        startMonth === endMonth ?
+                                                            <Text>{mlist[endMonth]} {new Date().getUTCFullYear()}</Text>
+                                                            :
+                                                            <Text>{mlist[startMonth]} - {mlist[endMonth]} {new Date().getUTCFullYear()}</Text>
+                                                    }
+                                                </Text>
+                                                :
+                                                <View style={{
+                                                    width: Dimensions.get('window').width,
+                                                    height: Dimensions.get('window').height - 480,
+                                                    justifyContent: "center",
+                                                    flex: 1,
+                                                    marginTop: 120,
+                                                }}>
+                                                    <Image
+                                                        source={require('../UXComponents/EmptyPage.png')}
+                                                        style={{
+                                                            width: undefined,
+                                                            height: undefined,
+                                                            flex: 1,
+                                                            resizeMode: "contain"
                                                         }}
-                                                        >
-                                                            Nothing here!
+                                                    />
+                                                    <Text style={{
+                                                        color: "#666",
+                                                        alignSelf: "center",
+                                                        textAlign: "center",
+                                                        marginTop: 20,
+                                                        paddingHorizontal: 40,
+                                                        fontSize: 16
+                                                    }}
+                                                    >
+                                                        Nothing here!
                                         </Text>
-                                                    </View>
-                                            }
-                                        </View>
+                                                </View>
+                                        }
                                     </View>
                                 </View>
+                            </View>
+                            <ScrollView style={styles.contentContainer} contentContainerStyle={{
+                                justifyContent: "center",
+                                alignItems: "center",
+                            }}>
                                 <View style={styles.results}>
                                     {
                                         bookings.map((booking, index) => {
@@ -165,9 +163,9 @@ const UpcomingBookings = ({ navigation }) => {
                                         })
                                     }
                                 </View>
-                            </>
-                    }
-                </ScrollView>
+                            </ScrollView>
+                        </>
+                }
 
             </ScrollView>
 

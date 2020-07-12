@@ -29,6 +29,7 @@ import EditProfile from './components/screens/EditProfile';
 import Congratulations from './components/screens/misc/Congratulations';
 import Support from './components/screens/Support';
 import Welcome from './components/screens/Welcome';
+import Rating from './components/screens/Rating';
 
 
 const App = () => {
@@ -419,6 +420,20 @@ const App = () => {
                         headerLeftContainerStyle: {
                           padding: 20,
                         },
+                      }}
+                    />
+                    <Stack.Screen 
+                      name="Rating"
+                      component={Rating}
+                      options={{
+                        title: "Rate the store",
+                        headerShown: true,
+                        headerBackImage: () => {
+                          return <BackButton />
+                        },
+                        headerLeftContainerStyle: {
+                          padding: 20,
+                        }
                       }}
                     />
                     <Stack.Screen

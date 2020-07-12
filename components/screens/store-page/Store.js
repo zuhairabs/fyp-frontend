@@ -367,7 +367,7 @@ const styles = StyleSheet.create({
         height: Math.floor(WINDOW_HEIGHT / 20),
         backgroundColor: "#0062FF",
         alignItems: "center",
-        justifyContent: "center",
+        justifyContent: "flex-end",
         padding: NAVIGATION_HEIGHT > 0 ? 30 : 40,
         borderTopRightRadius: 50,
         borderTopLeftRadius: 50,

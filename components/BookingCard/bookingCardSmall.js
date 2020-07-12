@@ -9,6 +9,10 @@ const BookingCardSmall = (props) => {
 
     const [extended, setExtended] = useState(false)
 
+    const statusTextColor = props.booking.status === "completed"
+        ? "#1AB542" : (props.booking.status === "cancelled"
+            ? "#E50A17" : "#FCC225")
+
     return (
         <View style={styles.card}>
             <View style={styles.container}>
@@ -51,12 +55,20 @@ const BookingCardSmall = (props) => {
                                 }
                             </Text>
                         </View>
+
+                        <Text style={{ marginTop: 5, color: statusTextColor, textTransform: "capitalize" }}>
+                            {props.booking.status}
+                        </Text>
                     </View>
                 </TouchableWithoutFeedback>
                 {
                     extended
                         ? <View style={styles.extension}>
-                            <TouchableOpacity>
+                            <TouchableOpacity
+                                onPress={()=>{
+                                    props.navigation.navigate("Booking", {archived: true, booking: props.booking})
+                                }}
+                            >
                                 <Text style={styles.tabText}>View</Text>
                             </TouchableOpacity>
                         </View>

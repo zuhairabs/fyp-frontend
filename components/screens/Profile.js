@@ -48,7 +48,6 @@ const Profile = ({ navigation }) => {
                         </View>
                         <View style={styles.details}>
                             <Text style={styles.name}>{user.firstName} {user.lastName}</Text>
-                            <Text style={styles.number}>+91 {user.phone}</Text>
                         </View>
                     </View>
                     <View style={styles.buttonContainer}>
@@ -148,17 +147,12 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
         alignItems: "flex-start",
         padding: 20,
-        marginVertical: 20,
+        marginTop: 30,
     },
     name: {
         fontSize: 18,
         color: "#FFF",
         fontWeight: "bold",
-    },
-    number: {
-        color: "#FFF",
-        fontWeight: "bold",
-
     },
     userPhotoContainer: {
         height: 100,

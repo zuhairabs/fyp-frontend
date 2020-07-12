@@ -1,57 +1,82 @@
 import React, { useState, useEffect } from 'react'
-import { View, Text, StyleSheet, StatusBar, Dimensions, Platform, ActivityIndicator } from 'react-native'
-import AsyncStorage from '@react-native-community/async-storage'
+import { View, Text, StyleSheet, Platform, Dimensions, StatusBar, ActivityIndicator } from 'react-native'
+import { ScrollView, TouchableOpacity, TouchableWithoutFeedback } from 'react-native-gesture-handler'
 
 import StatusBarWhite from '../UXComponents/StatusBar'
 import StoreCard from '../StoreCard/StoreCard'
 
-import QRCode from 'react-native-qrcode-svg';
-import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler'
+import StarBorder from './svg/star-border'
+import StarFilled from './svg/star-filled'
 
 const DEVICE_WIDTH = Dimensions.get("window").width;
 
-const SingleBooking = (props) => {
+const RatingParameter = ({ name, index }) => {
 
-    const bookingId = props.route.params.booking
-    const [loading, setLoading] = useState(true)
-    const [booking, setBooking] = useState({})
+    const [rating, setRating] = useState(0)
 
-    useEffect(() => {
-        const bootstrapper = async () => {
-            let user = JSON.parse(await AsyncStorage.getItem("user"))
-            let token = await AsyncStorage.getItem("jwt")
-            return { user, token }
-        }
-        bootstrapper()
-            .then(({ user, token }) => {
-                const requestOptions = {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        authorization: "Bearer " + token,
-                    },
-                    body: JSON.stringify({
-                        cred: {
-                            phone: user.phone,
-                        },
-                        bookingData: {
-                            _id: bookingId
-                        }
-                    }),
+    const Star = ({ i }) => {
+        return <TouchableWithoutFeedback
+            onPress={() => { setRating(i) }}
+            style={{
+                paddingHorizontal: 1,
+            }}
+        >
+            {
+                rating >= i ?
+                    <StarFilled />
+                    :
+                    <StarBorder />
+            }
+        </TouchableWithoutFeedback>
+    }
+
+    return (
+        <View style={{
+            flexDirection: "row",
+            justifyContent: "space-around",
+            alignItems: "center",
+            marginVertical: 20,
+        }}>
+            <Text style={{ flex: 2, fontSize: 16 }}>
+                {
+                    name
                 }
-                console.log(requestOptions)
-                fetch("https://shopout.herokuapp.com/user/booking/fetchone", requestOptions)
-                    .then((res) => {
-                        if (res.status === 200)
-                            res.json()
-                                .then(data => { setBooking(data.booking); setLoading(false) })
-                        else {
-                            Alert.alert("Something went wrong ", res.statusText)
-                        }
-                    })
-            })
-    }, [bookingId])
+            </Text>
+            <View style={{
+                flex: 1,
+                flexDirection: "row",
+                justifyContent: "flex-end",
+                alignItems: "center"
+            }}>
+                <Star i={1} />
+                <Star i={2} />
+                <Star i={3} />
+                <Star i={4} />
+                <Star i={5} />
+            </View>
+        </View>
+    )
+}
 
+const Rating = (props) => {
+    const booking = props.route.params.booking
+    const [loading, setLoading] = useState(true);
+
+    const parameters = [
+        "Social distancing maintained",
+        "Temperature checks for everyone",
+        "Multiple Billing Queues",
+        "No Mask No Entry",
+        "Shop Sanitized regularly",
+        "No-touch packing",
+        "Staff followed safety",
+        "Assistance in shopping",
+        "ePayment options"
+    ]
+
+    useEffect(()=>{
+        setLoading(false)
+    }, [])
 
     return (
         <View style={styles.screenContainer}>
@@ -105,37 +130,28 @@ const SingleBooking = (props) => {
                                         </Text>
                                     </View>
                                 </View>
-                                <View style={styles.qrContainer}>
+
+                                <Text style={{ marginTop: 20, fontSize: 16, color: "#666" }}>
+                                    Booking number: {booking.bookingId}
+                                </Text>
+
+                                <View style={styles.qrContainer} >
                                     {
-                                        booking.status === "upcoming"
-                                            ?
-                                            <>
-                                                <QRCode
-                                                    value="https://shopout.herokuapp.com/store/qrcode/scan"
-                                                    logo={{ uri: booking.store.business.logo }}
-                                                    size={180}
-                                                    logoBackgroundColor='transparent'
-                                                />
-                                                <Text style={{ marginTop: 20, fontSize: 24, fontWeight: "bold" }}>{booking.bookingId}</Text>
-                                            </>
-                                            : <View style={{ height: 200 }}></View>
+                                        parameters.map((param, index) => {
+                                            return <RatingParameter name={param} key={index} />
+                                        })
                                     }
                                 </View>
                                 <View style={styles.buttonArea}>
-                                    {
-                                        booking.review ? null
-                                            : <TouchableOpacity
-                                                style={!booking.completed ? styles.disabledButton : styles.defaultButton}
-                                                // disabled={!booking.completed}
-                                                onPress={() => {
-                                                    props.navigation.navigate("Rating", { booking: booking })
-                                                }}
-                                            >
-                                                <Text style={styles.defaultButtonText}>
-                                                    Rate Store
-                                                </Text>
-                                            </TouchableOpacity>
-                                    }
+                                    <TouchableOpacity
+                                        style={styles.defaultButton}
+                                    // disabled={!booking.completed}
+
+                                    >
+                                        <Text style={styles.defaultButtonText}>
+                                            Submit
+                                        </Text>
+                                    </TouchableOpacity>
                                 </View>
                             </View>
                         </View>
@@ -183,10 +199,11 @@ const styles = StyleSheet.create({
     },
     qrContainer: {
         flex: 3,
-        marginTop: 50,
+        marginTop: 30,
         marginBottom: 50,
-        justifyContent: "center",
+        justifyContent: "flex-start",
         alignItems: "center",
+        minHeight: 150,
     },
     buttonArea: {
         flex: 1,
@@ -203,14 +220,6 @@ const styles = StyleSheet.create({
         backgroundColor: "#0062FF",
         padding: 20,
     },
-    disabledButton: {
-        width: DEVICE_WIDTH - 40,
-        justifyContent: "center",
-        alignItems: "center",
-        borderRadius: 12,
-        backgroundColor: "#66666632",
-        padding: 20,
-    },
     defaultButtonText: {
         color: "#FFF",
         fontSize: 20,
@@ -219,4 +228,4 @@ const styles = StyleSheet.create({
     },
 })
 
-export default SingleBooking;
+export default Rating
