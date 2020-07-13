@@ -11,8 +11,6 @@ const Congratulations = (props) => {
     const [text] = useState(props.route.params.text || "")
     const [booking] = useState(props.route.params.booking || null)
 
-    console.log("BOOKING ID:", booking)
-
     return (
         <View style={{
             justifyContent: "space-between",
@@ -56,9 +54,9 @@ const Congratulations = (props) => {
                     </Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                    onPress={() => { 
+                    onPress={() => {
                         props.navigation.navigate("SingleBooking", {
-                            bookingId: booking
+                            booking: booking
                         })
                     }}
                     style={styles.defaultButton}

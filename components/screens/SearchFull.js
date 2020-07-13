@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { View, Text, ScrollView, StyleSheet, Platform, StatusBar, Dimensions, TextInput, ActivityIndicator } from 'react-native'
+import { View, Text, ScrollView, StyleSheet, Platform, StatusBar, Dimensions, TextInput, ActivityIndicator, Image } from 'react-native'
 import Icon from 'react-native-vector-icons/dist/MaterialIcons'
 import AsyncStorage from '@react-native-community/async-storage'
 
@@ -21,6 +21,34 @@ const SearchFull = (props) => {
     const [categories, setCategories] = useState([]);
     const [brands, setBrands] = useState([]);
     const [stores, setStores] = useState([]);
+
+    useEffect(() => {
+        const bootstrapper = async () => {
+            // let token = await AsyncStorage.getItem("jwt")
+            let user = JSON.parse(await AsyncStorage.getItem("user"))
+            fetch("https://shopout.herokuapp.com/user/store/history/fetch", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    cred: {
+                        phone: user.phone,
+                    }
+                }),
+            }).then((res) => {
+                if (res.status === 200) {
+                    res.json().then((data) => {
+                        console.log(data.response.storeHistory)
+                    });
+                }
+                else {
+                    console.log(res.statusText)
+                }
+            });
+        }
+        bootstrapper();
+    }, [])
 
     const shuffleArray = async (array) => {
         for (let i = array.length - 1; i > 0; i--) {
@@ -216,21 +244,51 @@ const SearchFull = (props) => {
                             <View style={styles.searchHeader}>
                                 {
                                     query
-                                        ? <Text style={styles.searchHeaderText}>Search results for '{query}'</Text>
+                                        ? <Text style={styles.searchHeaderText}>Search results for
+                                         <Text style={{ color: "#0062FF" }}> '{query}'</Text>
+                                        </Text>
                                         :
                                         <Text style={styles.searchHeaderText}>
                                             Your recent searches
-                            </Text>
+                                        </Text>
                                 }
 
                             </View>
                             <View style={styles.searchResult}>
                                 {
-                                    results ?
-                                        results.map(item => {
-                                            return <StoreCard key={item._id} store={item} navigation={props.navigation} />
+                                    results.length > 0 ?
+                                        results.map((item, index) => {
+                                            return <StoreCard key={index} store={item} navigation={props.navigation} />
                                         })
-                                        : null
+                                        :
+                                        <View style={{
+                                            width: Dimensions.get('window').width,
+                                            height: Dimensions.get('window').height - 480,
+                                            justifyContent: "center",
+                                            flex: 1,
+                                            marginTop: 120,
+                                        }}>
+                                            <Image
+                                                source={require('../UXComponents/EmptyPage.png')}
+                                                style={{
+                                                    width: undefined,
+                                                    height: undefined,
+                                                    flex: 1,
+                                                    resizeMode: "contain"
+                                                }}
+                                            />
+                                            <Text style={{
+                                                color: "#666",
+                                                alignSelf: "center",
+                                                textAlign: "center",
+                                                marginTop: 20,
+                                                paddingHorizontal: 40,
+                                                fontSize: 16
+                                            }}
+                                            >
+                                                Nothing here!
+                                            </Text>
+                                        </View>
                                 }
                             </View>
                         </>
@@ -298,8 +356,9 @@ const styles = StyleSheet.create({
     },
     searchResult: {
         paddingHorizontal: 20,
-        marginTop: 10,
+        marginTop: 20,
         marginBottom: 50,
+        alignItems: "center"
     }
 })
 

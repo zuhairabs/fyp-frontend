@@ -1,5 +1,5 @@
 import React, { useState, useEffect, createRef } from 'react'
-import { Dimensions, View, StyleSheet, Text, Alert, TimePickerAndroid, ActivityIndicator } from 'react-native'
+import { Dimensions, View, StyleSheet, Text, ActivityIndicator, ToastAndroid } from 'react-native'
 import { TouchableWithoutFeedback, TouchableOpacity } from 'react-native-gesture-handler';
 import AsyncStorage from '@react-native-community/async-storage'
 import Icon from 'react-native-vector-icons/dist/MaterialIcons'
@@ -112,13 +112,30 @@ const BookSlot = (props) => {
         }
         setMarkedDate(data);
         setSelectedDate(selected);
+        getDisabledDays();
+    }
+
+    const getDisabledDays = () => {
+        const working_days = props.storeData.working_days;
+        if (working_days && working_days.length > 0) {
+            const todayDate = new Date()
+            const maxDate = (new Date()).addDays(31)
+            let res = {}
+            for (let i = todayDate; i.getTime() <= maxDate.getTime(); i = i.addDays(1))
+                if (working_days.indexOf(i.getUTCDay()) === -1)
+                    res[i.toISOString().slice(0, 10)] = {
+                        disabled: true
+                    }
+            return res;
+        }
+        else return {}
     }
 
     const submitDate = () => {
         if (selectedDate)
             setScreen(1)
         else
-            Alert.alert("Please select a date")
+            ToastAndroid.show("Please select a date", ToastAndroid.SHORT)
     }
 
     const submitBooking = () => {
@@ -274,7 +291,8 @@ const BookSlot = (props) => {
                                         textDayHeaderFontWeight: "bold",
                                     }}
                                     onDayPress={(day) => { onDayPress(day) }}
-                                    markedDates={markedDate}
+                                    disabledDaysIndexes={[0, 6]}
+                                    markedDates={{ ...markedDate, ...getDisabledDays() }}
                                 />
                                 <View style={styles.buttonArea}>
                                     <TouchableOpacity style={styles.defaultButton} onPress={() => { submitDate() }}>

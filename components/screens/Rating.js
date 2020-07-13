@@ -65,7 +65,7 @@ const Rating = (props) => {
     const parameters = [
         "Social distancing maintained",
         "Temperature checks for everyone",
-        "Multiple Billing Queues",
+        "Priority Billing Queues",
         "No Mask No Entry",
         "Shop Sanitized regularly",
         "No-touch packing",

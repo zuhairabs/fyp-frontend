@@ -1,6 +1,8 @@
 import React from 'react'
-import { Text, View, StyleSheet, Image } from 'react-native'
+import { Text, View, StyleSheet, Image, ToastAndroid, Alert } from 'react-native'
 import { TouchableOpacity, TouchableWithoutFeedback } from 'react-native-gesture-handler'
+import AsyncStorage from '@react-native-community/async-storage'
+import Icon from 'react-native-vector-icons/dist/MaterialIcons'
 
 import RatingBadge from '../Rating/RatingBadge'
 import BookButton from '../UXComponents/BookButton'
@@ -11,14 +13,74 @@ const StoreCard = (props) => {
         ? "#1AB542" : (props.status === "cancelled"
             ? "#E50A17" : "#FCC225")
 
+    const removeFavourite = () => {
+        const bootstrapper = async () => {
+            let user = JSON.parse(await AsyncStorage.getItem("user"));
+            let token = await AsyncStorage.getItem("jwt");
+
+            return { user, token }
+        }
+        const updateAsyncStorage = async (favs) => {
+            let user = JSON.parse(await AsyncStorage.getItem("user"));
+            user.favouriteStores = favs
+            user = JSON.stringify(user);
+            await AsyncStorage.setItem("user", user)
+        }
+
+        Alert.alert(
+            "Do you want to remove the store from your favourites?",
+            "",
+            [
+                {
+                    text: "NO",
+                    onPress: () => { },
+                    style: "cancel"
+                },
+                {
+                    text: "YES",
+                    onPress: () => {
+                        bootstrapper().then(({ user, token }) => {
+                            fetch('https://shopout.herokuapp.com/user/removefavouritestore', {
+                                method: "POST",
+                                headers: {
+                                    "Content-Type": "application/json",
+                                    "Authorization": "Bearer " + token
+                                },
+                                body: JSON.stringify({
+                                    storeData: {
+                                        _id: props.store._id
+                                    },
+                                    cred: {
+                                        phone: user.phone
+                                    }
+                                })
+                            }).then(res => {
+                                if (res.status === 200) {
+                                    ToastAndroid.show("Removed from favourites", ToastAndroid.SHORT)
+                                    res.json().then(data => {
+                                        updateAsyncStorage(data.favouriteStores)
+                                        props.removeFavourite(props.store._id)
+                                    })
+                                }
+                            })
+                        })
+                    },
+                    style: "default"
+                }
+            ]
+        )
+    }
+
+
     return (
-        <TouchableWithoutFeedback
-            style={styles.container}
-            onPress={() => {
-                props.navigation.navigate("Store", { store: props.store._id })
-            }}
-        >
-            <View style={styles.details}>
+        <View style={styles.container}>
+            <View
+                style={styles.details}
+                onStartShouldSetResponder={()=>true}
+                onResponderStart={()=>{
+                    props.navigation.navigate("Store", { store: props.store._id })
+                }}
+            >
                 <View style={styles.imageContainer}>
                     <Image source={{
                         uri: `data:image/gif;base64,${props.store.business.title_image || props.store.business.logo}`
@@ -29,7 +91,10 @@ const StoreCard = (props) => {
                 </View>
                 <View style={styles.cardContent}>
                     <View>
-                        <Text style={styles.heading}>
+                        <Text
+                            style={styles.heading}
+                            numberOfLines={1}
+                        >
                             {props.store.business.display_name} {props.store.name}
                         </Text>
                         <View style={styles.subheading}>
@@ -61,9 +126,19 @@ const StoreCard = (props) => {
                 </View>
             </View>
             <View style={styles.rating}>
-                <RatingBadge value={props.store.avg_rating || 4.5} />
+                {
+                    props.favourite ?
+                        <TouchableWithoutFeedback
+                            onPress={() => { removeFavourite() }}
+                            style={styles.favouriteIcon}
+                        >
+                            <Icon name="favorite" size={16} color="#F30302" />
+                        </TouchableWithoutFeedback>
+                        :
+                        <RatingBadge value={props.store.avg_rating || 4.5} />
+                }
             </View>
-        </TouchableWithoutFeedback>
+        </View>
     )
 }
 
@@ -75,7 +150,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
         borderBottomWidth: 1,
         borderColor: "#ECF0F4",
-        paddingBottom: 20,
+        paddingVertical: 10,
     },
     rating: {
         flex: 1,
@@ -118,7 +193,13 @@ const styles = StyleSheet.create({
         color: "#666",
         textTransform: "capitalize",
     },
-
+    favouriteIcon: {
+        elevation: 5,
+        backgroundColor: "#FFF",
+        padding: 10,
+        borderRadius: 40 / 2,
+        zIndex: 2,
+    },
 })
 
 export default StoreCard;

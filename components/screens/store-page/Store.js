@@ -17,13 +17,23 @@ const WINDOW_WIDTH = Dimensions.get('window').width;
 const DEVICE_HEIGHT = Dimensions.get('screen').height;
 const NAVIGATION_HEIGHT = DEVICE_HEIGHT - WINDOW_HEIGHT - (StatusBar.currentHeight || 0);
 
+const dayList = [
+    "Sun",
+    "Mon",
+    "Tue",
+    "Wed",
+    "Thu",
+    "Fri",
+    "Sat"
+]
+
 const Store = (props) => {
     const { store } = props.route.params;
 
     const [loading, setLoading] = useState(true)
     const [storeData, setStoreData] = useState({})
 
-    
+
     const [images, setImages] = useState([])
     const [headerHeight, setHeaderHeight] = useState(Math.floor(WINDOW_HEIGHT / 2.8))
 
@@ -33,7 +43,8 @@ const Store = (props) => {
     useEffect(() => {
         const checkFavourite = async () => {
             let user = JSON.parse(await (AsyncStorage.getItem("user")))
-            if (user.favouriteStores && user.favouriteStores.indexOf(store) > -1) setFavourite(1);
+            saveStoreHistory(user.phone)
+            if (user.favouriteStores && user.favouriteStores.indexOf(store) > -1) setFavourite(true);
         }
         checkFavourite().then(
             fetch("https://shopout.herokuapp.com/store/fetch", {
@@ -60,6 +71,52 @@ const Store = (props) => {
                 }))
     }, [store])
 
+    const saveStoreHistory = (phone) => {
+        fetch("https://shopout.herokuapp.com/user/store/history/add", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                storeData: storeData._id,
+                cred: {
+                    phone: phone
+                }
+            })
+        })
+            .then(res => {
+                if (res.status === 200) console.log("Store history saved")
+                else console.log("Unable to save history")
+            })
+            .catch(e => {
+                console.log(e)
+            })
+    }
+
+
+    const getWorkingDaysText = () => {
+        const working_days = storeData.working_days
+        if (working_days && working_days.length > 0) {
+            if (working_days.length === 7) return `Open all days ${storeData.active_hours[0].start} to ${storeData.active_hours[0].end}`
+            if (working_days.length === 6) {
+                let offDay = '';
+                for (let i = 0; i < 7; ++i)
+                    if (working_days.indexOf(i) === -1) {
+                        offDay = dayList[i]
+                        break
+                    }
+                return `Daily ${storeData.active_hours[0].start} to ${storeData.active_hours[0].end}, ${offDay} closed`
+            }
+            else {
+                let string = ""
+                for (let i = 0; i < 7; ++i)
+                    if (working_days.indexOf(i) > -1)
+                        string = string + dayList[i] + ", "
+                return `${string} ${storeData.active_hours[0].start} to ${storeData.active_hours[0].end}`
+            }
+        }
+        else return `Open all days ${storeData.active_hours[0].start} to ${storeData.active_hours[0].end}`
+    }
 
     const toggleFavourite = () => {
         const bootstrapper = async () => {
@@ -76,7 +133,6 @@ const Store = (props) => {
         }
 
         if (!favourite) {
-            setFavourite(true)
             bootstrapper().then(({ user, token }) => {
                 fetch('https://shopout.herokuapp.com/user/addfavouritestore', {
                     method: "POST",
@@ -95,11 +151,15 @@ const Store = (props) => {
                 }).then(res => {
                     if (res.status === 200) {
                         ToastAndroid.show("Added to favourites", ToastAndroid.SHORT)
-                        res.json().then(data => { addToStorage(data.favouriteStores) })
+                        res.json().then(data => {
+                            addToStorage(data.favouriteStores)
+                            setFavourite(true)
+                        })
                     }
+                    else
+                        ToastAndroid.show("Something went wrong", ToastAndroid.SHORT)
                 })
             })
-
         }
         else {
             Alert.alert(
@@ -114,7 +174,6 @@ const Store = (props) => {
                     {
                         text: "YES",
                         onPress: () => {
-                            setFavourite(false);
                             bootstrapper().then(({ user, token }) => {
                                 fetch('https://shopout.herokuapp.com/user/removefavouritestore', {
                                     method: "POST",
@@ -133,8 +192,13 @@ const Store = (props) => {
                                 }).then(res => {
                                     if (res.status === 200) {
                                         ToastAndroid.show("Removed from favourites", ToastAndroid.SHORT)
-                                        res.json().then(data => { addToStorage(data.favouriteStores) })
+                                        res.json().then(data => {
+                                            addToStorage(data.favouriteStores)
+                                            setFavourite(false);
+                                        })
                                     }
+                                    else
+                                        ToastAndroid.show("Something went wrong", ToastAndroid.SHORT)
                                 })
                             })
                         },
@@ -238,7 +302,7 @@ const Store = (props) => {
                                         <View style={styles.safetyElement}>
                                             <Icon name="access-time" size={12} color="#0062FF" />
                                             <Text style={styles.safetyElementText}>
-                                                Monday to Friday {storeData.active_hours[0].start} to {storeData.active_hours[0].end}
+                                                {getWorkingDaysText()}
                                             </Text>
                                         </View>
                                     </View>

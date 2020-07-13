@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { View, Text, ScrollView, StyleSheet, Platform, StatusBar, Dimensions, TextInput, ActivityIndicator, Alert } from 'react-native'
+import { View, Text, ScrollView, StyleSheet, Platform, StatusBar, Dimensions, TextInput, ActivityIndicator, Alert, Image } from 'react-native'
 import Icon from 'react-native-vector-icons/dist/MaterialIcons'
 import AsyncStorage from '@react-native-community/async-storage'
 
@@ -9,6 +9,7 @@ import { TouchableOpacity } from 'react-native-gesture-handler'
 
 const DEVICE_HEIGHT = Dimensions.get('screen').height;
 const WINDOW_HEIGHT = Dimensions.get('window').height;
+const WINDOW_WIDTH = Dimensions.get('window').width
 
 const Favourites = (props) => {
     const [all, setAll] = useState([])
@@ -55,8 +56,8 @@ const Favourites = (props) => {
     }, [])
 
     const switchCategory = (cat) => {
-        if(cat === "all") setResults(all)
-        else{
+        if (cat === "all") setResults(all)
+        else {
             let favs = all;
             let temp = []
             favs.forEach(fav => { if (fav.business.category === cat) temp.push(fav) })
@@ -64,93 +65,135 @@ const Favourites = (props) => {
         }
     }
 
+    const removeFavourite = (id) => {
+        setResults(prev => {
+            return prev.filter(item => item._id != id)
+        })
+    }
+
     return (
         <View style={styles.screenContainer}>
             <StatusBarWhite />
 
-            <ScrollView
-                style={styles.container}
-                stickyHeaderIndices={[0]}
-            >
-                {
-                    loading ? <View
+            {
+                loading ?
+                    <View
                         style={{
                             justifyContent: "center",
                             alignItems: "center",
                             height: WINDOW_HEIGHT - 100,
                             width: "100%"
-                        }}>
+                        }}
+                    >
                         <ActivityIndicator size="large" color="#0062FF" />
                     </View>
-                        :
-                        <>
-                            <View style={styles.headerContainer}>
-                                <Text style={{
-                                    color: "#666",
-                                    fontSize: 15,
-                                    paddingHorizontal: 20,
-                                    textTransform: "capitalize",
+                    :
+                    <ScrollView
+                        style={styles.container}
+                    >
+                        <View style={styles.headerContainer}>
+                            <Text style={{
+                                color: "#666",
+                                fontSize: 15,
+                                paddingHorizontal: 20,
+                                textTransform: "capitalize",
+                            }}
+                            >
+                                {current}
+                            </Text>
+                            <TouchableOpacity
+                                style={{ paddingHorizontal: 20, paddingVertical: 10 }}
+                                onPress={() => {
+                                    setDropdown(!dropdown);
                                 }}
-                                >
-                                    {current}
-                                </Text>
-                                <TouchableOpacity
-                                    style={{ paddingHorizontal: 20, paddingVertical: 10 }}
-                                    onPress={() => {
-                                        setDropdown(!dropdown);
-                                    }}
-                                >
+                            >
+                                {
+                                    dropdown ? <Icon name="arrow-drop-up" size={20} color="#000" />
+                                        : <Icon name="arrow-drop-down" size={20} color="#000" />
+                                }
+
+                            </TouchableOpacity>
+                            {
+                                dropdown ? <ScrollView style={styles.dropdown}>
+                                    <TouchableOpacity
+                                        style={styles.dropdownTextBox}
+                                        onPress={() => {
+                                            setDropdown(false)
+                                            setCurrent("all")
+                                            switchCategory("all")
+                                        }}
+                                    >
+                                        <Text style={styles.dropdownText}>All</Text>
+                                    </TouchableOpacity>
                                     {
-                                        dropdown ? <Icon name="arrow-drop-up" size={20} color="#000" />
-                                            : <Icon name="arrow-drop-down" size={20} color="#000" />
-                                    }
-
-                                </TouchableOpacity>
-                                {
-                                    dropdown ? <ScrollView style={styles.dropdown}>
-                                        <TouchableOpacity
-                                            style={styles.dropdownTextBox}
-                                            onPress={() => {
-                                                setDropdown(false)
-                                                setCurrent("all")
-                                                switchCategory("all")
-                                            }}
-                                        >
-                                            <Text style={styles.dropdownText}>All</Text>
-                                        </TouchableOpacity>
-                                        {
-                                            categories.map(cat => {
-                                                return <TouchableOpacity
-                                                    key={cat}
-                                                    style={styles.dropdownTextBox}
-                                                    onPress={() => {
-                                                        setDropdown(false)
-                                                        setCurrent(cat)
-                                                        switchCategory(cat)
-                                                    }}
-                                                >
-                                                    <Text style={styles.dropdownText}>{cat}</Text>
-                                                </TouchableOpacity>
-                                            })
-                                        }
-                                    </ScrollView> : null
-                                }
-                            </View>
-
-                            <View style={{ height: DEVICE_HEIGHT }}>
-                                {
-                                    results ?
-                                        results.map(item => {
-                                            return <StoreCard key={item._id} store={item} navigation={props.navigation} />
+                                        categories.map(cat => {
+                                            return <TouchableOpacity
+                                                key={cat}
+                                                style={styles.dropdownTextBox}
+                                                onPress={() => {
+                                                    setDropdown(false)
+                                                    setCurrent(cat)
+                                                    switchCategory(cat)
+                                                }}
+                                            >
+                                                <Text style={styles.dropdownText}>{cat}</Text>
+                                            </TouchableOpacity>
                                         })
-                                        : <Text>No favourites added yet!</Text>
+                                    }
+                                </ScrollView> : null
+                            }
+                        </View>
 
-                                }
-                            </View>
-
-                        </>
-                }
-            </ScrollView>
+                        <View style={{
+                            paddingHorizontal: 20,
+                            marginBottom: 150,
+                            justifyContent: "center",
+                            alignItems: "center"
+                        }}>
+                            {
+                                results && results.length > 0 ?
+                                    results.map((item, index) => {
+                                        return <StoreCard
+                                            key={index}
+                                            store={item}
+                                            navigation={props.navigation}
+                                            favourite={true}
+                                            removeFavourite={removeFavourite}
+                                        />
+                                    })
+                                    :
+                                    <View style={{
+                                        width: Dimensions.get('window').width,
+                                        height: Dimensions.get('window').height - 480,
+                                        justifyContent: "center",
+                                        flex: 1,
+                                        marginTop: 120,
+                                    }}>
+                                        <Image
+                                            source={require('../UXComponents/EmptyPage.png')}
+                                            style={{
+                                                width: undefined,
+                                                height: undefined,
+                                                flex: 1,
+                                                resizeMode: "contain"
+                                            }}
+                                        />
+                                        <Text style={{
+                                            color: "#666",
+                                            alignSelf: "center",
+                                            textAlign: "center",
+                                            marginTop: 20,
+                                            paddingHorizontal: 40,
+                                            fontSize: 16
+                                        }}
+                                        >
+                                            Nothing here!
+                                        </Text>
+                                    </View>
+                            }
+                        </View>
+                    </ScrollView>
+            }
         </View>
     )
 }
@@ -162,7 +205,6 @@ const styles = StyleSheet.create({
     },
     container: {
         marginBottom: 50 + DEVICE_HEIGHT - WINDOW_HEIGHT,
-        paddingHorizontal: 20,
         height: DEVICE_HEIGHT,
     },
     dropdown: {
@@ -184,13 +226,12 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
         alignItems: "center",
         marginBottom: 20,
+        marginHorizontal: 20,
         zIndex: 5,
     },
     dropdownTextBox: {
         paddingHorizontal: 20,
-        paddingVertical: 15,
-        // borderBottomWidth: 1,
-        // borderBottomColor: "#CAD0D8"
+        paddingVertical: 15
     },
     dropdownText: {
         textTransform: "capitalize",

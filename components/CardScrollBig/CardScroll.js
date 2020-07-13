@@ -39,16 +39,19 @@ const CardScroll = (props) => {
 
     return (
         <View style={styles.container}>
-            <View style={styles.indicatorContainer}>
-                {
-                    stores.map((_store, index) => {
-                        return <View
-                            key={index + 20}
-                            style={current === index ? styles.indicatorSelected : styles.indicator}
-                        />
-                    })
-                }
-            </View>
+            {
+                !loading &&
+                <View style={styles.indicatorContainer}>
+                    {
+                        stores.map((_store, index) => {
+                            return <View
+                                key={index + 20}
+                                style={current === index ? styles.indicatorSelected : styles.indicator}
+                            />
+                        })
+                    }
+                </View>
+            }
             <ScrollView
                 ref={scrollRef}
                 horizontal
@@ -85,11 +88,11 @@ const styles = StyleSheet.create({
     },
     indicatorContainer: {
         flexDirection: "row",
-        justifyContent: "space-around",
+        justifyContent: "flex-start",
         alignItems: "center",
         position: "absolute",
-        bottom: 30,
-        left: 160,
+        top: 20,
+        left: 45,
         // right: 30,
         zIndex: 2,
     },

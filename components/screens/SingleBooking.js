@@ -57,8 +57,7 @@ const SingleBooking = (props) => {
                         }
                     })
             })
-    }, [props.route.params])
-
+    }, [bookingId, archived])
 
     return (
         <View style={styles.screenContainer}>
