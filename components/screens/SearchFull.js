@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { View, Text, ScrollView, StyleSheet, Platform, StatusBar, Dimensions, TextInput, ActivityIndicator, Image } from 'react-native'
 import Icon from 'react-native-vector-icons/dist/MaterialIcons'
 import AsyncStorage from '@react-native-community/async-storage'
@@ -6,10 +6,13 @@ import AsyncStorage from '@react-native-community/async-storage'
 import StatusBarWhite from '../UXComponents/StatusBar'
 import StoreCard from '../StoreCard/StoreCard'
 import { TouchableWithoutFeedback, TouchableOpacity } from 'react-native-gesture-handler'
+import { set } from 'react-native-reanimated'
 
 const DEVICE_HEIGHT = Dimensions.get('window').height;
 
 const SearchFull = (props) => {
+    const inputBox = useRef()
+
     const [results, setResults] = useState([])
     const [query, setQuery] = useState()
     const [loading, setLoading] = useState(false)
@@ -23,6 +26,7 @@ const SearchFull = (props) => {
     const [stores, setStores] = useState([]);
 
     useEffect(() => {
+        setLoading(true)
         const bootstrapper = async () => {
             // let token = await AsyncStorage.getItem("jwt")
             let user = JSON.parse(await AsyncStorage.getItem("user"))
@@ -39,16 +43,34 @@ const SearchFull = (props) => {
             }).then((res) => {
                 if (res.status === 200) {
                     res.json().then((data) => {
-                        console.log(data.response.storeHistory)
+                        getUniqueHistoryResults(data.response.storeHistory)
+                            .then(history => {
+                                setResults(history)
+                                setLoading(false)
+                            })
                     });
                 }
                 else {
                     console.log(res.statusText)
+                    setLoading(false)
+                    setResults([])
                 }
             });
         }
         bootstrapper();
     }, [])
+
+    const getUniqueHistoryResults = async (history) => {
+        let uniqueArray = []
+        let uniqueIdArray = []
+        history.forEach(element => {
+            if (uniqueIdArray.indexOf(element._id) === -1) {
+                uniqueArray.push(element)
+                uniqueIdArray.push(element._id)
+            }
+        });
+        return uniqueArray
+    }
 
     const shuffleArray = async (array) => {
         for (let i = array.length - 1; i > 0; i--) {
@@ -60,6 +82,11 @@ const SearchFull = (props) => {
 
     const fullSearch = (query, model, id) => {
         setLoading(true)
+        inputBox.current?.blur()
+        setStores([])
+        setBrands([])
+        setCategories([])
+        setTags([])
         const bootstrapper = async () => {
             let token = await AsyncStorage.getItem("jwt")
             let user = JSON.parse(await AsyncStorage.getItem("user"))
@@ -79,7 +106,6 @@ const SearchFull = (props) => {
                     _id: id,
                 }),
             }).then((res) => {
-                setLoading(false)
                 if (res.status === 200) {
                     res.json().then((data) => {
                         let temp = []
@@ -89,12 +115,15 @@ const SearchFull = (props) => {
                         shuffleArray(temp)
                             .then((array) => {
                                 setResults(array)
+                                setLoading(false)
                             })
                         setQuery(query)
                     });
                 }
-                else
+                else {
+                    setLoading(false)
                     Alert.alert("Something went wrong", res.status.toString())
+                }
             });
         }
         bootstrapper();
@@ -136,6 +165,10 @@ const SearchFull = (props) => {
         bootstrapper();
     }
 
+    const getDropdownBorderWidth = () => {
+        if (stores.length > 0 || tags.length > 0 || brands.length > 0 || categories.length > 0) return { borderWidth: 1 }
+        else return { borderWidth: 0 }
+    }
 
     return (
         <View style={styles.screenContainer}>
@@ -145,7 +178,7 @@ const SearchFull = (props) => {
 
             <View style={styles.search}>
                 <View style={styles.searchInputFull}>
-                    <Icon name="search" size={16} color="#666" />
+                    <Icon name="search" size={24} color="#666" />
                     <TextInput
                         style={styles.searchInputText}
                         value={text}
@@ -157,12 +190,24 @@ const SearchFull = (props) => {
                         blurOnSubmit={true}
                         placeholderTextColor="#707070"
                         autoFocus={true}
+                        ref={inputBox}
                     />
+                    <TouchableWithoutFeedback
+                        onPress={() => { setText(""); inputBox.current?.blur() }}
+                    >
+                        {
+                            inputBox.current?.isFocused()
+                                ?
+                                <Icon name="close" size={24} color="#666" />
+                                : 
+                                <View style={{width: 24}}></View>
+                        }
+                    </TouchableWithoutFeedback>
                 </View>
 
                 {/* DROPDOWN FOR SUGGESTIONS */}
                 <ScrollView
-                    style={styles.suggestionDropdown}>
+                    style={{ ...styles.suggestionDropdown, ...getDropdownBorderWidth() }}>
                     {stores.map(result => {
                         if (result.name)
                             return <TouchableOpacity
@@ -252,13 +297,18 @@ const SearchFull = (props) => {
                                             Your recent searches
                                         </Text>
                                 }
-
                             </View>
+
                             <View style={styles.searchResult}>
                                 {
                                     results.length > 0 ?
                                         results.map((item, index) => {
-                                            return <StoreCard key={index} store={item} navigation={props.navigation} />
+                                            return <StoreCard
+                                                key={index}
+                                                store={item}
+                                                navigation={props.navigation}
+                                                searched={true}
+                                            />
                                         })
                                         :
                                         <View style={{
@@ -314,7 +364,7 @@ const styles = StyleSheet.create({
     },
     searchInputFull: {
         flexDirection: "row",
-        justifyContent: "flex-start",
+        justifyContent: "space-around",
         alignItems: "center",
 
         backgroundColor: '#fff',
@@ -328,27 +378,32 @@ const styles = StyleSheet.create({
     searchInputText: {
         width: "100%",
         color: '#000',
+        paddingHorizontal: 20,
+        zIndex: 4,
+        fontSize: 18,
     },
     suggestionDropdown: {
         position: "absolute",
         width: "100%",
         maxHeight: 0.6 * DEVICE_HEIGHT,
 
-        top: 70,
+        top: 74,
         left: 20,
 
         paddingHorizontal: 20,
 
         backgroundColor: "#fff",
-        borderBottomLeftRadius: 12,
-        borderBottomRightRadius: 12,
+        borderTopWidth: 0,
+        borderColor: "#707070",
+        borderBottomLeftRadius: 4,
+        borderBottomRightRadius: 4,
 
         zIndex: 2,
-        elevation: 2,
     },
     suggestionText: {
         marginVertical: 15,
-        color: "#666"
+        color: "#666",
+        fontSize: 14,
     },
     searchHeaderText: {
         marginTop: 15,

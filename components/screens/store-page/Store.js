@@ -28,7 +28,7 @@ const dayList = [
 ]
 
 const Store = (props) => {
-    const { store } = props.route.params;
+    const { store, searched } = props.route.params;
 
     const [loading, setLoading] = useState(true)
     const [storeData, setStoreData] = useState({})
@@ -43,7 +43,8 @@ const Store = (props) => {
     useEffect(() => {
         const checkFavourite = async () => {
             let user = JSON.parse(await (AsyncStorage.getItem("user")))
-            saveStoreHistory(user.phone)
+            if(searched)
+                saveStoreHistory(user.phone)
             if (user.favouriteStores && user.favouriteStores.indexOf(store) > -1) setFavourite(true);
         }
         checkFavourite().then(
@@ -78,16 +79,12 @@ const Store = (props) => {
                 "Content-Type": "application/json",
             },
             body: JSON.stringify({
-                storeData: storeData._id,
+                storeData: store,
                 cred: {
                     phone: phone
                 }
             })
         })
-            .then(res => {
-                if (res.status === 200) console.log("Store history saved")
-                else console.log("Unable to save history")
-            })
             .catch(e => {
                 console.log(e)
             })

@@ -154,8 +154,8 @@ const UpcomingBookings = ({ navigation }) => {
                             }}>
                                 <View style={styles.results}>
                                     {
-                                        bookings.map((booking, index) => {
-                                            return <BookingCardSmall key={index} booking={booking} navigation={navigation} />
+                                        bookings.map((booking, _) => {
+                                            return <BookingCardSmall key={booking._id} booking={booking} navigation={navigation} />
                                         })
                                     }
                                 </View>

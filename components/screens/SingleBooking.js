@@ -116,7 +116,7 @@ const SingleBooking = (props) => {
                                             ?
                                             <>
                                                 <QRCode
-                                                    value="https://shopout.herokuapp.com/store/qrcode/scan"
+                                                    value={`https://shopout.herokuapp.com/store/scanqr/?booking_id=${booking._id}`}
                                                     logo={{ uri: booking.store.business.logo }}
                                                     size={180}
                                                     logoBackgroundColor='transparent'

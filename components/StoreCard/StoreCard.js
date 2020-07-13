@@ -78,7 +78,10 @@ const StoreCard = (props) => {
                 style={styles.details}
                 onStartShouldSetResponder={()=>true}
                 onResponderStart={()=>{
-                    props.navigation.navigate("Store", { store: props.store._id })
+                    props.navigation.navigate("Store", {
+                        store: props.store._id,
+                        searched: props.searched ? true : false
+                    })
                 }}
             >
                 <View style={styles.imageContainer}>

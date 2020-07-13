@@ -131,7 +131,7 @@ const BookingCard = (props) => {
                                 }}
                                 style={styles.extensionTab}
                             >
-                                <Text style={styles.tabTextDelete}>Delete</Text>
+                                <Text style={styles.tabText}>Delete</Text>
                             </TouchableOpacity>
                         </View>
                         : null
@@ -222,9 +222,6 @@ const styles = StyleSheet.create({
     },
     tabText: {
         color: "#666"
-    },
-    tabTextDelete: {
-        color: "#F30302"
     }
 })
 
