@@ -191,6 +191,8 @@ const App = () => {
                     response
                       .json()
                       .then((data) => {
+                        if (data.user.notifications)
+                          data.user.notifications = data.user.notifications.reverse()
                         AsyncStorage.setItem("jwt", data.token.toString());
                         AsyncStorage.setItem("user", JSON.stringify(data.user))
                         dispatch({ type: 'SIGN_IN', token: data.token.toString(), user: data.user });
@@ -256,6 +258,8 @@ const App = () => {
                   response
                     .json()
                     .then((data) => {
+                      if (data.user.notifications)
+                        data.user.notifications = data.user.notifications.reverse()
                       AsyncStorage.setItem("jwt", data.token.toString());
                       AsyncStorage.setItem("user", JSON.stringify(data.user))
                       dispatch({ type: 'SIGN_IN', token: data.token.toString(), user: data.user });
@@ -422,7 +426,7 @@ const App = () => {
                         },
                       }}
                     />
-                    <Stack.Screen 
+                    <Stack.Screen
                       name="Rating"
                       component={Rating}
                       options={{

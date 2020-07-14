@@ -12,22 +12,27 @@ import GraphicWelcome from './welcome1.svg'
 import GraphicVisit from './welcome2.svg'
 import GraphicBook from './welcome3.svg'
 
-const headings = ["Welcome to ShopOut!", "Visit any store on your time!", "Book your appointment!"]
-const illustrations = [<GraphicWelcome />, <GraphicVisit />, <GraphicBook />]
-const text = [
+const HEADINGS = ["Welcome to ShopOut!", "Visit any store on your time!", "Book your appointment!"]
+const ILLUSTRATIONS = [<GraphicWelcome />, <GraphicVisit />, <GraphicBook />]
+const TEXT = [
     "Your window to shopping with safety and wellbeing",
     "Find your preferred shopping destinations and visit at your convinience",
     "Book your time slot and visit in confidence"
 ]
+const NUMBER_OF_PAGES = 3
 
 const Welcome = () => {
     const { setWelcomeShown } = React.useContext(AuthContext);
     const [page, setPage] = useState(0)
 
     const nextPage = () => {
-        if (page >= 2)
+        if (page >= NUMBER_OF_PAGES - 1)
             setWelcomeShown();
         else setPage(page + 1);
+    }
+
+    const prevPage = () => {
+        if (page > 0) setPage(page - 1)
     }
 
     return (
@@ -35,7 +40,7 @@ const Welcome = () => {
             <SecondaryBackground />
             <StatusBarWhite />
 
-            <ScrollView 
+            <ScrollView
                 style={styles.container}
                 scrollEnabled={false}
             >
@@ -43,15 +48,15 @@ const Welcome = () => {
 
                 <View style={styles.contentContainer}>
                     <View style={styles.svgContainer}>
-                        {illustrations[page]}
+                        {ILLUSTRATIONS[page]}
                     </View>
 
                     <View style={styles.textContainer}>
                         <Text style={styles.header}>
-                            {headings[page]}
+                            {HEADINGS[page]}
                         </Text>
                         <Text style={styles.text}>
-                            {text[page]}
+                            {TEXT[page]}
                         </Text>
                     </View>
 
@@ -68,7 +73,10 @@ const Welcome = () => {
                             onPress={() => { setWelcomeShown() }}
                         >
                             <Text style={{ color: "#0062FF", marginTop: 20, }}>
-                                Skip
+                                {
+                                    page < NUMBER_OF_PAGES - 1 &&
+                                    "Skip"
+                                }
                             </Text>
                         </TouchableOpacity>
                     </View>

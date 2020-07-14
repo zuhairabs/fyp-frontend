@@ -1,14 +1,15 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, lazy, Suspense } from 'react'
 import { View, Text, StyleSheet, Dimensions, Platform, StatusBar, Alert, ActivityIndicator } from 'react-native'
 import { ScrollView, TouchableWithoutFeedback } from 'react-native-gesture-handler'
-import  AsyncStorage from '@react-native-community/async-storage'
+import AsyncStorage from '@react-native-community/async-storage'
 
 import StatusBarWhite from '../UXComponents/StatusBar'
-import NotificationCard from '../NotificationCard/NotificationCard'
+import { NotificationLoadingEffect } from '../NotificationCard/NotificationCard'
+const NotificationCard = lazy(() => import('../NotificationCard/NotificationCard'))
 
-const NotificationsFull = ({ navigation }) => {
+const NotificationsFull = (props) => {
 
-    const [notifications, setNotifications] = useState([])
+    const [notifications, setNotifications] = useState(props.route.params?.notifications)
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
@@ -16,15 +17,17 @@ const NotificationsFull = ({ navigation }) => {
             let notifications = JSON.parse(await AsyncStorage.getItem("user")).notifications
             return notifications
         }
-        bootstrapper()
-            .then(notifications => {
-                if (notifications) {
-                    setNotifications(notifications)
-                    setLoading(false)
-                    console.log(notifications)
-                }
-                else setNotifications([])
-            })
+        if (props.route.params?.notifications) setLoading(false)
+        else {
+            bootstrapper()
+                .then(notifications => {
+                    if (notifications) {
+                        setNotifications(notifications)
+                        setLoading(false)
+                    }
+                    else setNotifications([])
+                })
+        }
     }, [])
 
     return (
@@ -35,16 +38,13 @@ const NotificationsFull = ({ navigation }) => {
                 <View style={styles.contentContainer}>
                     {
                         loading
-                            ? <View style=
-                                {{
-                                    justifyContent: "center",
-                                    alignItems: "center",
-                                    height: Dimensions.get('window').height - 100,
-                                    width: "100%"
-                                }}
-                            >
-                                <ActivityIndicator size="large" color="#0062FF" />
-                            </View>
+                            ? <ScrollView style={{ height: "85%", marginTop: 20 }}>
+                                {
+                                    Array.from({ length: 10 }, (_, k) => {
+                                        return <NotificationLoadingEffect />
+                                    })
+                                }
+                            </ScrollView>
                             : <View style={styles.notifications}>
                                 {
                                     notifications.length === 0
@@ -56,8 +56,10 @@ const NotificationsFull = ({ navigation }) => {
                                             alignItems: "center"
                                         }}>
                                             {
-                                                notifications.reverse().map((notification, index) => {
-                                                    return <NotificationCard key={index} notification={notification} />
+                                                notifications.map((notification, index) => {
+                                                    return <Suspense fallback={<NotificationLoadingEffect />}>
+                                                        <NotificationCard key={index} notification={notification} />
+                                                    </Suspense>
                                                 })
                                             }
                                         </ScrollView>

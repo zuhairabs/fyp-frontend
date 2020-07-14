@@ -173,7 +173,7 @@ const Home = ({ navigation }) => {
             }
             getFeaturedStores(requestOptions)
             getCategories(requestOptions)
-            getStoreList(requestOptions)
+            // getStoreList(requestOptions)
         })
     }, [])
 

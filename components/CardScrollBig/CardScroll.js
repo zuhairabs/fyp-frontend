@@ -91,15 +91,14 @@ const styles = StyleSheet.create({
         justifyContent: "flex-start",
         alignItems: "center",
         position: "absolute",
-        top: 20,
-        left: 45,
-        // right: 30,
+        bottom: 5,
+        right: 32, //card border radius + card margin horizontal
         zIndex: 2,
     },
     indicatorSelected: {
         paddingVertical: 1,
-        paddingHorizontal: 4,
-        marginHorizontal: 2,
+        paddingHorizontal: 3,
+        marginHorizontal: 3,
         borderWidth: 1,
         borderColor: "#0062FF",
         borderRadius: 6,
@@ -107,7 +106,7 @@ const styles = StyleSheet.create({
     },
     indicator: {
         paddingHorizontal: 2,
-        marginHorizontal: 2,
+        marginHorizontal: 1,
         borderWidth: 1,
         borderColor: "#0062FF",
         opacity: 0.5,

@@ -1,36 +1,76 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, lazy, Suspense } from 'react'
 import { View, Text, StyleSheet, Dimensions, ActivityIndicator } from 'react-native'
 import Icon from 'react-native-vector-icons/dist/Feather'
 import { TouchableWithoutFeedback, TouchableOpacity, ScrollView } from 'react-native-gesture-handler'
 import AsyncStorage from '@react-native-community/async-storage'
 
-import NotificationCard from '../NotificationCard/NotificationCard'
+import { NotificationLoadingEffect } from '../NotificationCard/NotificationCard'
+const NotificationCard = lazy(() => import('../NotificationCard/NotificationCard'))
 import NotificationBell from './notifications.svg'
 
-const NotificationDropdown = (props) => {
-
-    const [expand, setExpand] = useState(false)
+const Dropdown = ({ navigation }) => {
     const [notifications, setNotifications] = useState([])
-    const [loading, setLoading] = useState(true)
-    const [unread, setUnread] = useState(false)
+    const [loading, setLoading] = useState(false)
 
     useEffect(() => {
         const bootstrapper = async () => {
             let notifications = JSON.parse(await AsyncStorage.getItem("user")).notifications
             return notifications
         }
+        setLoading(true)
         bootstrapper()
             .then(notifications => {
-                if (notifications) {
-                    setNotifications(notifications)
-                    setLoading(false)
-                    for (i = notifications.length - 1; i > -1 && !unread; --i)
-                        if (notifications[i].readStatus === false)
-                            setUnread(true);
-                }
+                if (notifications) setNotifications(notifications)
                 else setNotifications([])
+                setLoading(false)
             })
     }, [])
+
+    return (
+        <View style={styles.dropdown}>
+            <View style={styles.notifications}>
+                <View style={styles.header}>
+                    <Text style={styles.heading}>Notifications</Text>
+                </View>
+                {
+                    loading
+                    && <ScrollView style={{ height: "85%" }}>
+                        {
+                            Array.from({ length: 5 }, (_, k) => {
+                                return <NotificationLoadingEffect />
+                            })
+                        }
+                    </ScrollView>
+                }
+                {
+                    !loading && notifications.length === 0
+                        ? <View style={{ height: "80%", justifyContent: "center", alignItems: "center", padding: 20 }}>
+                            <Text style={{ color: "#666", fontSize: 16 }}>No new notifications</Text>
+                        </View>
+                        : <ScrollView style={{ height: "85%" }}>
+                            {
+                                notifications.map(notification => {
+                                    return <Suspense fallback={<NotificationLoadingEffect />}>
+                                        <NotificationCard key={notification._id} notification={notification} />
+                                    </Suspense>
+                                })
+                            }
+                        </ScrollView>
+                }
+                <TouchableOpacity
+                    style={styles.footer}
+                    onPress={() => navigation.navigate("NotificationsFull", {notifications: notifications})}
+                >
+                    <Text>View All</Text>
+                </TouchableOpacity>
+            </View>
+        </View>
+    )
+}
+
+const NotificationDropdown = (props) => {
+
+    const [expand, setExpand] = useState(false)
 
     return (
         <>
@@ -39,64 +79,11 @@ const NotificationDropdown = (props) => {
             }}
                 style={styles.container}
             >
-                {/* <Icon name="bell" size={24} color="#06369B" /> */}
                 <NotificationBell height="90%" />
-                {
-                    unread
-                        ?
-                        <View style={styles.notificationCountCircle}>
-                        </View>
-                        : null
-                }
-
             </TouchableWithoutFeedback>
             {
-                expand ?
-                    <>
-                        <View style={styles.dropdown}>
-                            {
-                                loading ? <View style={{ justifyContent: "center", alignItems: "center", height: "100%", width: "100%" }}>
-                                    <ActivityIndicator size="large" color="#0062FF" />
-                                </View>
-                                    : <View style={styles.notifications}>
-                                        <View style={styles.header}>
-                                            <Text style={styles.heading}>Notifications</Text>
-                                            {/* <TouchableOpacity
-                                            onPress={() => console.log("Pressed notification clear")}
-                                        >
-                                            <Text style={styles.small}>MARK ALL AS SEEN</Text>
-                                        </TouchableOpacity> */}
-                                        </View>
-                                        {
-                                            notifications.length === 0
-                                                ? <View style={{ height: "80%", justifyContent: "center", alignItems: "center", padding: 20 }}>
-                                                    <Text style={{ color: "#666", fontSize: 16 }}>No new notifications</Text>
-                                                </View>
-                                                : <ScrollView style={{ height: "85%" }}
-                                                // scrollEnabled={false} showsVerticalScrollIndicator={false} 
-                                                >
-                                                    {
-                                                        notifications.reverse().map(notification => {
-                                                            return <NotificationCard key={notification._id} notification={notification} />
-                                                        })
-                                                    }
-                                                </ScrollView>
-                                        }
-                                        <TouchableOpacity
-                                            style={styles.footer}
-                                            onPress={() => props.navigation.navigate("NotificationsFull")}
-                                        >
-                                            <Text>View All</Text>
-                                        </TouchableOpacity>
-                                    </View>
-                            }
-
-                        </View>
-                    </>
-                    :
-                    null
+                expand && <Dropdown navigation={props.navigation} />
             }
-
         </>
     )
 }
@@ -104,19 +91,6 @@ const NotificationDropdown = (props) => {
 const styles = StyleSheet.create({
     container: {
         padding: 10,
-    },
-    notificationCountCircle: {
-        height: 12,
-        width: 12,
-        borderRadius: 12 / 2,
-        fontSize: 16,
-        textAlign: "center",
-        position: 'absolute',
-        top: 14,
-        right: 14,
-        backgroundColor: "#EF1515F0",
-        justifyContent: "center",
-        alignItems: "center"
     },
     dropdown: {
         position: "absolute",
@@ -130,7 +104,7 @@ const styles = StyleSheet.create({
         borderColor: "#E5E5E5",
         borderWidth: 1,
         right: 0,
-        top: 50,
+        top: 55,
         borderRadius: 15,
         backgroundColor: "#fff",
         paddingBottom: 20,
@@ -162,6 +136,12 @@ const styles = StyleSheet.create({
         borderTopWidth: 1,
         borderColor: "#6666662F",
         fontSize: 18,
+    },
+    activityIndicatorContainer: {
+        height: "50%",
+        width: "100%",
+        justifyContent: "center",
+        alignItems: "center",
     }
 })
 

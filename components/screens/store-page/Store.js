@@ -8,7 +8,7 @@ import Icon from 'react-native-vector-icons/dist/MaterialIcons'
 import NavbarBackButton from '../../Header/NavbarBackButton'
 import StatusBarWhite from '../../UXComponents/StatusBar'
 import MainBackground from '../../UXComponents/MainBackground'
-import BookSlot from '../../UXComponents/BookSlot'
+import BookSlotSlider from '../../UXComponents/BookSlotSlider/BookSlot'
 import RatingBadge from '../../Rating/RatingBadge';
 import ImageHeader from './ImageHeader'
 
@@ -322,7 +322,7 @@ const Store = (props) => {
                         </ScrollView>),
                         (
                             bookSlot
-                                ? <BookSlot setBookSlot={setBookSlot} storeData={storeData} navigation={props.navigation} />
+                                ? <BookSlotSlider setBookSlot={setBookSlot} storeData={storeData} navigation={props.navigation} />
                                 : <TouchableNativeFeedback onPress={() => { setBookSlot(true) }} style={styles.button}>
                                     <Text style={styles.buttonText}>BOOK SLOT</Text>
                                 </TouchableNativeFeedback>
