@@ -1,23 +1,63 @@
 import React, { useState, useEffect } from 'react'
-import { View, StyleSheet, StatusBar, Dimensions, Text, Keyboard, KeyboardAvoidingView, ToastAndroid } from 'react-native'
+import { View, StyleSheet, StatusBar, Dimensions, Text, KeyboardAvoidingView, TouchableOpacity, TouchableHighlight, ToastAndroid, PermissionsAndroid } from 'react-native'
 import AsyncStorage from '@react-native-community/async-storage'
-import { ScrollView, TouchableWithoutFeedback, TextInput, TouchableOpacity } from 'react-native-gesture-handler'
+import { ScrollView, TextInput } from 'react-native-gesture-handler'
 import Svg, { Circle } from 'react-native-svg'
 import Icon from 'react-native-vector-icons/dist/MaterialIcons'
+import ImagePicker from 'react-native-image-picker';
 
 import StatusBarWhite from '../UXComponents/StatusBar'
 import NavbarBackButton from '../Header/NavbarBackButton'
-import ProfileBackground from '../UXComponents/ProfileBackground'
+
 
 const EditProfile = ({ navigation }) => {
 
     const [user, setUser] = useState({})
+
+    const [permissionStatus, setPermissionStatus] = useState(false)
 
     const [firstName, setFirstName] = useState("")
     const [lastName, setLastName] = useState("")
     const [phone, setPhone] = useState()
     const [email, setEmail] = useState("")
     const [location, setLocation] = useState()
+    const [avatar, setAvatar] = useState("");
+
+    const filePermission = async () => {
+        try {
+            const granted = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.CAMERA)
+            console.log(granted)
+            if (granted === PermissionsAndroid.RESULTS.GRANTED) setPermissionStatus(true);
+            else setPermissionStatus(false);
+        } catch (err) { console.warn(err) }
+    }
+
+    const selectPicture = () => {
+        const ImagePickerOptions = {
+            title: "Select Avatar"
+        }
+        filePermission()
+        if (permissionStatus === true) {
+            ToastAndroid.show("Permission granted", ToastAndroid.SHORT)
+            // ImagePicker.launchImageLibrary(ImagePickerOptions, (response) => {
+            //     console.log('Response = ', response);
+
+            //     if (response.didCancel) {
+            //         console.log('User cancelled image picker');
+            //     } else if (response.error) {
+            //         console.log('ImagePicker Error: ', response.error);
+            //     } else {
+            //         const source = { uri: response.uri };
+
+            //         // You can also display the image using data:
+            //         // const source = { uri: 'data:image/jpeg;base64,' + response.data };
+
+            //         setAvatar(source)
+            //     }
+            // });
+        }
+        else ToastAndroid.show("Storage permission required")
+    }
 
     useEffect(() => {
         const bootstraper = async () => {
@@ -31,6 +71,7 @@ const EditProfile = ({ navigation }) => {
                 setLastName(storedUser.lastName)
                 setPhone(storedUser.phone)
                 setEmail(storedUser.email)
+                setAvatar(storedUser.avatar)
             })
     }, [])
 
@@ -54,7 +95,8 @@ const EditProfile = ({ navigation }) => {
                     userData: {
                         firstName: firstName,
                         lastName: lastName,
-                        email: email
+                        email: email,
+                        avatar: avatar
                     }
                 }),
             }).then((res) => {
@@ -103,9 +145,12 @@ const EditProfile = ({ navigation }) => {
                                     :
                                     <Icon name="person" size={80} color="#0062FF" />
                             }
-                            <View style={styles.cameraContainer}>
+                            <TouchableHighlight
+                                style={styles.cameraContainer}
+                                onPress={() => { selectPicture() }}
+                            >
                                 <Icon name="camera-alt" size={18} color="#BDBDBD" />
-                            </View>
+                            </TouchableHighlight>
                         </View>
                     </View>
                     <Text style={styles.number}>+91 {user.phone}</Text>
@@ -144,22 +189,6 @@ const EditProfile = ({ navigation }) => {
                                 <Icon name="edit" color="#D7D7D7" size={24} />
                             </View>
                         </View>
-
-                        {/* <View style={styles.formObject}>
-                            <Text style={styles.formLabel}>
-                                Phone Number
-                            </Text>
-                            <View style={styles.inputContainer}>
-                                <TextInput
-                                    value={phone ? phone.toString() : null}
-                                    style={styles.formInput}
-                                    onChangeText={(value) => setPhone(Number(value))}
-                                    returnKeyType="done"
-                                    keyboardType="numeric"
-                                />
-                                <Icon name="edit" color="#D7D7D7" size={24} />
-                            </View>
-                        </View> */}
 
                         <View style={styles.formObject}>
                             <Text style={styles.formLabel}>

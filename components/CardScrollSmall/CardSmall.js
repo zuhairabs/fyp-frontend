@@ -65,7 +65,7 @@ const styles = StyleSheet.create({
         marginRight: 20,
     },
     card: {
-        height: 280,
+        height: 272,
         backgroundColor: "#fff",
         justifyContent: "flex-start",
 
@@ -73,8 +73,9 @@ const styles = StyleSheet.create({
         borderRadius: 15,
     },
     cardContent: {
-        padding: 15,
-        height: 140,
+        paddingHorizontal: 16,
+        paddingVertical: 8,
+        height: 134,
         justifyContent: "flex-end",
         alignItems: "flex-start",
     },
@@ -97,7 +98,7 @@ const styles = StyleSheet.create({
     },
     cardHeader: {
         width: "100%",
-        height: 140,
+        height: 138,
     },
     cardImage: {
         width: undefined,
@@ -110,7 +111,7 @@ const styles = StyleSheet.create({
         position: "absolute",
         bottom: 0,
         // right: -Math.floor(DEVICE_WIDTH/2.6),
-        right: "-12%",
+        right: "-10%",
         bottom: "-6%",
         elevation: 5,
     }

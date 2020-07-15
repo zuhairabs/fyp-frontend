@@ -45,15 +45,15 @@ const SingleBooking = (props) => {
                     .then((res) => {
                         if (res.status === 200)
                             res.json()
-                                .then(data => { 
-                                    setBooking(data.booking); 
+                                .then(data => {
+                                    setBooking(data.booking);
                                     setLoading(false)
                                 })
                         else {
                             res.json()
-                            .then(data =>{
-                                Alert.alert("Something went wrong ", data.error)
-                            })
+                                .then(data => {
+                                    Alert.alert("Something went wrong ", data.error)
+                                })
                         }
                     })
             })
@@ -130,8 +130,8 @@ const SingleBooking = (props) => {
                                     {
                                         booking.review ? null
                                             : <TouchableOpacity
-                                                style={booking.status !== "completed" ? styles.disabledButton : styles.defaultButton}
-                                                disabled={booking.status !== "completed"}
+                                                style={booking.status === "completed" || booking.status === "missed" ? styles.defaultButton : styles.disabledButton}
+                                                disabled={booking.status === "cancelled" || booking.status === "upcoming"}
                                                 onPress={() => {
                                                     props.navigation.navigate("Rating", { booking: booking })
                                                 }}

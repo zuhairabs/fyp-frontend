@@ -5,8 +5,7 @@ import {
     View,
     Image,
     TouchableOpacity,
-    Dimensions,
-    PixelRatio,
+    Dimensions
 } from 'react-native';
 import BookButton from '../UXComponents/BookButton'
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
@@ -23,9 +22,11 @@ const BigCard = (props) => {
                 style={styles.card}
                 setOutlineAmbientShadowColor="#f00"
             >
-                <View style={styles.cardRight}>
+                <View style={styles.cardLeft}>
                     <View>
-                        <Text style={styles.cardTitleSubtext}>hometown</Text>
+                        <Text style={styles.cardTitleSubtext}>
+                            {props.store.location_desc}
+                        </Text>
                     </View>
                     <View style={styles.cardTitle}>
                         <Text style={styles.cardTitleText} numberOfLines={1}>
@@ -43,7 +44,7 @@ const BigCard = (props) => {
                         <BookButton />
                     </TouchableOpacity>
                 </View>
-                <View style={styles.cardLeft}>
+                <View style={styles.cardRight}>
                     <Image source={{
                         uri: `data:image/gif;base64,${props.store.business.title_image || props.store.business.logo}`
                     }}
@@ -64,7 +65,6 @@ const styles = StyleSheet.create({
 
         height: 220,
         width: DEVICE_WIDTH,
-
     },
     card: {
         backgroundColor: "#fff",
@@ -72,15 +72,16 @@ const styles = StyleSheet.create({
         borderRadius: 12,
 
         height: 200,
-        width: DEVICE_WIDTH - 40,
+        width: DEVICE_WIDTH - 60,
         flexDirection: 'row',
         justifyContent: 'space-between',
 
-        marginLeft: 10,
         marginVertical: 10,
     },
-    cardRight: {
-        padding: 20,
+    cardLeft: {
+        paddingVertical: 24,
+        paddingLeft: 16,
+        paddingRight: 8,
         flex: 2,
         justifyContent: 'space-between',
         alignItems: 'flex-start',
@@ -92,17 +93,15 @@ const styles = StyleSheet.create({
         color: '#1162FB',
         fontSize: 24,
         fontWeight: "bold",
-        margin: 0,
-        padding: 0,
-        fontFamily: 'serif'
+        fontFamily: 'serif',
+        lineHeight: 24,
     },
     cardTitleTextBlack: {
         color: '#000',
         fontSize: 24,
         fontWeight: "bold",
-        margin: 0,
-        padding: 0,
-        fontFamily: 'serif'
+        fontFamily: 'serif',
+        lineHeight: 24,
     },
     cardTitleSubtext: {
         textTransform: 'uppercase',
@@ -121,7 +120,7 @@ const styles = StyleSheet.create({
         textTransform: 'uppercase',
         fontSize: 10,
     },
-    cardLeft: {
+    cardRight: {
         width: '100%',
         flex: 2,
         justifyContent: 'center',

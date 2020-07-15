@@ -4,14 +4,18 @@ import { TouchableOpacity, TouchableWithoutFeedback } from 'react-native-gesture
 
 import Icon from 'react-native-vector-icons/dist/MaterialIcons'
 
+const bookingStatusColor = {
+    completed: "#1AB542",
+    upcoming: "#0062FF",
+    missed: "#FCC225",
+    cancelled: "#E50A17"
+}
+
+const mlist = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
 const BookingCardSmall = (props) => {
-    const mlist = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
     const [extended, setExtended] = useState(false)
-
-    const statusTextColor = props.booking.status === "completed"
-        ? "#1AB542" : (props.booking.status === "cancelled"
-            ? "#E50A17" : "#FCC225")
 
     return (
         <View style={styles.card}>
@@ -56,7 +60,11 @@ const BookingCardSmall = (props) => {
                             </Text>
                         </View>
 
-                        <Text style={{ marginTop: 5, color: statusTextColor, textTransform: "capitalize" }}>
+                        <Text style={{
+                            marginTop: 5,
+                            color: bookingStatusColor[props.booking.status],
+                            textTransform: "capitalize"
+                        }}>
                             {props.booking.status}
                         </Text>
                     </View>
@@ -65,8 +73,8 @@ const BookingCardSmall = (props) => {
                     extended
                         ? <View style={styles.extension}>
                             <TouchableOpacity
-                                onPress={()=>{
-                                    props.navigation.navigate("SingleBooking", {archived: true, booking: props.booking._id})
+                                onPress={() => {
+                                    props.navigation.navigate("SingleBooking", { archived: true, booking: props.booking._id })
                                 }}
                                 style={styles.extensionTab}
                             >

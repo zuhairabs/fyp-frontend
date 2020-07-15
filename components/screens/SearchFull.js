@@ -6,13 +6,13 @@ import AsyncStorage from '@react-native-community/async-storage'
 import StatusBarWhite from '../UXComponents/StatusBar'
 import StoreCard from '../StoreCard/StoreCard'
 import { TouchableWithoutFeedback, TouchableOpacity } from 'react-native-gesture-handler'
-import { set } from 'react-native-reanimated'
 
 const DEVICE_HEIGHT = Dimensions.get('window').height;
 
 const SearchFull = (props) => {
     const inputBox = useRef()
 
+    const [dropdownOpen, setDropdown] = useState(false)
     const [results, setResults] = useState([])
     const [query, setQuery] = useState()
     const [loading, setLoading] = useState(false)
@@ -80,13 +80,20 @@ const SearchFull = (props) => {
         return array;
     }
 
-    const fullSearch = (query, model, id) => {
-        setLoading(true)
+    const clearPartialSearchResults = () => {
         inputBox.current?.blur()
         setStores([])
         setBrands([])
         setCategories([])
         setTags([])
+        setDropdown(false)
+        setText("")
+    }
+
+    const fullSearch = (query, model, id) => {
+        setLoading(true);
+        setDropdown(false);
+        clearPartialSearchResults();
         const bootstrapper = async () => {
             let token = await AsyncStorage.getItem("jwt")
             let user = JSON.parse(await AsyncStorage.getItem("user"))
@@ -106,6 +113,7 @@ const SearchFull = (props) => {
                     _id: id,
                 }),
             }).then((res) => {
+                clearPartialSearchResults();
                 if (res.status === 200) {
                     res.json().then((data) => {
                         let temp = []
@@ -131,7 +139,7 @@ const SearchFull = (props) => {
 
 
     const partialSearch = (query) => {
-        const bootstrapper = async () => {
+        const fetchPartialSearch = async () => {
             let token = await AsyncStorage.getItem("jwt")
             let user = JSON.parse(await AsyncStorage.getItem("user"))
             fetch("https://shopout.herokuapp.com/user/search/partial", {
@@ -154,6 +162,7 @@ const SearchFull = (props) => {
                         if (data.response[2]) setCategories(data.response[2]);
                         if (data.response[1]) setBrands(data.response[1]);
                         if (data.response[0]) setStores(data.response[0]);
+                        setDropdown(true)
                     });
                 }
                 else {
@@ -162,12 +171,20 @@ const SearchFull = (props) => {
                 }
             });
         }
-        bootstrapper();
+        if (query.length > 0)
+            fetchPartialSearch();
     }
 
-    const getDropdownBorderWidth = () => {
-        if (stores.length > 0 || tags.length > 0 || brands.length > 0 || categories.length > 0) return { borderWidth: 1 }
-        else return { borderWidth: 0 }
+    const getDropDownStyles = () => {
+        if (dropdownOpen)
+            return {
+                borderWidth: 1
+            }
+        else
+            return {
+                borderWidth: 0,
+                height: 0
+            }
     }
 
     return (
@@ -186,28 +203,28 @@ const SearchFull = (props) => {
                         onChangeText={(query) => { setText(query); partialSearch(query); }}
                         autoCompleteType='off'
                         placeholder={placeholder}
-                        onBlur={() => { setText(""); setBrands([]); setStores([]); setCategories([]); setTags([]); }}
+                        onBlur={() => { clearPartialSearchResults(); }}
                         blurOnSubmit={true}
                         placeholderTextColor="#707070"
                         autoFocus={true}
                         ref={inputBox}
                     />
                     <TouchableWithoutFeedback
-                        onPress={() => { setText(""); inputBox.current?.blur() }}
+                        onPress={() => { clearPartialSearchResults(); }}
                     >
                         {
                             inputBox.current?.isFocused()
                                 ?
                                 <Icon name="close" size={24} color="#666" />
-                                : 
-                                <View style={{width: 24}}></View>
+                                :
+                                <View style={{ width: 24 }}></View>
                         }
                     </TouchableWithoutFeedback>
                 </View>
 
                 {/* DROPDOWN FOR SUGGESTIONS */}
                 <ScrollView
-                    style={{ ...styles.suggestionDropdown, ...getDropdownBorderWidth() }}>
+                    style={{ ...styles.suggestionDropdown, ...getDropDownStyles() }}>
                     {stores.map(result => {
                         if (result.name)
                             return <TouchableOpacity

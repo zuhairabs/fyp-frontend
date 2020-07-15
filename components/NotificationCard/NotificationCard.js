@@ -48,6 +48,8 @@ const NotificationCard = ({ notification, navigation }) => {
         (notification.store.business.title_image ? notification.store.business.title_image : notification.store.business.logo)
         : "";
 
+    // const logo = notification.store && notification.store.business ? notification.store.business.logo : null
+
     return (
         <TouchableOpacity
             style={{

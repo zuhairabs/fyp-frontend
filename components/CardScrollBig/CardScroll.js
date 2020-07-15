@@ -70,8 +70,8 @@ const CardScroll = (props) => {
                     </View>
                         : <>
                             {
-                                stores.map((store, index) => {
-                                    return <BigCard key={index} store={store} navigation={props.navigation} />
+                                stores.map((store, _) => {
+                                    return <BigCard key={store._id} store={store} navigation={props.navigation} />
                                 })
                             }
                         </>
@@ -88,25 +88,25 @@ const styles = StyleSheet.create({
     },
     indicatorContainer: {
         flexDirection: "row",
-        justifyContent: "flex-start",
+        justifyContent: "space-around",
         alignItems: "center",
         position: "absolute",
         bottom: 5,
-        right: 32, //card border radius + card margin horizontal
+        right: 52, //card border radius + card margin horizontal
         zIndex: 2,
+        width: 55,
     },
     indicatorSelected: {
         paddingVertical: 1,
-        paddingHorizontal: 3,
-        marginHorizontal: 3,
+        paddingHorizontal: 5,
         borderWidth: 1,
         borderColor: "#0062FF",
         borderRadius: 6,
         opacity: 1,
     },
     indicator: {
-        paddingHorizontal: 2,
-        marginHorizontal: 1,
+        paddingRight: 2,
+        paddingLeft: 3,
         borderWidth: 1,
         borderColor: "#0062FF",
         opacity: 0.5,

@@ -2,17 +2,20 @@ import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, FlatList, Image, View } from 'react-native';
 
 import Other from './svg/other'
-import Apparels from './svg/apparels'
-import Cafe from './svg/cafe'
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
 const CategoryScroll = (props) => {
     const [categories, setCategories] = useState([])
+
     useEffect(() => {
         const formatData = async () => {
             let data = []
             props.categories.forEach(element => {
-                data.push({ key: element._id, name: element.name })
+                data.push({
+                    key: element._id,
+                    name: element.name,
+                    icon: element.icon
+                })
             });
             return data
         }
@@ -25,13 +28,16 @@ const CategoryScroll = (props) => {
         return (
             <View style={styles.scrollCardContainer}>
                 <>
-                <TouchableOpacity style={styles.categoryScrollCard}>
-                    {/* <Image source={require(`./svg/${item.name.toLowerCase()}.svg`)} height={12} width={12} /> */}
-                    <Other />
-                </TouchableOpacity>
-                <Text style={styles.CategoryScrollText}>
-                    {item.name.toLowerCase()}
-                </Text>
+                    <TouchableOpacity style={styles.categoryScrollCard}>
+                        {
+                            item.icon
+                                ? <Image source={{ uri: `data:image/png;base64,${item.icon}` }} style={styles.image} />
+                                : <Other height={24} width={24} />
+                        }
+                    </TouchableOpacity>
+                    <Text style={styles.CategoryScrollText}>
+                        {item.name.toLowerCase()}
+                    </Text>
                 </>
             </View>
         );
@@ -49,18 +55,24 @@ const CategoryScroll = (props) => {
 
 const styles = StyleSheet.create({
     CategoryScroll: {
-        marginHorizontal: 20,
         marginBottom: 5,
         marginTop: 5,
-        padding: 5,
+        padding: 10,
         flexDirection: "row",
     },
     scrollCardContainer: {
         margin: 2,
-        marginHorizontal: 24,
+        marginHorizontal: 18,
         marginBottom: 5,
         justifyContent: "center",
         alignItems: "center"
+    },
+    image: {
+        resizeMode: "contain",
+        flex: 1,
+        height: 24,
+        width: 24,
+        opacity: 0.5
     },
     CategoryScrollText: {
         color: "#666",
@@ -68,14 +80,15 @@ const styles = StyleSheet.create({
         textTransform: "capitalize",
     },
     categoryScrollCard: {
-        paddingVertical: 8,
         marginBottom: 5,
         borderRadius: 12 / 2,
-        width: 48,
+        height: 50,
+        width: 50,
         backgroundColor: "#fff",
         elevation: 10,
+        zIndex: 2,
         justifyContent: "center",
-        alignItems: "center"
+        alignItems: "center",
     }
 });
 

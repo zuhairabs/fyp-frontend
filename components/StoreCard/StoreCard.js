@@ -1,17 +1,20 @@
 import React from 'react'
-import { Text, View, StyleSheet, Image, ToastAndroid, TouchableOpacity, TouchableWithoutFeedback, Alert } from 'react-native'
+import { Text, View, StyleSheet, Image, ToastAndroid, TouchableOpacity, Alert } from 'react-native'
+import { TouchableWithoutFeedback } from 'react-native-gesture-handler'
 import AsyncStorage from '@react-native-community/async-storage'
 import Icon from 'react-native-vector-icons/dist/MaterialIcons'
 
 import RatingBadge from '../Rating/RatingBadge'
 import BookButton from '../UXComponents/BookButton'
 
+const bookingStatusColor = {
+    completed: "#1AB542",
+    upcoming: "#0062FF",
+    missed: "#FCC225",
+    cancelled: "#E50A17"
+}
+
 const StoreCard = (props) => {
-
-    const statusTextColor = props.status === "completed"
-        ? "#1AB542" : (props.status === "cancelled"
-            ? "#E50A17" : "#FCC225")
-
     const removeFavourite = () => {
         const bootstrapper = async () => {
             let user = JSON.parse(await AsyncStorage.getItem("user"));
@@ -61,6 +64,7 @@ const StoreCard = (props) => {
                                         props.removeFavourite(props.store._id)
                                     })
                                 }
+                                else ToastAndroid.show("Unable to remove favourite", ToastAndroid.SHORT)
                             })
                         })
                     },
@@ -115,7 +119,11 @@ const StoreCard = (props) => {
                             </Text>
                             {
                                 props.status &&
-                                <Text style={{ marginTop: 5, color: statusTextColor, textTransform: "capitalize" }}>
+                                <Text style={{
+                                    marginTop: 5,
+                                    color: bookingStatusColor[props.status],
+                                    textTransform: "capitalize"
+                                }}>
                                     {props.status}
                                 </Text>
                             }
