@@ -1,6 +1,5 @@
 import React from 'react'
-import { Text, View, StyleSheet, Image } from 'react-native'
-import { TouchableOpacity } from 'react-native-gesture-handler'
+import { Text, View, StyleSheet, Image, TouchableOpacity, ToastAndroid } from 'react-native'
 
 const DAY_LENGTH = 24 * 60 * 60 * 1000;
 const WEEK_LENGTH = 7 * DAY_LENGTH;
@@ -20,7 +19,7 @@ export const NotificationLoadingEffect = () => {
     )
 }
 
-const NotificationCard = ({ notification }) => {
+const NotificationCard = ({ notification, navigation }) => {
 
     const calculateNotificationTime = (time) => {
         let generatedTime = new Date(time).getTime()
@@ -36,15 +35,29 @@ const NotificationCard = ({ notification }) => {
         else return `${Math.floor(offset / MONTH_LENGTH)} months ago`
     }
 
+    const handleNotificationCardPress = () => {
+        console.log(notification.archived)
+        if (notification.booking)
+            navigation.navigate("SingleBooking", { booking: notification.booking, archived: notification.archived })
+        else if (notification.store)
+            navigation.navigate("Store", { store: notification.store, searched: false })
+        else ToastAndroid.show("No actions available", ToastAndroid.SHORT)
+    }
+
     const logo = notification.store && notification.store.business ?
         (notification.store.business.title_image ? notification.store.business.title_image : notification.store.business.logo)
         : "";
 
     return (
-        <TouchableOpacity style={{
-            ...styles.container,
-            backgroundColor: notification.readStatus ? "#FFF" : "#0062FF05"
-        }}>
+        <TouchableOpacity
+            style={{
+                ...styles.container,
+                backgroundColor: notification.readStatus ? "#FFF" : "#0062FF05"
+            }}
+            onPress={() => {
+                handleNotificationCardPress();
+            }}
+        >
             <View
                 style={{
                     ...styles.imageContainer,
@@ -62,7 +75,6 @@ const NotificationCard = ({ notification }) => {
                     {notification.text}
                 </Text>
                 <Text style={styles.date}>
-                    {/* {new Date(notification.generatedTime).toDateString()} */}
                     {calculateNotificationTime(notification.generatedTime)}
                 </Text>
             </View>

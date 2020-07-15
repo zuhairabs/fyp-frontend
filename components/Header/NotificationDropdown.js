@@ -12,15 +12,16 @@ const Dropdown = ({ navigation }) => {
     const [notifications, setNotifications] = useState([])
     const [loading, setLoading] = useState(false)
 
+    const loadNotificationsFromAsyncStorage = async () => {
+        let storedNotifications = JSON.parse(await AsyncStorage.getItem("user")).notifications
+        return storedNotifications
+    }
+
     useEffect(() => {
-        const bootstrapper = async () => {
-            let notifications = JSON.parse(await AsyncStorage.getItem("user")).notifications
-            return notifications
-        }
         setLoading(true)
-        bootstrapper()
-            .then(notifications => {
-                if (notifications) setNotifications(notifications)
+        loadNotificationsFromAsyncStorage()
+            .then(storedNotifications => {
+                if (storedNotifications) setNotifications(storedNotifications)
                 else setNotifications([])
                 setLoading(false)
             })
@@ -37,7 +38,7 @@ const Dropdown = ({ navigation }) => {
                     && <ScrollView style={{ height: "85%" }}>
                         {
                             Array.from({ length: 5 }, (_, k) => {
-                                return <NotificationLoadingEffect />
+                                return <NotificationLoadingEffect key={k} />
                             })
                         }
                     </ScrollView>
@@ -51,7 +52,11 @@ const Dropdown = ({ navigation }) => {
                             {
                                 notifications.map(notification => {
                                     return <Suspense fallback={<NotificationLoadingEffect />}>
-                                        <NotificationCard key={notification._id} notification={notification} />
+                                        <NotificationCard
+                                            key={notification._id}
+                                            notification={notification}
+                                            navigation={navigation}
+                                        />
                                     </Suspense>
                                 })
                             }
@@ -59,7 +64,7 @@ const Dropdown = ({ navigation }) => {
                 }
                 <TouchableOpacity
                     style={styles.footer}
-                    onPress={() => navigation.navigate("NotificationsFull", {notifications: notifications})}
+                    onPress={() => navigation.navigate("NotificationsFull", { notifications: notifications })}
                 >
                     <Text>View All</Text>
                 </TouchableOpacity>
@@ -136,12 +141,6 @@ const styles = StyleSheet.create({
         borderTopWidth: 1,
         borderColor: "#6666662F",
         fontSize: 18,
-    },
-    activityIndicatorContainer: {
-        height: "50%",
-        width: "100%",
-        justifyContent: "center",
-        alignItems: "center",
     }
 })
 

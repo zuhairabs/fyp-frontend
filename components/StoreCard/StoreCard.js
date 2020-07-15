@@ -1,6 +1,5 @@
 import React from 'react'
-import { Text, View, StyleSheet, Image, ToastAndroid, Alert } from 'react-native'
-import { TouchableOpacity, TouchableWithoutFeedback } from 'react-native-gesture-handler'
+import { Text, View, StyleSheet, Image, ToastAndroid, TouchableOpacity, TouchableWithoutFeedback, Alert } from 'react-native'
 import AsyncStorage from '@react-native-community/async-storage'
 import Icon from 'react-native-vector-icons/dist/MaterialIcons'
 
@@ -74,25 +73,32 @@ const StoreCard = (props) => {
 
     return (
         <View style={styles.container}>
-            <View
-                style={styles.details}
-                onStartShouldSetResponder={()=>true}
-                onResponderStart={()=>{
-                    props.navigation.navigate("Store", {
-                        store: props.store._id,
-                        searched: props.searched ? true : false
-                    })
-                }}
-            >
-                <View style={styles.imageContainer}>
+            <View style={styles.details}>
+                <TouchableOpacity
+                    onPress={() => {
+                        props.navigation.navigate("Store", {
+                            store: props.store._id,
+                            searched: props.searched ? true : false
+                        })
+                    }}
+                    style={styles.imageContainer}
+                >
                     <Image source={{
                         uri: `data:image/gif;base64,${props.store.business.title_image || props.store.business.logo}`
                     }}
                         style={styles.image}
                     />
                     <View style={styles.imageFiller}></View>
-                </View>
-                <View style={styles.cardContent}>
+                </TouchableOpacity>
+                <TouchableOpacity
+                    style={styles.cardContent}
+                    onPress={() => {
+                        props.navigation.navigate("Store", {
+                            store: props.store._id,
+                            searched: props.searched ? true : false
+                        })
+                    }}
+                >
                     <View>
                         <Text
                             style={styles.heading}
@@ -126,7 +132,7 @@ const StoreCard = (props) => {
                             </TouchableOpacity>
                     }
 
-                </View>
+                </TouchableOpacity>
             </View>
             <View style={styles.rating}>
                 {

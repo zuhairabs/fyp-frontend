@@ -35,6 +35,42 @@ import Rating from './components/screens/Rating';
 const App = () => {
   // console.disableYellowBox = true;
 
+  const fetchNotifications = async () => {
+    const bootstrapAsync = async () => {
+      let user = JSON.parse(await AsyncStorage.getItem("user"))
+      let token = await AsyncStorage.getItem("jwt")
+      return { user, token }
+    }
+    bootstrapAsync()
+      .then(({ user, token }) => {
+        fetch("https://shopout.herokuapp.com/user/notifications", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            authorization: "Bearer " + token,
+          },
+          body: JSON.stringify({
+            cred: {
+              phone: user.phone,
+            },
+          }),
+        })
+          .then(res => {
+            if (res.status === 200) {
+              res.json().then(async data => {
+                let user = JSON.parse(await AsyncStorage.getItem("user"));
+                let notifs = data.notifications
+                user.notifications = notifs.reverse();
+                await AsyncStorage.setItem("user", JSON.stringify(user));
+              })
+            }
+          })
+          .catch(e => {
+            console.log(e);
+          })
+      })
+  }
+
   const [state, dispatch] = React.useReducer(
     (prevState, action) => {
       switch (action.type) {
@@ -159,10 +195,7 @@ const App = () => {
 
     // foreground message handler
     messaging().onMessage(async remoteMessage => {
-      console.log('A new FCM message arrived!', JSON.stringify(remoteMessage));
-      let user = JSON.parse(await AsyncStorage.getItem("user"));
-      user.notifications?.push(remoteMessage.notification);
-      await AsyncStorage.setItem("user", JSON.stringify(user));
+      fetchNotifications();
     });
   }
 
