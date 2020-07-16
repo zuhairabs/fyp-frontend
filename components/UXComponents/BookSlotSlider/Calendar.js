@@ -1,10 +1,5 @@
-import React from 'react'
-import { Dimensions, View, StyleSheet, Text, ActivityIndicator, ToastAndroid } from 'react-native'
-import { TouchableWithoutFeedback, TouchableOpacity } from 'react-native-gesture-handler';
+import React, { useState } from 'react'
 import { Calendar, LocaleConfig } from 'react-native-calendars'
-const WINDOW_HEIGHT = Dimensions.get('window').height;
-const WINDOW_WIDTH = Dimensions.get('window').width;
-const DEVICE_HEIGHT = Dimensions.get('screen').height;
 
 Date.prototype.addDays = function (days) {
     var date = new Date(this.valueOf());
@@ -25,7 +20,20 @@ LocaleConfig.locales['en'] = {
 };
 LocaleConfig.defaultLocale = 'en';
 
-const StoreCalendar = ({ submitDateSelection, setSelectedDate, working_days }) => {
+const calendarTheme = {
+    backgroundColor: "#FFF",
+    monthTextColor: "#0062FF",
+    textMonthFontSize: 18,
+
+    indicatorColor: "#0062FF",
+    arrowColor: "#0062FF",
+
+    dayTextColor: "#0062FF",
+    selectedDotColor: "#0062FF00",
+    textDayHeaderFontWeight: "bold",
+}
+
+export default function StoreCalendar({ setSelectedDate, working_days }) {
     const today = new Date();
     const [maxDate] = useState(today.addDays(30));
     const [minDate] = useState(today.addDays(1));
@@ -45,7 +53,8 @@ const StoreCalendar = ({ submitDateSelection, setSelectedDate, working_days }) =
         }
         else return {}
     }
-    const onDaySelect = (day) => {
+
+    const onDayPress = (day) => {
         const selected = day.dateString;
         setCurrent(selected);
         const data = {}
@@ -58,10 +67,18 @@ const StoreCalendar = ({ submitDateSelection, setSelectedDate, working_days }) =
         setMarkedDate(data);
         setSelectedDate(selected);
     }
+
+    return (
+        <Calendar
+            current={current}
+            minDate={minDate}
+            maxDate={maxDate}
+            hideExtraDays={true}
+            disableAllTouchEventsForDisabledDays={true}
+            theme={calendarTheme}
+            onDayPress={(day) => { onDayPress(day) }}
+            disabledDaysIndexes={[0, 6]}
+            markedDates={{ ...markedDate, ...getDisabledDays() }}
+        />
+    )
 }
-
-const styles = StyleSheet.create({
-
-})
-
-export default StoreCalendar

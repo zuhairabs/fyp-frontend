@@ -2,7 +2,6 @@ import React, { useState, createRef } from 'react'
 import {
     View,
     StyleSheet,
-    Text,
     Image,
     Dimensions
 } from 'react-native'

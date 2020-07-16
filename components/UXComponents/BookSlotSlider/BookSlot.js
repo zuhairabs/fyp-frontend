@@ -1,28 +1,16 @@
-import React, { useState, useEffect, createRef } from 'react'
+import React, { useState, createRef } from 'react'
 import { Dimensions, View, StyleSheet, Text, ActivityIndicator, ToastAndroid } from 'react-native'
 import { TouchableWithoutFeedback, TouchableOpacity } from 'react-native-gesture-handler';
 import AsyncStorage from '@react-native-community/async-storage'
 import Icon from 'react-native-vector-icons/dist/MaterialIcons'
-import DateTimePicker from '@react-native-community/datetimepicker';
 import Modal from 'react-native-modalbox';
-
-import { Calendar, LocaleConfig } from 'react-native-calendars'
 
 import Add from '../Add.svg'
 import Minus from '../Minus.svg'
 import CheckBox from '../CheckBox.svg'
 import CheckBoxFilled from '../CheckBoxFilled.svg'
-
-const monthNames = ['JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUNE', 'JULY', 'AUGUST', 'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER']
-
-LocaleConfig.locales['en'] = {
-    monthNames: ['JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUNE', 'JULY', 'AUGUST', 'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER'],
-    monthNamesShort: ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEPT', 'OCT', 'NOV', 'DEC'],
-    dayNames: ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'],
-    dayNamesShort: ['S', 'M', 'T', 'W', 'T', 'F', 'S'],
-    today: 'Today'
-};
-LocaleConfig.defaultLocale = 'en';
+import Calendar, { monthNames } from './Calendar'
+import TimePicker, { timeToString, stringToTime, MINUTE } from './TimePicker'
 
 const WINDOW_HEIGHT = Dimensions.get('window').height;
 const WINDOW_WIDTH = Dimensions.get('window').width;
@@ -37,147 +25,54 @@ const BookSlotSlider = (props) => {
     }
 
     const [screen, setScreen] = useState(0);
-    // calendar
-    const date = new Date();
-    const [maxDate, _setMaxDate] = useState(date.addDays(30));
-    const [minDate, _setMinDate] = useState(date.addDays(1));
-    const [current, setCurrent] = useState(date.addDays(1));
-    const [markedDate, setMarkedDate] = useState({});
     const [selectedDate, setSelectedDate] = useState();
 
     // time picker
-    const [start, setStart] = useState("")
-    const [end, setEnd] = useState("")
+    const [start, setStart] = useState(props.storeData.active_hours[0].start)
+    const [end, setEnd] = useState(timeToString(stringToTime(props.storeData.active_hours[0].start) + 30 * MINUTE))
     const [visitors, setVisitors] = useState(1)
     const [assistance, setAssistance] = useState(false)
-
-    const [minTime, setMinTime] = useState();
-    const [maxTime, setMaxTime] = useState();
-    const [showTimeDialog, setShowTimeDialog] = useState(false);
-    const [showTimeDialogEnd, setShowTimeDialogEnd] = useState(false);
 
     // error modal
     const [modalText, setModalText] = useState("");
     const [errorModal, setErrorModal] = useState(false);
     const loadingModal = createRef();
 
-    const onChange = (event, selectedTime) => {
-        setShowTimeDialog(false);
-        if (selectedTime
-            && selectedTime.getTime() >= minTime.getTime()
-            && selectedTime.getTime() < maxTime.getTime()
-        ) {
-            setStart(selectedTime);
-            if (Number(selectedTime.getHours()) >= Number(end.getHours()))
-                setEnd(new Date(selectedTime.getTime() + 30 * 60 * 1000))
+    const bootstrapper = async () => {
+        let user = JSON.parse(await AsyncStorage.getItem("user"))
+        let token = await AsyncStorage.getItem("jwt")
+        const bookingData = {
+            store: props.storeData._id,
+            user: user._id,
+            start: selectedDate + "T" + start + ":00.00+05:30",
+            end: selectedDate + "T" + end + ":00.00+05:30",
+            visitors: visitors,
+            assistance: assistance,
         }
-    }
-
-    const onChangeEnd = (event, selectedTime) => {
-        setShowTimeDialogEnd(false);
-        if (selectedDate
-            && selectedTime.getTime() > start.getTime()
-            && selectedTime.getTime() <= maxTime.getTime()
-            && selectedTime.getTime() > minTime.getTime()
-        )
-            setEnd(selectedTime)
-    }
-
-    useEffect(() => {
-        const s = props.storeData.active_hours[0].start.split(":");
-        const e = props.storeData.active_hours[0].end.split(":");
-        const startHours = s[0], startMin = s[1];
-        const endHours = e[0], endMin = e[1];
-        const startDate = new Date();
-        const endDate = new Date();
-        const maxDate = new Date();
-        startDate.setHours(startHours)
-        startDate.setMinutes(startMin)
-        setStart(startDate)
-        setMinTime(startDate)
-        maxDate.setHours(endHours);
-        maxDate.setMinutes(endMin);
-        setMaxTime(maxDate)
-        endDate.setHours(Number(startMin) > 0 ? (Number(startHours) + 1).toString() : startHours)
-        endDate.setMinutes(Number(startMin) > 0 ? '00' : (Number(startMin) + 30).toString())
-        setEnd(endDate)
-    }, [])
-
-    const onDayPress = (day) => {
-        const selected = day.dateString;
-        setCurrent(selected);
-        const data = {}
-        data[selected] = {
-            selected: true,
-            marked: true,
-            selectedColor: "#0062FF",
-            color: "#fff"
-        }
-        setMarkedDate(data);
-        setSelectedDate(selected);
-        getDisabledDays();
-    }
-
-    const getDisabledDays = () => {
-        const working_days = props.storeData.working_days;
-        if (working_days && working_days.length > 0) {
-            const todayDate = new Date()
-            const maxDate = (new Date()).addDays(31)
-            let res = {}
-            for (let i = todayDate; i.getTime() <= maxDate.getTime(); i = i.addDays(1))
-                if (working_days.indexOf(i.getUTCDay()) === -1)
-                    res[i.toISOString().slice(0, 10)] = {
-                        disabled: true
-                    }
-            return res;
-        }
-        else return {}
+        return ({ bookingData, token, user })
     }
 
     const submitDate = () => {
-        if (selectedDate)
-            setScreen(1)
-        else
-            ToastAndroid.show("Please select a date", ToastAndroid.SHORT)
+        if (selectedDate) setScreen(1)
+        else ToastAndroid.show("Please select a date", ToastAndroid.SHORT)
     }
 
-    const submitBooking = () => {
-        setModalText("Waiting for approval")
-        setErrorModal(false)
-        loadingModal.current.open();
-
-        const bootstrapper = async () => {
-            let user = JSON.parse(await AsyncStorage.getItem("user"))
-            let token = await AsyncStorage.getItem("jwt")
-
-            let startString = (Number(start.getHours()) > 9 ? start.getHours() : '0' + start.getHours()) + ':' + (Number(start.getMinutes()) > 9 ? start.getMinutes() : '0' + start.getMinutes())
-            let endString = (Number(end.getHours()) > 9 ? end.getHours() : '0' + end.getHours()) + ':' + (Number(end.getMinutes()) > 9 ? end.getMinutes() : '0' + end.getMinutes())
-
-            const bookingData = {
-                store: props.storeData._id,
-                user: user._id,
-                start: selectedDate + "T" + startString + ":00.00+05:30",
-                end: selectedDate + "T" + endString + ":00.00+05:30",
-                visitors: visitors,
-                assistance: assistance,
-            }
-            return ({ bookingData, token, user })
-        }
-        bootstrapper().then(({ bookingData, token, user }) => {
-            fetch('https://shopout.herokuapp.com/user/booking/approval', {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "authorization": "Bearer " + token
-                },
-                body: JSON.stringify({
-                    bookingData: bookingData,
-                    cred: {
-                        phone: user.phone
-                    }
-                })
-            })
-                .then(res => {
+    const getBookingApproval = () => {
+        bootstrapper()
+            .then(({ bookingData, token, user }) => {
+                fetch('https://shopout.herokuapp.com/user/booking/approval', {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "authorization": "Bearer " + token
+                    },
+                    body: JSON.stringify({
+                        bookingData: bookingData,
+                        cred: {
+                            phone: user.phone
+                        }
+                    })
+                }).then(res => {
                     if (res.status === 200) {
                         res.json().then(data => {
                             let tempApp = true;
@@ -186,36 +81,7 @@ const BookSlotSlider = (props) => {
                             });
                             if (tempApp === true) {
                                 setModalText("Booking your slot")
-                                bootstrapper().then(({ bookingData, token, user }) => {
-                                    fetch('https://shopout.herokuapp.com/user/book', {
-                                        method: "POST",
-                                        headers: {
-                                            "Content-Type": "application/json",
-                                            "authorization": "Bearer " + token
-                                        },
-                                        body: JSON.stringify({
-                                            bookingData: bookingData,
-                                            cred: {
-                                                phone: user.phone
-                                            }
-                                        })
-                                    })
-                                        .then(res => {
-                                            if (res.status === 200) {
-                                                res.json()
-                                                    .then(data => {
-                                                        props.navigation.navigate("Congratulations", {
-                                                            text: "Your booking has been successfully created",
-                                                            booking: data.booking
-                                                        })
-                                                    })
-                                            }
-                                            else {
-                                                setErrorModal(true);
-                                                setModalText("Something went wrong");
-                                            }
-                                        })
-                                })
+                                bookSlot();
                             }
                             else {
                                 setErrorModal(true)
@@ -232,7 +98,47 @@ const BookSlotSlider = (props) => {
                         setModalText("Something went wrong please try again later")
                     }
                 })
+            })
+    }
+
+    const bookSlot = () => {
+        bootstrapper().then(({ bookingData, token, user }) => {
+            fetch('https://shopout.herokuapp.com/user/book', {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "authorization": "Bearer " + token
+                },
+                body: JSON.stringify({
+                    bookingData: bookingData,
+                    cred: {
+                        phone: user.phone
+                    }
+                })
+            })
+                .then(res => {
+                    if (res.status === 200) {
+                        res.json()
+                            .then(data => {
+                                props.navigation.navigate("Congratulations", {
+                                    text: "Your booking has been successfully created",
+                                    booking: data.booking
+                                })
+                            })
+                    }
+                    else {
+                        setErrorModal(true);
+                        setModalText("Something went wrong");
+                    }
+                })
         })
+    }
+
+    const submitBooking = () => {
+        setModalText("Waiting for approval")
+        setErrorModal(false)
+        loadingModal.current.open();
+        getBookingApproval()
     }
 
     return (
@@ -273,151 +179,73 @@ const BookSlotSlider = (props) => {
 
                 {
                     screen === 0 ?
-                        (
-                            <>
-                                <Calendar style={styles.calendar}
-                                    current={current}
-                                    minDate={minDate}
-                                    maxDate={maxDate}
-                                    hideExtraDays={true}
-                                    disableAllTouchEventsForDisabledDays={true}
-                                    theme={{
-                                        backgroundColor: "#FFF",
-                                        monthTextColor: "#0062FF",
-                                        textMonthFontSize: 18,
-
-                                        indicatorColor: "#0062FF",
-                                        arrowColor: "#0062FF",
-
-                                        dayTextColor: "#0062FF",
-                                        selectedDotColor: "#0062FF00",
-                                        textDayHeaderFontWeight: "bold",
-                                    }}
-                                    onDayPress={(day) => { onDayPress(day) }}
-                                    disabledDaysIndexes={[0, 6]}
-                                    markedDates={{ ...markedDate, ...getDisabledDays() }}
-                                />
-                                <View style={styles.buttonArea}>
-                                    <TouchableOpacity style={styles.defaultButton} onPress={() => { submitDate() }}>
-                                        <Text style={styles.defaultButtonText}>confirm</Text>
-                                    </TouchableOpacity>
-                                </View>
-                            </>
-                        )
+                        <>
+                            <View style={styles.buttonArea}>
+                                <TouchableOpacity style={styles.defaultButton} onPress={() => { submitDate() }}>
+                                    <Text style={styles.defaultButtonText}>confirm</Text>
+                                </TouchableOpacity>
+                            </View>
+                            <Calendar working_days={props.storeData.working_days} setSelectedDate={setSelectedDate} />
+                        </>
                         :
-                        (
-                            <>
-                                <View style={styles.linkContainerTop}>
-                                    <Text style={styles.linkTop}>
-                                        {new Date(selectedDate).getUTCDate()} {monthNames[new Date(selectedDate).getUTCMonth()]} {new Date(selectedDate).getUTCFullYear()}
-                                    </Text>
-                                </View>
-                                <View style={styles.timeContainer}>
-                                    <Text style={styles.timeHeading}>
-                                        Please choose a slot
-                                    </Text>
-                                    <View style={styles.timeSelector}>
-                                        <Text style={styles.timeText}>Check In</Text>
-                                        <View style={styles.timeBox}>
-                                            <TouchableWithoutFeedback
-                                                onPress={() => {
-                                                    setShowTimeDialog(true)
-                                                }}
-                                            >
-                                                <Text style={styles.time}>
-                                                    {start.getHours() > 12 ? start.getHours() - 12 : start.getHours()}:
-                                                    {start.getMinutes() < 10 ? 0 : null}{start.getMinutes()}
-                                                    {start.getHours() >= 12 ?
-                                                        <Text> PM</Text> : <Text> AM</Text>
-                                                    }
-                                                </Text>
-                                            </TouchableWithoutFeedback>
-                                            {showTimeDialog && (
-                                                <DateTimePicker
-                                                    testID="dateTimePicker"
-                                                    value={start}
-                                                    mode='time'
-                                                    display="default"
-                                                    is24Hour={false}
-                                                    onChange={onChange}
-                                                    minuteInterval={30}
-                                                />
-                                            )}
-                                        </View>
-                                    </View>
-                                    <View style={styles.timeSelector}>
-                                        <Text style={styles.timeText}>Check Out</Text>
-                                        <View style={styles.timeBox}>
-                                            <TouchableWithoutFeedback
-                                                onPress={() => {
-                                                    setShowTimeDialogEnd(true)
-                                                }}
-                                            >
-                                                <Text style={styles.time}>
-                                                    {end.getHours() > 12 ? end.getHours() - 12 : end.getHours()}:
-                                                    {end.getMinutes() < 10 ? 0 : null}{end.getMinutes()}
-                                                    {end.getHours() >= 12 ?
-                                                        <Text> PM</Text> : <Text> AM</Text>
-                                                    }
-                                                </Text>
-                                            </TouchableWithoutFeedback>
-                                            {showTimeDialogEnd && (
-                                                <DateTimePicker
-                                                    testID="dateTimePicker"
-                                                    value={end}
-                                                    mode='time'
-                                                    display="default"
-                                                    is24Hour={false}
-                                                    onChange={onChangeEnd}
-                                                    minuteInterval={30}
-                                                />
-                                            )}
-                                        </View>
-                                    </View>
-                                </View>
-                                <View style={styles.iconContainer}>
-                                    <View style={styles.iconItem}>
-                                        <Text style={styles.timeText}>Number of People</Text>
-                                        <View style={styles.iconBox}>
-                                            <TouchableOpacity onPress={() => setVisitors(visitors - 1 > 0 ? visitors - 1 : visitors)}>
-                                                <Minus />
-                                            </TouchableOpacity>
-                                            <View style={styles.visitorsContainer}>
-                                                <Text style={styles.visitorsText}>{visitors}</Text>
-                                            </View>
-                                            <TouchableOpacity onPress={() => setVisitors(visitors < 4 ? visitors + 1 : visitors)}>
-                                                <Add />
-                                            </TouchableOpacity>
-                                        </View>
-                                    </View>
-                                    <View style={styles.iconItem}>
-                                        <Text style={styles.timeText}>Need Assistance?</Text>
-                                        <View style={styles.iconBox}>
-                                            <TouchableOpacity onPress={() => { setAssistance(!assistance) }}>
-                                                {
-                                                    assistance ? <CheckBoxFilled /> : <CheckBox />
-                                                }
-                                            </TouchableOpacity>
-                                        </View>
-                                    </View>
-                                </View>
-                                <View style={styles.linkContainer}>
-                                    <TouchableWithoutFeedback onPress={() => setScreen(0)}>
-                                        <Text style={styles.link}>
-                                            Choose another day
-                                    </Text>
-                                    </TouchableWithoutFeedback>
-                                </View>
-                                <View style={styles.buttonArea}>
-                                    <TouchableOpacity style={styles.defaultButton} onPress={() => { submitBooking() }}>
-                                        <Text style={styles.defaultButtonText}>confirm</Text>
-                                    </TouchableOpacity>
-                                </View>
-                            </>
-                        )
-                }
-            </View >
+                        <>
+                            <View style={styles.buttonArea}>
+                                <TouchableOpacity style={styles.defaultButton} onPress={() => { submitBooking() }}>
+                                    <Text style={styles.defaultButtonText}>confirm</Text>
+                                </TouchableOpacity>
+                            </View>
 
+                            <View style={styles.linkContainer}>
+                                <TouchableWithoutFeedback onPress={() => setScreen(0)}>
+                                    <Text style={styles.link}>
+                                        Choose another day
+                                    </Text>
+                                </TouchableWithoutFeedback>
+                            </View>
+
+                            <View style={styles.iconContainer}>
+                                <View style={styles.iconItem}>
+                                    <Text style={styles.timeText}>Number of People</Text>
+                                    <View style={styles.iconBox}>
+                                        <TouchableOpacity onPress={() => setVisitors(visitors - 1 > 0 ? visitors - 1 : visitors)}>
+                                            <Minus />
+                                        </TouchableOpacity>
+                                        <View style={styles.visitorsContainer}>
+                                            <Text style={styles.visitorsText}>{visitors}</Text>
+                                        </View>
+                                        <TouchableOpacity onPress={() => setVisitors(visitors < 4 ? visitors + 1 : visitors)}>
+                                            <Add />
+                                        </TouchableOpacity>
+                                    </View>
+                                </View>
+                                <View style={styles.iconItem}>
+                                    <Text style={styles.timeText}>Need Assistance?</Text>
+                                    <View style={styles.iconBox}>
+                                        <TouchableOpacity onPress={() => { setAssistance(!assistance) }}>
+                                            {
+                                                assistance ? <CheckBoxFilled /> : <CheckBox />
+                                            }
+                                        </TouchableOpacity>
+                                    </View>
+                                </View>
+                            </View>
+
+                            <TimePicker
+                                start={start}
+                                end={end}
+                                setStart={setStart}
+                                setEnd={setEnd}
+                                storeEnd={props.storeData.active_hours[0].end}
+                            />
+
+                            <View style={styles.linkContainerTop}>
+                                <Text style={styles.linkTop}>
+                                    {new Date(selectedDate).getUTCDate()} {monthNames[new Date(selectedDate).getUTCMonth()]} {new Date(selectedDate).getUTCFullYear()}
+                                </Text>
+                            </View>
+                        </>
+                }
+            </View>
         </View >
     )
 }
@@ -457,6 +285,7 @@ const styles = StyleSheet.create({
         flex: 7,
         backgroundColor: "#FFF",
         marginTop: 20,
+        flexDirection: "column-reverse",
     },
     buttonArea: {
         flex: 1,

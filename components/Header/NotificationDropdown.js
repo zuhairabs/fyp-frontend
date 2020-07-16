@@ -111,7 +111,6 @@ const styles = StyleSheet.create({
         right: 0,
         top: 55,
         borderRadius: 15,
-        backgroundColor: "#fff",
         paddingBottom: 20,
     },
     notifications: {
