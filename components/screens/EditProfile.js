@@ -1,62 +1,77 @@
 import React, { useState, useEffect } from 'react'
-import { View, StyleSheet, StatusBar, Dimensions, Text, KeyboardAvoidingView, TouchableOpacity, TouchableHighlight, ToastAndroid, PermissionsAndroid } from 'react-native'
+import {
+    View,
+    StyleSheet,
+    StatusBar,
+    Dimensions,
+    Text,
+    KeyboardAvoidingView,
+    TouchableOpacity,
+    TouchableHighlight,
+    ToastAndroid,
+    PermissionsAndroid,
+    Image,
+    Alert
+} from 'react-native'
 import AsyncStorage from '@react-native-community/async-storage'
 import { ScrollView, TextInput } from 'react-native-gesture-handler'
 import Svg, { Circle } from 'react-native-svg'
 import Icon from 'react-native-vector-icons/dist/MaterialIcons'
 import ImagePicker from 'react-native-image-picker';
+import ImageResizer from 'react-native-image-resizer';
+import RNFS from 'react-native-fs'
 
 import StatusBarWhite from '../UXComponents/StatusBar'
 import NavbarBackButton from '../Header/NavbarBackButton'
 
 
-const EditProfile = ({ navigation }) => {
+const EditProfile = (props) => {
+    const { cachedUser } = props.route.params
+    const navigation = props.navigation
 
-    const [user, setUser] = useState({})
+    const [user, setUser] = useState(cachedUser)
 
-    const [permissionStatus, setPermissionStatus] = useState(false)
-
-    const [firstName, setFirstName] = useState("")
-    const [lastName, setLastName] = useState("")
-    const [phone, setPhone] = useState()
-    const [email, setEmail] = useState("")
+    const [firstName, setFirstName] = useState(cachedUser.firstName || "")
+    const [lastName, setLastName] = useState(cachedUser.lastName || "")
+    const [phone, setPhone] = useState(cachedUser.phone || null)
+    const [email, setEmail] = useState(cachedUser.email || "")
     const [location, setLocation] = useState()
-    const [avatar, setAvatar] = useState("");
+    const [avatar, setAvatar] = useState(cachedUser.avatar || "");
 
-    const filePermission = async () => {
+    async function requestPermission() {
         try {
-            const granted = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.CAMERA)
-            console.log(granted)
-            if (granted === PermissionsAndroid.RESULTS.GRANTED) setPermissionStatus(true);
-            else setPermissionStatus(false);
-        } catch (err) { console.warn(err) }
+            const granted = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE)
+            return (granted === PermissionsAndroid.RESULTS.GRANTED)
+        } catch (err) {
+            console.warn(err)
+        }
     }
 
     const selectPicture = () => {
         const ImagePickerOptions = {
             title: "Select Avatar"
         }
-        filePermission()
-        if (permissionStatus === true) {
-            ToastAndroid.show("Permission granted", ToastAndroid.SHORT)
-            // ImagePicker.launchImageLibrary(ImagePickerOptions, (response) => {
-            //     console.log('Response = ', response);
-
-            //     if (response.didCancel) {
-            //         console.log('User cancelled image picker');
-            //     } else if (response.error) {
-            //         console.log('ImagePicker Error: ', response.error);
-            //     } else {
-            //         const source = { uri: response.uri };
-
-            //         // You can also display the image using data:
-            //         // const source = { uri: 'data:image/jpeg;base64,' + response.data };
-
-            //         setAvatar(source)
-            //     }
-            // });
-        }
-        else ToastAndroid.show("Storage permission required")
+        requestPermission()
+            .then(granted => {
+                if (granted)
+                    ImagePicker.launchImageLibrary(ImagePickerOptions, (response) => {
+                        if (response.didCancel)
+                            console.log('User cancelled image picker');
+                        else if (response.error)
+                            ToastAndroid.show(`Error: ${response.error}`, ToastAndroid.SHORT);
+                        else {
+                            ImageResizer.createResizedImage(response.uri, 400, 400, "JPEG", 50, 0)
+                                .then(async compressedImage => {
+                                    const base64Image = await RNFS.readFile(compressedImage.uri, 'base64');
+                                    setAvatar(base64Image)
+                                })
+                                .catch(err => {
+                                    ToastAndroid.show(err, ToastAndroid.SHORT)
+                                });
+                        }
+                    });
+                else ToastAndroid.show("File permission required to upload image", ToastAndroid.LONG)
+            })
     }
 
     useEffect(() => {
@@ -64,15 +79,16 @@ const EditProfile = ({ navigation }) => {
             let storedUser = JSON.parse(await AsyncStorage.getItem("user"))
             return storedUser
         }
-        bootstraper()
-            .then((storedUser) => {
-                setUser(storedUser);
-                setFirstName(storedUser.firstName)
-                setLastName(storedUser.lastName)
-                setPhone(storedUser.phone)
-                setEmail(storedUser.email)
-                setAvatar(storedUser.avatar)
-            })
+        if (user === {})
+            bootstraper()
+                .then((storedUser) => {
+                    setUser(storedUser);
+                    setFirstName(storedUser.firstName)
+                    setLastName(storedUser.lastName)
+                    setPhone(storedUser.phone)
+                    setEmail(storedUser.email)
+                    setAvatar(storedUser.avatar)
+                })
     }, [])
 
     const save = () => {
@@ -104,13 +120,14 @@ const EditProfile = ({ navigation }) => {
                     user.firstName = firstName
                     user.lastName = lastName
                     user.email = email
+                    user.avatar = avatar
                     saveToAsync(user)
                         .then(() => {
                             ToastAndroid.show("Profile updated!", ToastAndroid.LONG)
                         })
                 }
                 else
-                    Alert.alert(res.statusText)
+                    Alert.alert(res.error)
             });
         }
         bootstrapper();
@@ -140,8 +157,8 @@ const EditProfile = ({ navigation }) => {
                     <View style={styles.userPhotoContainer}>
                         <View style={styles.photo}>
                             {
-                                user.avatar ?
-                                    <Image source={{ uri: `data:image/gif;base64,${user.avatar}` }} style={styles.avatar} />
+                                avatar && avatar.length > 0 ?
+                                    <Image source={{ uri: `data:image/gif;base64,${avatar}` }} style={styles.avatar} />
                                     :
                                     <Icon name="person" size={80} color="#0062FF" />
                             }
@@ -299,10 +316,9 @@ const styles = StyleSheet.create({
         alignItems: "center",
     },
     avatar: {
-        width: undefined,
-        height: undefined,
-        flex: 1,
-        resizeMode: "contain",
+        height: 100,
+        width: 100,
+        borderRadius: 50,
     },
     number: {
         color: "#FFF",

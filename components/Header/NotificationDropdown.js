@@ -98,13 +98,10 @@ const styles = StyleSheet.create({
         padding: 10,
     },
     dropdown: {
-        position: "absolute",
-
         height: Math.floor(Dimensions.get("window").height / 1.5),
         width: Math.floor(Dimensions.get("window").width) - 40,
 
         backgroundColor: "#fff",
-        zIndex: 10,
         elevation: 5,
         borderColor: "#E5E5E5",
         borderWidth: 1,
@@ -112,6 +109,9 @@ const styles = StyleSheet.create({
         top: 55,
         borderRadius: 15,
         paddingBottom: 20,
+
+        zIndex: 10,
+        position: "absolute",
     },
     notifications: {
         paddingBottom: 20,

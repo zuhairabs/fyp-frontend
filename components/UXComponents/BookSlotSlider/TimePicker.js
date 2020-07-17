@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { View, Text, StyleSheet, TouchableOpacity, Dimensions } from 'react-native'
-import { ScrollView, TouchableWithoutFeedback } from 'react-native-gesture-handler';
+import { ScrollView, TouchableWithoutFeedback, FlatList } from 'react-native-gesture-handler';
 
 Date.prototype.addDays = function (days) {
     var date = new Date(this.valueOf());
@@ -34,28 +34,42 @@ export const timeToString = (time) => {
 }
 
 
-const Dropdown = ({ list, onSelect, visible = false, selected }) => {
+const Dropdown = ({ list, onSelect, visible = false, selected, title }) => {
+    const [indexOfSelected] = useState(list.indexOf(selected) - 1)
+
+    const Item = ({ item }) => {
+        return <TouchableOpacity onPress={() => { onSelect(item); }}
+            style={styles.dropDownItem}>
+            <Text style={{
+                color: selected === item ? "#0062FF" : "#000",
+                fontWeight: selected === item ? "bold" : "regular"
+            }}>
+                {parseTimeTo12Hour(item)}
+            </Text>
+        </TouchableOpacity>
+    }
+
+    const getItemLayout = (index) => {
+        return {
+            length: 52,
+            offset: 52 * index,
+            index
+        }
+    }
+
     const getDropdownHeight = () => {
         if (visible) return { height: 180 };
         else return { height: 0 }
     }
 
     return <View style={{ ...styles.dropdown, ...getDropdownHeight() }}>
-        <ScrollView>
-            {
-                list.map((item, _) => {
-                    return <TouchableOpacity onPress={() => { onSelect(item); }}
-                        style={styles.dropDownItem}>
-                        <Text style={{
-                            color: selected === item ? "#0062FF" : "#000",
-                            fontWeight: selected === item ? "bold" : "regular"
-                        }}>
-                            {parseTimeTo12Hour(item)}
-                        </Text>
-                    </TouchableOpacity>
-                })
-            }
-        </ScrollView>
+        <Text style={styles.dropdownTitle}>{title}</Text>
+        <FlatList
+            data={list}
+            renderItem={Item}
+            getItemLayout={(_, index) => getItemLayout(index)}
+            initialScrollIndex={indexOfSelected}
+        />
     </View >
 }
 
@@ -87,6 +101,7 @@ const TimeSelector = ({ text = "Choose a time", selected, onChange, list }) => {
                     list={list}
                     visible={expanded}
                     selected={selected}
+                    title={text}
                 />
             }
         </>
@@ -197,7 +212,7 @@ const styles = StyleSheet.create({
     },
 
     dropdown: {
-        paddingVertical: 10,
+        paddingBottom: 10,
         position: "absolute",
         width: 120,
         right: 20,
@@ -209,13 +224,17 @@ const styles = StyleSheet.create({
         borderColor: "#E5E5E5",
         backgroundColor: "#FFF",
     },
+    dropdownTitle: {
+        textAlign: "center",
+        color: "#666",
+        fontSize: 12,
+        borderBottomWidth: 1,
+        borderColor: "#E5E5E5",
+        paddingVertical: 10,
+    },
     dropDownItem: {
         paddingVertical: 16,
         alignItems: "center",
         zIndex: 5,
     },
-    dropdownUnderlay: {
-        height: Dimensions.get("window").height,
-        width: Dimensions.get('window').width,
-    }
 });

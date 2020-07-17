@@ -53,7 +53,7 @@ const Profile = ({ navigation }) => {
                     <View style={styles.buttonContainer}>
                         <TouchableOpacity
                             onPress={() => {
-                                navigation.navigate("EditProfile");
+                                navigation.navigate("EditProfile", { cachedUser: user });
                             }}
                             style={styles.button}
                         >
@@ -174,10 +174,9 @@ const styles = StyleSheet.create({
         alignItems: "center"
     },
     avatar: {
-        width: undefined,
-        height: undefined,
-        flex: 1,
-        resizeMode: "contain",
+        width: 80,
+        height: 80,
+        borderRadius: 80 / 2,
     },
     buttonContainer: {
         marginTop: 50,

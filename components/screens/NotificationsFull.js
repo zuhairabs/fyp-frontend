@@ -55,7 +55,7 @@ const NotificationsFull = (props) => {
                                         {
                                             notifications.map((notification, index) => {
                                                 return <Suspense fallback={<NotificationLoadingEffect />}>
-                                                    <NotificationCard key={index} notification={notification} />
+                                                    <NotificationCard navigation={props.navigation} key={index} notification={notification} />
                                                 </Suspense>
                                             })
                                         }

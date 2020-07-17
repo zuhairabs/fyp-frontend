@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react'
-import { View, Text, StyleSheet } from 'react-native'
+import { View, Text, StyleSheet, Image } from 'react-native'
 import { TouchableOpacity } from 'react-native-gesture-handler'
-import  AsyncStorage from '@react-native-community/async-storage'
+import AsyncStorage from '@react-native-community/async-storage'
+import { min } from 'react-native-reanimated'
 
 const Sidebar = () => {
     const [user, setUser] = useState({})
@@ -21,19 +22,16 @@ const Sidebar = () => {
     }, [])
 
     return (
-        <View>
-                {user && user.avatar && user.avatar.length > 0 && (
-                    <Text>User has an avatar</Text>
-                )}
-                {(!user.avatar || user.avatar.length == 0) && (
-                    <View style={styles.userAvatarOuterCircle}>
-                        <View style={styles.userAvatarCircle}>
-                            <Text style={styles.userAvatarText}>
-                                {firstLetter}
-                            </Text>
-                        </View>
-                    </View>
-                )}
+        <View style={styles.userAvatarOuterCircle}>
+            <View style={styles.userAvatarCircle}>
+                {
+                    user.avatar
+                        ? <Image source={{ uri: `data:image/gif;base64,${user.avatar}` }} style={styles.avatar} />
+                        : <Text style={styles.userAvatarText}>
+                            {firstLetter}
+                        </Text>
+                }
+            </View>
         </View>
     )
 }
@@ -59,6 +57,11 @@ const styles = StyleSheet.create({
         backgroundColor: "#E6EEFE",
         justifyContent: 'center',
         alignItems: 'center'
+    },
+    avatar: {
+        height: 28,
+        width: 28,
+        borderRadius: 28 / 2
     }
 })
 
