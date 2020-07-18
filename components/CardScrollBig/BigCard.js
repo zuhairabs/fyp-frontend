@@ -7,9 +7,9 @@ import {
     TouchableOpacity,
     Dimensions
 } from 'react-native';
-import BookButton from '../UXComponents/BookButton'
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 
+import BookButton from '../Buttons/BookButton'
 const DEVICE_WIDTH = Dimensions.get('window').width;
 
 const BigCard = (props) => {

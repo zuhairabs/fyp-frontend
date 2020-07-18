@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from 'react'
-import { View, Text, StyleSheet, TextInput, Alert } from 'react-native'
-// import Geolocation from '@react-native-community/geolocation';
+import React from 'react'
+import { View, Text, StyleSheet } from 'react-native'
 import Icon from 'react-native-vector-icons/dist/MaterialIcons'
 
 const Location = (props) => {

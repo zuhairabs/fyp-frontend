@@ -4,9 +4,9 @@ import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler'
 
 import { AuthContext } from '../../App'
 
-import Navbar from '../Header/Navbar'
-import StatusBarWhite from '../UXComponents/StatusBar'
-import SecondaryBackground from '../UXComponents/SecondaryBackground'
+import Navbar from '../../components/Header/Navbar'
+import StatusBarWhite from '../../components/StatusBar'
+import SecondaryBackground from '../../components/Backgrounds/SecondaryBackground'
 
 import GraphicWelcome from './welcome1.svg'
 import GraphicVisit from './welcome2.svg'

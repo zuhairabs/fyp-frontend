@@ -5,10 +5,11 @@ import AsyncStorage from '@react-native-community/async-storage'
 import Icon from 'react-native-vector-icons/dist/MaterialIcons'
 import Modal from 'react-native-modalbox';
 
-import Add from '../Add.svg'
-import Minus from '../Minus.svg'
-import CheckBox from '../CheckBox.svg'
-import CheckBoxFilled from '../CheckBoxFilled.svg'
+import Add from '../UXComponents/svg/Add.svg'
+import Minus from '../UXComponents/svg/Minus.svg'
+import CheckBox from '../UXComponents/svg/CheckBox.svg'
+import CheckBoxFilled from '../UXComponents/svg/CheckBoxFilled.svg'
+
 import Calendar, { monthNames } from './Calendar'
 import TimePicker, { timeToString, stringToTime, MINUTE } from './TimePicker'
 

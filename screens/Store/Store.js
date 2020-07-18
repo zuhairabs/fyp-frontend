@@ -1,15 +1,24 @@
 import React, { useState, useEffect } from 'react'
-import { View, Text, StyleSheet, Dimensions, Platform, StatusBar, Alert, ActivityIndicator, ToastAndroid } from 'react-native'
+import {
+    View,
+    Text,
+    StyleSheet,
+    Dimensions,
+    Platform,
+    StatusBar,
+    Alert,
+    ActivityIndicator,
+    ToastAndroid
+} from 'react-native'
 import { ScrollView, TouchableNativeFeedback, TouchableWithoutFeedback } from 'react-native-gesture-handler'
 import AsyncStorage from '@react-native-community/async-storage'
 import Icon from 'react-native-vector-icons/dist/MaterialIcons'
 
-
-import NavbarBackButton from '../../Header/NavbarBackButton'
-import StatusBarWhite from '../../UXComponents/StatusBar'
-import MainBackground from '../../UXComponents/MainBackground'
-import BookSlotSlider from '../../UXComponents/BookSlotSlider/BookSlot'
-import RatingBadge from '../../Rating/RatingBadge';
+import NavbarBackButton from '../../components/Header/NavbarBackButton'
+import StatusBarWhite from '../../components/StatusBar'
+import MainBackground from '../../components/Backgrounds/MainBackground'
+import BookSlotSlider from '../../components/BookSlotSlider/BookSlot'
+import RatingBadge from '../../components/RatingBadge/RatingBadge';
 import ImageHeader from './ImageHeader'
 
 const WINDOW_HEIGHT = Dimensions.get('window').height;
@@ -43,7 +52,7 @@ const Store = (props) => {
     useEffect(() => {
         const checkFavourite = async () => {
             let user = JSON.parse(await (AsyncStorage.getItem("user")))
-            if(searched)
+            if (searched)
                 saveStoreHistory(user.phone)
             if (user.favouriteStores && user.favouriteStores.indexOf(store) > -1) setFavourite(true);
         }

@@ -8,10 +8,10 @@ import {
     Dimensions,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/dist/MaterialIcons'
-
-import RatingBadge from '../Rating/RatingBadge'
-import BookButton from '../UXComponents/BookButton'
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
+
+import RatingBadge from '../RatingBadge/RatingBadge'
+import BookButton from '../Buttons/BookButton'
 
 const DEVICE_WIDTH = Dimensions.get('window').width;
 

@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react'
 import { View, Text, StyleSheet, Platform, Dimensions, StatusBar, ActivityIndicator } from 'react-native'
 import { ScrollView, TouchableOpacity, TouchableWithoutFeedback } from 'react-native-gesture-handler'
 
-import StatusBarWhite from '../UXComponents/StatusBar'
-import StoreCard from '../StoreCard/StoreCard'
+import StatusBarWhite from '../../components/StatusBar'
+import StoreCard from '../../components/Cards/StoreCard/StoreCard'
 
 import StarBorder from './svg/star-border'
 import StarFilled from './svg/star-filled'
@@ -74,7 +74,7 @@ const Rating = (props) => {
         "ePayment options"
     ]
 
-    useEffect(()=>{
+    useEffect(() => {
         setLoading(false)
     }, [])
 

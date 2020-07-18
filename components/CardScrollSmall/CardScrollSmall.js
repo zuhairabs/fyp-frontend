@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, ScrollView, View, ActivityIndicator } from 'react-native';
+import { StyleSheet, ScrollView, View, ActivityIndicator } from 'react-native';
 
 import CardSmall from './CardSmall'
 
 const CardScrollSmall = (props) => {
 
-    const [stores, setStores] = useState(props.stores)
+    const [stores] = useState(props.stores)
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {

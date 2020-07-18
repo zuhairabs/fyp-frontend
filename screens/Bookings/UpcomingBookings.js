@@ -3,8 +3,8 @@ import { View, Text, StyleSheet, Dimensions, Alert, ActivityIndicator, Image } f
 import { ScrollView, TouchableWithoutFeedback } from 'react-native-gesture-handler'
 import AsyncStorage from '@react-native-community/async-storage'
 
-import StatusBarWhite from '../UXComponents/StatusBar'
-import BookingCard from '../BookingCard/bookingCard'
+import StatusBarWhite from '../../components/StatusBar'
+import BookingCard from '../../components/Cards/BookingCard/bookingCard'
 
 const UpcomingBookings = ({ navigation }) => {
 
@@ -127,7 +127,7 @@ const UpcomingBookings = ({ navigation }) => {
                                             marginTop: 120,
                                         }}>
                                             <Image
-                                                source={require('../UXComponents/EmptyPage.png')}
+                                                source={require('../../components/UXComponents/svg/EmptyPage.png')}
                                                 style={{
                                                     width: undefined,
                                                     height: undefined,

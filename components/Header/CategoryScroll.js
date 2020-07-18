@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, FlatList, Image, View } from 'react-native';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 import Other from './svg/other'
-import { TouchableOpacity } from 'react-native-gesture-handler';
 
 const CategoryScroll = (props) => {
     const [categories, setCategories] = useState([])

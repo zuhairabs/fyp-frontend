@@ -1,21 +1,29 @@
-import React, { useEffect, useState, lazy, Suspense } from 'react';
-import { StyleSheet, Text, ScrollView, View, Platform, StatusBar, PermissionsAndroid, Alert, ActivityIndicator, Dimensions } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import {
+    StyleSheet,
+    Text,
+    ScrollView,
+    View,
+    Platform,
+    StatusBar,
+    PermissionsAndroid,
+    Alert,
+    ActivityIndicator,
+    Dimensions
+} from 'react-native';
 import Geolocation from 'react-native-geolocation-service';
 import AsyncStorage from '@react-native-community/async-storage'
-
-import MainBackground from '../UXComponents/MainBackground'
-import StatusBarWhite from '../UXComponents/StatusBar'
-
-import Navbar from '../Header/Navbar';
-import SearchBarIdle from '../Header/SearchBarIdle'
-import Location from '../Header/HeaderLocation'
-import CategoryScroll from '../Header/CategoryScroll'
-import CardScroll from '../CardScrollBig/CardScroll'
-import CardScrollSmall from '../CardScrollSmall/CardScrollSmall'
 import { TouchableHighlight } from 'react-native-gesture-handler';
 
-// const Navbar = lazy(() => import('../Header/Navbar'))
-// const CardScrollSmall = lazy(() => import('../CardScrollSmall/CardScrollSmall'))
+import MainBackground from '../../components/Backgrounds/MainBackground'
+import StatusBarWhite from '../../components/StatusBar'
+
+import Navbar from '../../components/Header/Navbar';
+import SearchBarIdle from '../../components/Header/SearchBarIdle'
+import Location from '../../components/Header/HeaderLocation'
+import CategoryScroll from '../../components/Header/CategoryScroll'
+import CardScroll from '../../components/CardScrollBig/CardScroll'
+import CardScrollSmall from '../../components/CardScrollSmall/CardScrollSmall'
 
 const DEVICE_HEIGHT = Dimensions.get("window").height;
 
@@ -188,8 +196,8 @@ const Home = ({ navigation }) => {
                 maintainVisibleContentPosition
                 showsVerticalScrollIndicator={false}
             >
+
                 <Navbar type="unlocked" navigation={navigation} />
-                {/* <Search navigation={navigation} /> */}
                 <SearchBarIdle navigation={navigation} />
 
                 {

@@ -1,18 +1,25 @@
 import React, { useState, useEffect } from 'react'
-import { View, Text, StyleSheet, StatusBar, Dimensions, Image, Alert, TextInput } from 'react-native'
+import {
+    View,
+    Text,
+    StyleSheet,
+    StatusBar,
+    Dimensions,
+    Image,
+    Alert
+} from 'react-native'
 import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler'
 import Icon from 'react-native-vector-icons/dist/MaterialIcons'
 import AsyncStorage from '@react-native-community/async-storage'
 
 import { AuthContext } from '../../App'
 
-import StatusBarWhite from '../UXComponents/StatusBar'
-import MenuBackground from '../UXComponents/MenuBackground'
+import StatusBarWhite from '../../components/StatusBar'
+import MenuBackground from '../../components/Backgrounds/MenuBackground'
+
 
 const Profile = ({ navigation }) => {
-
     const { signOut } = React.useContext(AuthContext);
-
     const [user, setUser] = useState({})
 
     useEffect(() => {
@@ -25,7 +32,6 @@ const Profile = ({ navigation }) => {
                 setUser(storedUser);
             })
     }, [])
-
 
     return (
         <View style={styles.screenContainer}>

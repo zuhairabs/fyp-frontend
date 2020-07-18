@@ -42,7 +42,7 @@ const Dropdown = ({ list, onSelect, visible = false, selected, title }) => {
             style={styles.dropDownItem}>
             <Text style={{
                 color: selected === item ? "#0062FF" : "#000",
-                fontWeight: selected === item ? "bold" : "regular"
+                fontWeight: selected === item ? "bold" : "normal"
             }}>
                 {parseTimeTo12Hour(item)}
             </Text>

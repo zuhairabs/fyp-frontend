@@ -4,9 +4,9 @@ import { TouchableOpacity, ScrollView, TextInput } from 'react-native-gesture-ha
 import Icon from 'react-native-vector-icons/dist/MaterialIcons'
 import Modal from 'react-native-modalbox';
 
-import Navbar from '../Header/Navbar'
-import StatusBarWhite from '../UXComponents/StatusBar'
-import SecondaryBackground from '../UXComponents/SecondaryBackground'
+import Navbar from '../../components/Header/Navbar'
+import StatusBarWhite from '../../components/StatusBar'
+import SecondaryBackground from '../../components/Backgrounds/SecondaryBackground'
 
 
 const SignUp = ({ navigation }) => {

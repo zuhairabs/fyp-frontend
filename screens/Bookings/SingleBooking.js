@@ -1,20 +1,17 @@
 import React, { useState, useEffect } from 'react'
 import { View, Text, StyleSheet, StatusBar, Dimensions, Platform, ActivityIndicator, Alert } from 'react-native'
 import AsyncStorage from '@react-native-community/async-storage'
-
-import StatusBarWhite from '../UXComponents/StatusBar'
-import StoreCard from '../StoreCard/StoreCard'
-
 import QRCode from 'react-native-qrcode-svg';
 import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler'
+
+import StatusBarWhite from '../../components/StatusBar'
+import StoreCard from '../../components/Cards/StoreCard/StoreCard'
 
 const DEVICE_WIDTH = Dimensions.get("window").width;
 
 const SingleBooking = (props) => {
-
     const bookingId = props.route.params.booking
     const archived = props.route.params.archived
-
     const [loading, setLoading] = useState(true)
     const [booking, setBooking] = useState({})
 

@@ -3,7 +3,7 @@ import { View, StyleSheet, StatusBar, Dimensions, Text, KeyboardAvoidingView, To
 import AsyncStorage from '@react-native-community/async-storage'
 import { TextInput, TouchableOpacity } from 'react-native-gesture-handler'
 
-import StatusBarWhite from '../UXComponents/StatusBar'
+import StatusBarWhite from '../../components/StatusBar'
 
 const Support = ({ navigation }) => {
 
@@ -34,7 +34,7 @@ const Support = ({ navigation }) => {
                     Alert.alert(res.statusText)
             });
         }
-        if(title.length > 0 && text.length > 0)
+        if (title.length > 0 && text.length > 0)
             bootstrapper();
         else ToastAndroid.show("All fields are required", ToastAndroid.SHORT)
     }

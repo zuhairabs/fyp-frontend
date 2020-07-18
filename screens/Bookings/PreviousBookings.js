@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react'
-import { View, Text, StyleSheet, Dimensions, Platform, StatusBar, Alert, ActivityIndicator, Image } from 'react-native'
+import { View, Text, StyleSheet, Dimensions, Alert, ActivityIndicator, Image } from 'react-native'
 import { ScrollView, TouchableWithoutFeedback } from 'react-native-gesture-handler'
 import AsyncStorage from '@react-native-community/async-storage'
 
-import StatusBarWhite from '../UXComponents/StatusBar'
-import BookingCardSmall from '../BookingCard/bookingCardSmall'
+import StatusBarWhite from '../../components/StatusBar'
+import BookingCardSmall from '../../components/Cards/BookingCard/bookingCardSmall'
 
 const UpcomingBookings = ({ navigation }) => {
 
@@ -126,7 +126,7 @@ const UpcomingBookings = ({ navigation }) => {
                                             marginTop: 120
                                         }}>
                                             <Image
-                                                source={require('../UXComponents/EmptyPage.png')}
+                                                source={require('../../components/UXComponents/svg/EmptyPage.png')}
                                                 style={{
                                                     width: undefined,
                                                     height: undefined,

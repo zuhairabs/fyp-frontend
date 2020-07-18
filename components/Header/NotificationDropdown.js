@@ -4,9 +4,9 @@ import Icon from 'react-native-vector-icons/dist/Feather'
 import { TouchableWithoutFeedback, TouchableOpacity, ScrollView } from 'react-native-gesture-handler'
 import AsyncStorage from '@react-native-community/async-storage'
 
-import { NotificationLoadingEffect } from '../NotificationCard/NotificationCard'
-const NotificationCard = lazy(() => import('../NotificationCard/NotificationCard'))
-import NotificationBell from './notifications.svg'
+import { NotificationLoadingEffect } from '../Cards/NotificationCard/NotificationCard'
+const NotificationCard = lazy(() => import('../Cards/NotificationCard/NotificationCard'))
+import NotificationBell from './svg/notifications.svg'
 
 const Dropdown = ({ navigation }) => {
     const [notifications, setNotifications] = useState([])

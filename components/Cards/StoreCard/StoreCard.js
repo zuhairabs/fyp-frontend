@@ -4,8 +4,8 @@ import { TouchableWithoutFeedback } from 'react-native-gesture-handler'
 import AsyncStorage from '@react-native-community/async-storage'
 import Icon from 'react-native-vector-icons/dist/MaterialIcons'
 
-import RatingBadge from '../Rating/RatingBadge'
-import BookButton from '../UXComponents/BookButton'
+import RatingBadge from '../../RatingBadge/RatingBadge'
+import BookButton from '../../Buttons/BookButton'
 
 const bookingStatusColor = {
     completed: "#1AB542",

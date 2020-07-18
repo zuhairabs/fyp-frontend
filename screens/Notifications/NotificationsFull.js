@@ -3,9 +3,9 @@ import { View, Text, StyleSheet, Dimensions } from 'react-native'
 import { ScrollView } from 'react-native-gesture-handler'
 import AsyncStorage from '@react-native-community/async-storage'
 
-import StatusBarWhite from '../UXComponents/StatusBar'
-import { NotificationLoadingEffect } from '../NotificationCard/NotificationCard'
-const NotificationCard = lazy(() => import('../NotificationCard/NotificationCard'))
+import StatusBarWhite from '../../components/StatusBar'
+import { NotificationLoadingEffect } from '../../components/Cards/NotificationCard/NotificationCard'
+const NotificationCard = lazy(() => import('../../components/Cards/NotificationCard/NotificationCard'))
 
 const NotificationsFull = (props) => {
     const [notifications, setNotifications] = useState(props.route.params?.notifications)

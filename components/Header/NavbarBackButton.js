@@ -2,8 +2,8 @@ import React from 'react';
 import { View, StyleSheet, Dimensions, Text } from 'react-native';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 
-import LeftArrow from './left-arrow.svg'
-import LeftArrowWhite from './left-arrow-white.svg'
+import LeftArrow from './svg/left-arrow.svg'
+import LeftArrowWhite from './svg/left-arrow-white.svg'
 
 const NavbarBackButton = (props) => {
 

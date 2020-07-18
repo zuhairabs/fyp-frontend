@@ -1,36 +1,40 @@
 import * as React from 'react';
-import { Text, Alert } from 'react-native';
+import { Text } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import AsyncStorage from '@react-native-community/async-storage'
 import { TouchableOpacity } from 'react-native-gesture-handler';
-
 import messaging from '@react-native-firebase/messaging';
 
 export const AuthContext = React.createContext();
 const Stack = createStackNavigator();
 const navigationRef = React.createRef();
 
-import Home from './components/screens/Home'
-import Login from './components/screens/Login'
-import Splash from './components/screens/Splash'
-import Profile from './components/screens/Profile'
-import Favourites from './components/screens/Favourites'
-import SignUp from './components/screens/SignUp'
-import Verification from './components/screens/Verification'
-import Store from './components/screens/store-page/Store'
-import SearchFull from './components/screens/SearchFull'
-import UpcomingBookings from './components/screens/UpcomingBookings';
-import PreviousBookings from './components/screens/PreviousBookings';
-import SingleBooking from './components/screens/SingleBooking';
-import NotificationsFull from './components/screens/NotificationsFull';
-import BackButton from './components/UXComponents/BackButton';
-import EditProfile from './components/screens/EditProfile';
-import Congratulations from './components/screens/misc/Congratulations';
-import Support from './components/screens/Support';
-import Welcome from './components/screens/Welcome';
-import Rating from './components/screens/Rating';
+import Home from './screens/Home/Home'
+import Store from './screens/Store/Store'
 
+import Login from './screens/Authentication/Login'
+import SignUp from './screens/Authentication/SignUp'
+import Verification from './screens/Authentication/Verification'
+
+import EditProfile from './screens/Profile/EditProfile';
+import Profile from './screens/Profile/Profile'
+
+import Favourites from './screens/Favourites/Favourites'
+
+import PreviousBookings from './screens/Bookings/PreviousBookings';
+import Rating from './screens/Bookings/Rating';
+import SingleBooking from './screens/Bookings/SingleBooking';
+import UpcomingBookings from './screens/Bookings/UpcomingBookings';
+
+import Congratulations from './screens/Misc/Congratulations';
+import NotificationsFull from './screens/Notifications/NotificationsFull';
+import SearchFull from './screens/Misc/SearchFull'
+import Splash from './screens/Misc/Splash'
+import Support from './screens/Misc/Support';
+import Welcome from './screens/OnBoarding/OnBoarding';
+
+import BackButton from './components/Buttons/BackButton';
 
 const App = () => {
   // console.disableYellowBox = true;
@@ -179,7 +183,7 @@ const App = () => {
   }, []);
 
   const notificationHandler = () => {
-    // Handler to control notification interaction
+    // Handler to control push notification interaction
     messaging().onNotificationOpenedApp(remoteMessage => {
       console.log(
         'Notification caused app to open from background state:',
@@ -193,8 +197,8 @@ const App = () => {
         navigationRef.current?.navigate("Store", { store: remoteMessage.data.store })
     });
 
-    // foreground message handler
-    messaging().onMessage(async remoteMessage => {
+    // Global message handler
+    messaging().onMessage(async _ => {
       fetchNotifications();
     });
   }

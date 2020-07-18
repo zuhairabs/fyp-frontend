@@ -1,15 +1,25 @@
 import React, { useEffect, useState } from 'react'
-import { View, Text, ScrollView, StyleSheet, Platform, StatusBar, Dimensions, TextInput, ActivityIndicator, Alert, Image } from 'react-native'
+import {
+    View,
+    Text,
+    ScrollView,
+    StyleSheet,
+    Platform,
+    StatusBar,
+    Dimensions,
+    ActivityIndicator,
+    Alert,
+    Image
+} from 'react-native'
 import Icon from 'react-native-vector-icons/dist/MaterialIcons'
 import AsyncStorage from '@react-native-community/async-storage'
-
-import StatusBarWhite from '../UXComponents/StatusBar'
-import StoreCard from '../StoreCard/StoreCard'
 import { TouchableOpacity } from 'react-native-gesture-handler'
+
+import StatusBarWhite from '../../components/StatusBar'
+import StoreCard from '../../components/Cards/StoreCard/StoreCard'
 
 const DEVICE_HEIGHT = Dimensions.get('screen').height;
 const WINDOW_HEIGHT = Dimensions.get('window').height;
-const WINDOW_WIDTH = Dimensions.get('window').width
 
 const Favourites = (props) => {
     const [all, setAll] = useState([])
@@ -170,7 +180,7 @@ const Favourites = (props) => {
                                         marginTop: 120,
                                     }}>
                                         <Image
-                                            source={require('../UXComponents/EmptyPage.png')}
+                                            source={require('../../components/UXComponents/svg/EmptyPage.png')}
                                             style={{
                                                 width: undefined,
                                                 height: undefined,

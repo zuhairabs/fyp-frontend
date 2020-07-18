@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { View, Text, StyleSheet, Image } from 'react-native'
-import { TouchableOpacity } from 'react-native-gesture-handler'
 import AsyncStorage from '@react-native-community/async-storage'
-import { min } from 'react-native-reanimated'
 
 const Sidebar = () => {
     const [user, setUser] = useState({})

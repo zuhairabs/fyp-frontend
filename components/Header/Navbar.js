@@ -1,11 +1,11 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
+import { TouchableNativeFeedback } from 'react-native-gesture-handler';
 
 import NotificationDropdown from './NotificationDropdown';
 import Sidebar from './Sidebar';
 
-import ShopOutLogo from './shopout.svg'
-import { TouchableNativeFeedback } from 'react-native-gesture-handler';
+import ShopOutLogo from './svg/shopout.svg'
 
 const Navbar = (props) => {
     if (props.type == "unlocked") {
@@ -15,7 +15,7 @@ const Navbar = (props) => {
                     <ShopOutLogo width={120} height={60} />
                 </View>
                 <View style={Styles.navbarLinks}>
-                    <NotificationDropdown navigation={props.navigation}/>
+                    <NotificationDropdown navigation={props.navigation} />
                     <TouchableNativeFeedback onPress={() => { props.navigation.navigate("Profile") }}>
                         <Sidebar />
                     </TouchableNativeFeedback>

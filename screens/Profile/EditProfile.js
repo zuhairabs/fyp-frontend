@@ -21,9 +21,8 @@ import ImagePicker from 'react-native-image-picker';
 import ImageResizer from 'react-native-image-resizer';
 import RNFS from 'react-native-fs'
 
-import StatusBarWhite from '../UXComponents/StatusBar'
-import NavbarBackButton from '../Header/NavbarBackButton'
-
+import StatusBarWhite from '../../components/StatusBar'
+import NavbarBackButton from '../../components/Header/NavbarBackButton'
 
 const EditProfile = (props) => {
     const { cachedUser } = props.route.params

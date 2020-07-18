@@ -1,11 +1,22 @@
 import React, { useEffect, useState, useRef } from 'react'
-import { View, Text, ScrollView, StyleSheet, Platform, StatusBar, Dimensions, TextInput, ActivityIndicator, Image } from 'react-native'
-import Icon from 'react-native-vector-icons/dist/MaterialIcons'
+import {
+    View,
+    Text,
+    ScrollView,
+    StyleSheet,
+    Platform,
+    StatusBar,
+    Dimensions,
+    TextInput,
+    ActivityIndicator,
+    Image
+} from 'react-native'
 import AsyncStorage from '@react-native-community/async-storage'
-
-import StatusBarWhite from '../UXComponents/StatusBar'
-import StoreCard from '../StoreCard/StoreCard'
 import { TouchableWithoutFeedback, TouchableOpacity } from 'react-native-gesture-handler'
+import Icon from 'react-native-vector-icons/dist/MaterialIcons'
+
+import StatusBarWhite from '../../components/StatusBar'
+import StoreCard from '../../components/Cards/StoreCard/StoreCard'
 
 const DEVICE_HEIGHT = Dimensions.get('window').height;
 
@@ -336,7 +347,7 @@ const SearchFull = (props) => {
                                             marginTop: 120,
                                         }}>
                                             <Image
-                                                source={require('../UXComponents/EmptyPage.png')}
+                                                source={require('../../components/UXComponents/svg/EmptyPage.png')}
                                                 style={{
                                                     width: undefined,
                                                     height: undefined,
