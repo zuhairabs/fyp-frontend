@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { View, Text, StyleSheet, Dimensions, Alert, ActivityIndicator, Image } from 'react-native'
 import { ScrollView, TouchableWithoutFeedback } from 'react-native-gesture-handler'
 import AsyncStorage from '@react-native-community/async-storage'
@@ -6,51 +6,45 @@ import AsyncStorage from '@react-native-community/async-storage'
 import StatusBarWhite from '../../components/StatusBar'
 import BookingCard from '../../components/Cards/BookingCard/bookingCard'
 
-const UpcomingBookings = ({ navigation }) => {
+import { GlobalContext } from '../../providers/GlobalContext'
 
+const mlist = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+const UpcomingBookings = ({ navigation }) => {
+    const { state } = useContext(GlobalContext)
     const [bookings, setBookings] = useState([])
     const [loading, setLoading] = useState(true)
-
-    const mlist = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
     const startMonth = bookings.length > 0 ? new Date(bookings[0].start).getUTCMonth() : null;
     const endMonth = bookings.length > 0 ? new Date(bookings[bookings.length - 1].start).getUTCMonth() : null;
 
     useEffect(() => {
-        const bootstrapper = async () => {
-            let user = JSON.parse(await AsyncStorage.getItem("user"))
-            let token = await AsyncStorage.getItem("jwt")
-            return { user, token }
+        const requestOptions = {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                authorization: "Bearer " + state.token,
+            },
+            body: JSON.stringify({
+                cred: {
+                    phone: state.user.phone,
+                },
+            }),
         }
-        bootstrapper()
-            .then(({ user, token }) => {
-                const requestOptions = {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        authorization: "Bearer " + token,
-                    },
-                    body: JSON.stringify({
-                        cred: {
-                            phone: user.phone,
-                        },
-                    }),
+        console.log(requestOptions)
+        fetch("https://shopout.herokuapp.com/user/bookings", requestOptions)
+            .then((res) => {
+                if (res.status === 200)
+                    res.json()
+                        .then(data => {
+                            setBookings(data.bookings);
+                            sortBookings().then(() => {
+                                setLoading(false);
+                            })
+                        })
+                else {
+                    Alert.alert("Something went wrong ", res.statusText)
                 }
-                console.log(requestOptions)
-                fetch("https://shopout.herokuapp.com/user/bookings", requestOptions)
-                    .then((res) => {
-                        if (res.status === 200)
-                            res.json()
-                                .then(data => {
-                                    setBookings(data.bookings);
-                                    sortBookings().then(() => {
-                                        setLoading(false);
-                                    })
-                                })
-                        else {
-                            Alert.alert("Something went wrong ", res.statusText)
-                        }
-                    })
             })
     }, [])
 

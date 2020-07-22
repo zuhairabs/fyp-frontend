@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { View, StyleSheet, StatusBar, Dimensions, Platform, Text } from 'react-native'
 import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler'
 
-import { AuthContext } from '../../App'
+import { GlobalContext } from '../../providers/GlobalContext'
 
 import Navbar from '../../components/Header/Navbar'
 import StatusBarWhite from '../../components/StatusBar'
@@ -22,12 +22,12 @@ const TEXT = [
 const NUMBER_OF_PAGES = 3
 
 const Welcome = () => {
-    const { setWelcomeShown } = React.useContext(AuthContext);
+    const { authActions } = React.useContext(GlobalContext);
     const [page, setPage] = useState(0)
 
     const nextPage = () => {
         if (page >= NUMBER_OF_PAGES - 1)
-            setWelcomeShown();
+            authActions.setWelcomeShown();
         else setPage(page + 1);
     }
 

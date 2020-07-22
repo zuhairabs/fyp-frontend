@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { View, Text, StyleSheet, Dimensions, Alert, ActivityIndicator, Image } from 'react-native'
 import { ScrollView, TouchableWithoutFeedback } from 'react-native-gesture-handler'
-import AsyncStorage from '@react-native-community/async-storage'
 
 import StatusBarWhite from '../../components/StatusBar'
 import BookingCardSmall from '../../components/Cards/BookingCard/bookingCardSmall'
+import { GlobalContext } from '../../providers/GlobalContext'
 
 const UpcomingBookings = ({ navigation }) => {
-
+    const { state } = useContext(GlobalContext)
     const [bookings, setBookings] = useState([])
     const [loading, setLoading] = useState(true)
 
@@ -18,29 +18,20 @@ const UpcomingBookings = ({ navigation }) => {
     const endMonth = bookings.length > 0 ? new Date(bookings[bookings.length - 1].start).getUTCMonth() : null;
 
     useEffect(() => {
-        // get user and token from async storage
-        const bootstrapper = async () => {
-            let user = JSON.parse(await AsyncStorage.getItem("user"))
-            let token = await AsyncStorage.getItem("jwt")
-            return { user, token }
+        // TODO: request options to be moved into separate network request file
+        const requestOptions = {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                authorization: "Bearer " + state.token,
+            },
+            body: JSON.stringify({
+                cred: {
+                    phone: state.user.phone,
+                },
+            }),
         }
-        bootstrapper()
-            .then(({ user, token }) => {
-                // TODO: request options to be moved into separate network request file
-                const requestOptions = {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        authorization: "Bearer " + token,
-                    },
-                    body: JSON.stringify({
-                        cred: {
-                            phone: user.phone,
-                        },
-                    }),
-                }
-                fetchBookings(requestOptions)
-            })
+        fetchBookings(requestOptions)
     }, [])
 
     const fetchBookings = async (options) => {
@@ -54,9 +45,8 @@ const UpcomingBookings = ({ navigation }) => {
                                 setLoading(false)
                             })
                         })
-                else {
+                else
                     Alert.alert("Something went wrong ", res.statusText)
-                }
             })
     }
 

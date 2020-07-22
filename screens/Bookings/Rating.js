@@ -48,11 +48,11 @@ const RatingParameter = ({ name, index }) => {
                 justifyContent: "flex-end",
                 alignItems: "center"
             }}>
-                <Star i={1} />
-                <Star i={2} />
-                <Star i={3} />
-                <Star i={4} />
-                <Star i={5} />
+                {
+                    Array.from({ length: 5 }, (_, k) => {
+                        return <Star i={k} />
+                    })
+                }
             </View>
         </View>
     )

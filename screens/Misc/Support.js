@@ -1,18 +1,16 @@
-import React, { useState, createRef } from 'react'
+import React, { useState, createRef, useContext } from 'react'
 import { View, StyleSheet, StatusBar, Dimensions, Text, KeyboardAvoidingView, ToastAndroid, Alert } from 'react-native'
-import AsyncStorage from '@react-native-community/async-storage'
 import { TextInput, TouchableOpacity } from 'react-native-gesture-handler'
-
 import StatusBarWhite from '../../components/StatusBar'
+import { GlobalContext } from '../../providers/GlobalContext'
 
 const Support = ({ navigation }) => {
-
+    const { state } = useContext(GlobalContext)
     const [title, setTitle] = useState("")
     const [text, setText] = useState("")
 
     const sendRequest = () => {
-        const bootstrapper = async () => {
-            let user = JSON.parse(await AsyncStorage.getItem("user"))
+        if (title.length > 0 && text.length > 0)
             fetch("https://shopout.herokuapp.com/user/support/submit", {
                 method: "POST",
                 headers: {
@@ -20,7 +18,7 @@ const Support = ({ navigation }) => {
                 },
                 body: JSON.stringify({
                     supportRequest: {
-                        user: user._id,
+                        user: state.user._id,
                         title: title,
                         text: text
                     }
@@ -30,12 +28,8 @@ const Support = ({ navigation }) => {
                     ToastAndroid.show("Request Submitted", ToastAndroid.LONG)
                     navigation.goBack();
                 }
-                else
-                    Alert.alert(res.statusText)
+                else Alert.alert(res.statusText)
             });
-        }
-        if (title.length > 0 && text.length > 0)
-            bootstrapper();
         else ToastAndroid.show("All fields are required", ToastAndroid.SHORT)
     }
 

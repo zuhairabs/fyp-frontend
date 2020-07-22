@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import {
     StyleSheet,
     Text,
@@ -12,7 +12,6 @@ import {
     Dimensions
 } from 'react-native';
 import Geolocation from 'react-native-geolocation-service';
-import AsyncStorage from '@react-native-community/async-storage'
 import { TouchableHighlight } from 'react-native-gesture-handler';
 
 import MainBackground from '../../components/Backgrounds/MainBackground'
@@ -25,9 +24,12 @@ import CategoryScroll from '../../components/Header/CategoryScroll'
 import CardScroll from '../../components/CardScrollBig/CardScroll'
 import CardScrollSmall from '../../components/CardScrollSmall/CardScrollSmall'
 
+import { GlobalContext } from '../../providers/GlobalContext'
+
 const DEVICE_HEIGHT = Dimensions.get("window").height;
 
 const Home = ({ navigation }) => {
+    const { state } = useContext(GlobalContext)
 
     const [location, setLocation] = useState({})
     const [loading, setLoading] = useState(true)
@@ -38,7 +40,7 @@ const Home = ({ navigation }) => {
     const [dataSmallCard, setDataSmallCard] = useState([])
     const [dataNewStores, setDataNewStores] = useState([])
 
-    const locationPermission = async () => {
+    const requestLocationPermission = async () => {
         try {
             const granted = await PermissionsAndroid.request(
                 PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
@@ -63,11 +65,8 @@ const Home = ({ navigation }) => {
                         timeout: 15000,
                         enableHighAccuracy: true
                     })
-            } else {
-                console.log("location permission denied")
-                // alert("Location permission denied");
+            } else
                 setLocationPermissionStatus(false)
-            }
         } catch (err) {
             console.warn(err)
         }
@@ -156,33 +155,24 @@ const Home = ({ navigation }) => {
     // }
 
     useEffect(() => {
-        locationPermission();
-
-        const getUserFromStorage = async () => {
-            const user = JSON.parse(await AsyncStorage.getItem("user"))
-            const token = await AsyncStorage.getItem("jwt")
-            return { user, token }
-        }
-
-        getUserFromStorage().then(({ user, token }) => {
-            const requestOptions = {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": "Bearer " + token
+        requestLocationPermission();
+        const requestOptions = {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + state.token
+            },
+            body: JSON.stringify({
+                "cred": {
+                    "phone": state.user.phone
                 },
-                body: JSON.stringify({
-                    "cred": {
-                        "phone": user.phone
-                    },
-                    "city": "Mumbai",
-                    "number": 50,
-                })
-            }
-            getFeaturedStores(requestOptions)
-            getCategories(requestOptions)
-            // getStoreList(requestOptions)
-        })
+                "city": "Mumbai",
+                "number": 50,
+            })
+        }
+        getFeaturedStores(requestOptions)
+        getCategories(requestOptions)
+        // getStoreList(requestOptions)
     }, [])
 
     return (

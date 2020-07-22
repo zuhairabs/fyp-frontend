@@ -1,9 +1,10 @@
-import React, { useState, createRef } from 'react'
+import React, { useState, createRef, useContext } from 'react'
 import { Dimensions, View, StyleSheet, Text, ActivityIndicator, ToastAndroid } from 'react-native'
 import { TouchableWithoutFeedback, TouchableOpacity } from 'react-native-gesture-handler';
-import AsyncStorage from '@react-native-community/async-storage'
 import Icon from 'react-native-vector-icons/dist/MaterialIcons'
 import Modal from 'react-native-modalbox';
+
+import { GlobalContext } from '../../providers/GlobalContext'
 
 import Add from '../UXComponents/svg/Add.svg'
 import Minus from '../UXComponents/svg/Minus.svg'
@@ -25,6 +26,7 @@ const BookSlotSlider = (props) => {
         return date;
     }
 
+    const { state } = useContext(GlobalContext)
     const [screen, setScreen] = useState(0);
     const [selectedDate, setSelectedDate] = useState();
 
@@ -40,17 +42,15 @@ const BookSlotSlider = (props) => {
     const loadingModal = createRef();
 
     const bootstrapper = async () => {
-        let user = JSON.parse(await AsyncStorage.getItem("user"))
-        let token = await AsyncStorage.getItem("jwt")
         const bookingData = {
             store: props.storeData._id,
-            user: user._id,
+            user: state.user._id,
             start: selectedDate + "T" + start + ":00.00+05:30",
             end: selectedDate + "T" + end + ":00.00+05:30",
             visitors: visitors,
             assistance: assistance,
         }
-        return ({ bookingData, token, user })
+        return ({ bookingData })
     }
 
     const submitDate = () => {
@@ -60,17 +60,17 @@ const BookSlotSlider = (props) => {
 
     const getBookingApproval = () => {
         bootstrapper()
-            .then(({ bookingData, token, user }) => {
+            .then(({ bookingData }) => {
                 fetch('https://shopout.herokuapp.com/user/booking/approval', {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
-                        "authorization": "Bearer " + token
+                        "authorization": "Bearer " + state.token
                     },
                     body: JSON.stringify({
                         bookingData: bookingData,
                         cred: {
-                            phone: user.phone
+                            phone: state.user.phone
                         }
                     })
                 }).then(res => {
@@ -103,17 +103,17 @@ const BookSlotSlider = (props) => {
     }
 
     const bookSlot = () => {
-        bootstrapper().then(({ bookingData, token, user }) => {
+        bootstrapper().then(({ bookingData }) => {
             fetch('https://shopout.herokuapp.com/user/book', {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    "authorization": "Bearer " + token
+                    "authorization": "Bearer " + state.token
                 },
                 body: JSON.stringify({
                     bookingData: bookingData,
                     cred: {
-                        phone: user.phone
+                        phone: state.user.phone
                     }
                 })
             })

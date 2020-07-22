@@ -1,58 +1,53 @@
 import React, { useState, useEffect } from 'react'
 import { View, Text, StyleSheet, StatusBar, Dimensions, Platform, ActivityIndicator, Alert } from 'react-native'
-import AsyncStorage from '@react-native-community/async-storage'
 import QRCode from 'react-native-qrcode-svg';
 import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler'
 
 import StatusBarWhite from '../../components/StatusBar'
 import StoreCard from '../../components/Cards/StoreCard/StoreCard'
 
+import { GlobalContext } from '../../providers/GlobalContext'
+
 const DEVICE_WIDTH = Dimensions.get("window").width;
 
 const SingleBooking = (props) => {
+    const { state } = useContext(GlobalContext)
+
     const bookingId = props.route.params.booking
     const archived = props.route.params.archived
     const [loading, setLoading] = useState(true)
     const [booking, setBooking] = useState({})
 
     useEffect(() => {
-        const bootstrapper = async () => {
-            let user = JSON.parse(await AsyncStorage.getItem("user"))
-            let token = await AsyncStorage.getItem("jwt")
-            return { user, token }
-        }
-        bootstrapper()
-            .then(({ user, token }) => {
-                const requestOptions = {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        authorization: "Bearer " + token,
-                    },
-                    body: JSON.stringify({
-                        cred: {
-                            phone: user.phone,
-                        },
-                        bookingData: {
-                            _id: bookingId
-                        }
-                    }),
+        const requestOptions = {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                authorization: "Bearer " + state.token,
+            },
+            body: JSON.stringify({
+                cred: {
+                    phone: state.user.phone,
+                },
+                bookingData: {
+                    _id: bookingId
                 }
-                fetch(`https://shopout.herokuapp.com/user/booking/${archived ? 'archived/' : ''}fetchone`, requestOptions)
-                    .then((res) => {
-                        if (res.status === 200)
-                            res.json()
-                                .then(data => {
-                                    setBooking(data.booking);
-                                    setLoading(false)
-                                })
-                        else {
-                            res.json()
-                                .then(data => {
-                                    Alert.alert("Something went wrong ", data.error)
-                                })
-                        }
-                    })
+            }),
+        }
+        fetch(`https://shopout.herokuapp.com/user/booking/${archived ? 'archived/' : ''}fetchone`, requestOptions)
+            .then((res) => {
+                if (res.status === 200)
+                    res.json()
+                        .then(data => {
+                            setBooking(data.booking);
+                            setLoading(false)
+                        })
+                else {
+                    res.json()
+                        .then(data => {
+                            Alert.alert("Something went wrong ", data.error)
+                        })
+                }
             })
     }, [bookingId, archived])
 

@@ -7,7 +7,7 @@ import Navbar from '../../components/Header/Navbar'
 import StatusBarWhite from '../../components/StatusBar'
 import SecondaryBackground from '../../components/Backgrounds/SecondaryBackground'
 
-import { AuthContext } from '../../App'
+import { GlobalContext } from '../../providers/GlobalContext'
 
 const Login = ({ navigation }) => {
     const [phone, setPhone] = useState()
@@ -17,15 +17,15 @@ const Login = ({ navigation }) => {
     const [loading, setLoading] = useState(false)
     const loadingModal = createRef();
 
-    const { signIn } = useContext(AuthContext);
+    const { authActions } = useContext(GlobalContext);
 
     const phoneInput = createRef();
     const passwordInput = createRef();
 
     const validatePhone = () => {
         if (phone) {
-            let phoneno = /^\d{10}$/;
-            if (phone.match(phoneno))
+            let phoneNumberRegex = /^\d{10}$/;
+            if (phone.match(phoneNumberRegex))
                 return true;
         }
         return false;
@@ -36,7 +36,7 @@ const Login = ({ navigation }) => {
         loadingModal.current.open();
         setModalText("Logging In")
         if (validatePhone()) {
-            let res = await signIn({ phone: phone, password: password });
+            let res = await authActions.signIn({ phone: phone, password: password });
             if (res[0] === false) {
                 setLoading(false);
                 setModalText(res[1]);

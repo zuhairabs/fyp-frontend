@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import {
     View,
     Text,
@@ -13,6 +13,8 @@ import {
 import { ScrollView, TouchableNativeFeedback, TouchableWithoutFeedback } from 'react-native-gesture-handler'
 import AsyncStorage from '@react-native-community/async-storage'
 import Icon from 'react-native-vector-icons/dist/MaterialIcons'
+
+import { GlobalContext } from '../../providers/GlobalContext'
 
 import NavbarBackButton from '../../components/Header/NavbarBackButton'
 import StatusBarWhite from '../../components/StatusBar'
@@ -36,52 +38,49 @@ const dayList = [
     "Sat"
 ]
 
+const headerHeight = Math.floor(WINDOW_HEIGHT / 2.8)
+
 const Store = (props) => {
     const { store, searched } = props.route.params;
+    const { state, authActions } = useContext(GlobalContext)
 
     const [loading, setLoading] = useState(true)
     const [storeData, setStoreData] = useState({})
-
-
     const [images, setImages] = useState([])
-    const [headerHeight, setHeaderHeight] = useState(Math.floor(WINDOW_HEIGHT / 2.8))
-
     const [bookSlot, setBookSlot] = useState(props.route.params.bookSlot || false)
     const [favourite, setFavourite] = useState(false)
 
     useEffect(() => {
-        const checkFavourite = async () => {
-            let user = JSON.parse(await (AsyncStorage.getItem("user")))
-            if (searched)
-                saveStoreHistory(user.phone)
-            if (user.favouriteStores && user.favouriteStores.indexOf(store) > -1) setFavourite(true);
-        }
-        checkFavourite().then(
-            fetch("https://shopout.herokuapp.com/store/fetch", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    storeData: {
-                        _id: store
-                    }
-                })
+        if (searched)
+            saveStoreHistory()
+        if (state.user.favouriteStores && state.user.favouriteStores.indexOf(store) > -1)
+            setFavourite(true);
+
+        fetch("https://shopout.herokuapp.com/store/fetch", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                storeData: {
+                    _id: store
+                }
             })
-                .then(res => {
-                    if (res.status === 200) {
-                        res.json().then(data => {
-                            setStoreData(data.store)
-                            setImages(data.store.business.images)
-                            setLoading(false)
-                        })
-                    }
-                    else
-                        Alert.alert("Something went wrong", res.status)
-                }))
+        })
+            .then(res => {
+                if (res.status === 200) {
+                    res.json().then(data => {
+                        setStoreData(data.store)
+                        setImages(data.store.business.images)
+                        setLoading(false)
+                    })
+                }
+                else
+                    Alert.alert("Something went wrong", res.status)
+            })
     }, [store])
 
-    const saveStoreHistory = (phone) => {
+    const saveStoreHistory = () => {
         fetch("https://shopout.herokuapp.com/user/store/history/add", {
             method: "POST",
             headers: {
@@ -90,7 +89,7 @@ const Store = (props) => {
             body: JSON.stringify({
                 storeData: store,
                 cred: {
-                    phone: phone
+                    phone: state.user.phone
                 }
             })
         })
@@ -125,12 +124,6 @@ const Store = (props) => {
     }
 
     const toggleFavourite = () => {
-        const bootstrapper = async () => {
-            let user = JSON.parse(await AsyncStorage.getItem("user"));
-            let token = await AsyncStorage.getItem("jwt");
-
-            return { user, token }
-        }
         const addToStorage = async (favs) => {
             let user = JSON.parse(await AsyncStorage.getItem("user"));
             user.favouriteStores = favs
@@ -139,32 +132,31 @@ const Store = (props) => {
         }
 
         if (!favourite) {
-            bootstrapper().then(({ user, token }) => {
-                fetch('https://shopout.herokuapp.com/user/addfavouritestore', {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": "Bearer " + token
+
+            fetch('https://shopout.herokuapp.com/user/addfavouritestore', {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": "Bearer " + state.token
+                },
+                body: JSON.stringify({
+                    storeData: {
+                        _id: store
                     },
-                    body: JSON.stringify({
-                        storeData: {
-                            _id: store
-                        },
-                        cred: {
-                            phone: user.phone
-                        }
-                    })
-                }).then(res => {
-                    if (res.status === 200) {
-                        ToastAndroid.show("Added to favourites", ToastAndroid.SHORT)
-                        res.json().then(data => {
-                            addToStorage(data.favouriteStores)
-                            setFavourite(true)
-                        })
+                    cred: {
+                        phone: state.user.phone
                     }
-                    else
-                        ToastAndroid.show("Something went wrong", ToastAndroid.SHORT)
                 })
+            }).then(res => {
+                if (res.status === 200) {
+                    ToastAndroid.show("Added to favourites", ToastAndroid.SHORT)
+                    res.json().then(data => {
+                        addToStorage(data.favouriteStores)
+                        setFavourite(true)
+                    })
+                }
+                else
+                    ToastAndroid.show("Something went wrong", ToastAndroid.SHORT)
             })
         }
         else {
@@ -180,32 +172,31 @@ const Store = (props) => {
                     {
                         text: "YES",
                         onPress: () => {
-                            bootstrapper().then(({ user, token }) => {
-                                fetch('https://shopout.herokuapp.com/user/removefavouritestore', {
-                                    method: "POST",
-                                    headers: {
-                                        "Content-Type": "application/json",
-                                        "Authorization": "Bearer " + token
+
+                            fetch('https://shopout.herokuapp.com/user/removefavouritestore', {
+                                method: "POST",
+                                headers: {
+                                    "Content-Type": "application/json",
+                                    "Authorization": "Bearer " + state.token
+                                },
+                                body: JSON.stringify({
+                                    storeData: {
+                                        _id: store
                                     },
-                                    body: JSON.stringify({
-                                        storeData: {
-                                            _id: store
-                                        },
-                                        cred: {
-                                            phone: user.phone
-                                        }
-                                    })
-                                }).then(res => {
-                                    if (res.status === 200) {
-                                        ToastAndroid.show("Removed from favourites", ToastAndroid.SHORT)
-                                        res.json().then(data => {
-                                            addToStorage(data.favouriteStores)
-                                            setFavourite(false);
-                                        })
+                                    cred: {
+                                        phone: state.user.phone
                                     }
-                                    else
-                                        ToastAndroid.show("Something went wrong", ToastAndroid.SHORT)
                                 })
+                            }).then(res => {
+                                if (res.status === 200) {
+                                    ToastAndroid.show("Removed from favourites", ToastAndroid.SHORT)
+                                    res.json().then(data => {
+                                        addToStorage(data.favouriteStores)
+                                        setFavourite(false);
+                                    })
+                                }
+                                else
+                                    ToastAndroid.show("Something went wrong", ToastAndroid.SHORT)
                             })
                         },
                         style: "default"

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useContext } from 'react'
 import {
     View,
     Text,
@@ -12,8 +12,9 @@ import {
     Image
 } from 'react-native'
 import Icon from 'react-native-vector-icons/dist/MaterialIcons'
-import AsyncStorage from '@react-native-community/async-storage'
 import { TouchableOpacity } from 'react-native-gesture-handler'
+
+import { GlobalContext } from '../../providers/GlobalContext'
 
 import StatusBarWhite from '../../components/StatusBar'
 import StoreCard from '../../components/Cards/StoreCard/StoreCard'
@@ -22,6 +23,8 @@ const DEVICE_HEIGHT = Dimensions.get('screen').height;
 const WINDOW_HEIGHT = Dimensions.get('window').height;
 
 const Favourites = (props) => {
+    const { state } = useContext(GlobalContext)
+
     const [all, setAll] = useState([])
     const [results, setResults] = useState([])
     const [loading, setLoading] = useState(true)
@@ -30,39 +33,34 @@ const Favourites = (props) => {
     const [current, setCurrent] = useState("all")
 
     useEffect(() => {
-        const bootstrapper = async () => {
-            let token = await AsyncStorage.getItem("jwt")
-            let user = JSON.parse(await AsyncStorage.getItem("user"))
-            fetch("https://shopout.herokuapp.com/user/allfavourites", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    authorization: "Bearer " + token,
-                },
-                body: JSON.stringify({
-                    cred: {
-                        phone: user.phone,
-                    }
-                }),
-            }).then((res) => {
-                if (res.status === 200) {
-                    res.json().then((data) => {
-                        setResults(data.response.favouriteStores);
-                        setAll(data.response.favouriteStores);
-                        setLoading(false)
-                        setCurrent("all")
-                        let temp = []
-                        data.response.favouriteStores.forEach(fav => {
-                            if (temp.indexOf(fav.business.category) === -1) temp.push(fav.business.category)
-                        })
-                        setCategories(temp);
-                    });
+        fetch("https://shopout.herokuapp.com/user/allfavourites", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                authorization: "Bearer " + state.token,
+            },
+            body: JSON.stringify({
+                cred: {
+                    phone: state.user.phone,
                 }
-                else
-                    Alert.alert(res.statusText)
-            });
-        }
-        bootstrapper();
+            }),
+        }).then((res) => {
+            if (res.status === 200) {
+                res.json().then((data) => {
+                    setResults(data.response.favouriteStores);
+                    setAll(data.response.favouriteStores);
+                    setLoading(false)
+                    setCurrent("all")
+                    let temp = []
+                    data.response.favouriteStores.forEach(fav => {
+                        if (temp.indexOf(fav.business.category) === -1) temp.push(fav.business.category)
+                    })
+                    setCategories(temp);
+                });
+            }
+            else
+                Alert.alert(res.statusText)
+        });
     }, [])
 
     const switchCategory = (cat) => {

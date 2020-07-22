@@ -7,11 +7,11 @@ import Navbar from '../../components/Header/Navbar'
 import StatusBarWhite from '../../components/StatusBar'
 import SecondaryBackground from '../../components/Backgrounds/SecondaryBackground'
 
-import { AuthContext } from '../../App'
+import { GlobalContext } from '../../providers/GlobalContext'
 
 const Login = (props) => {
     const { phone, password, firstName, lastName, email } = props.route.params;
-    const { signUp } = useContext(AuthContext);
+    const { authActions } = useContext(GlobalContext);
 
     const [otp, setOtp] = useState()
     const [session, setSession] = useState("")
@@ -57,7 +57,7 @@ const Login = (props) => {
             })
     }
 
-    
+
 
     const verifyOtpRequest = async () => {
         if (otp.length === 6) {
@@ -103,7 +103,7 @@ const Login = (props) => {
     const callSignUp = async () => {
         setLoading(true)
         setModalText("Loggin in")
-        let result = await signUp({ phone, password, firstName, lastName, email });
+        let result = await authActions.signUp({ phone, password, firstName, lastName, email });
         if (result[0] === false) {
             setLoading(false)
             setModalText(result[1])
@@ -171,7 +171,7 @@ const Login = (props) => {
                         </TouchableOpacity>
                     </View>
                     <View style={styles.forgotPassword}>
-                        <Text style={{color: "#666"}}>Didn't recieve OTP? </Text>
+                        <Text style={{ color: "#666" }}>Didn't recieve OTP? </Text>
                         <TouchableOpacity>
                             <Text style={styles.forgotPasswordText}>
                                 Resend OTP

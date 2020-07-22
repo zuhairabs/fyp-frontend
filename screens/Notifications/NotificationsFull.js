@@ -1,4 +1,4 @@
-import React, { useState, useEffect, lazy, Suspense } from 'react'
+import React, { useState, useEffect, lazy, Suspense, useContext } from 'react'
 import { View, Text, StyleSheet, Dimensions } from 'react-native'
 import { ScrollView } from 'react-native-gesture-handler'
 import AsyncStorage from '@react-native-community/async-storage'
@@ -7,23 +7,27 @@ import StatusBarWhite from '../../components/StatusBar'
 import { NotificationLoadingEffect } from '../../components/Cards/NotificationCard/NotificationCard'
 const NotificationCard = lazy(() => import('../../components/Cards/NotificationCard/NotificationCard'))
 
+import { GlobalContext } from '../../providers/GlobalContext'
+
 const NotificationsFull = (props) => {
-    const [notifications, setNotifications] = useState(props.route.params?.notifications)
+    const { state } = useContext(GlobalContext)
+
+    const [notifications, setNotifications] = useState(state.user.notifications ? state.user.notifications : [])
     const [loading, setLoading] = useState(true)
 
     const loadNotificationsFromAsyncStorage = async () => {
-        return notifications = JSON.parse(await AsyncStorage.getItem("user")).notifications
+        return storedNotifications = JSON.parse(await AsyncStorage.getItem("user")).notifications
     }
 
     useEffect(() => {
-        if (props.route.params?.notifications) setLoading(false)
-        else
+        setLoading(false)
+        if (notifications === []) {
             loadNotificationsFromAsyncStorage()
-                .then(notifications => {
-                    if (notifications) setNotifications(notifications)
-                    else setNotifications([])
+                .then(storedNotifications => {
+                    if (storedNotifications && storedNotifications !== []) setNotifications(storedNotifications)
                     setLoading(false)
                 })
+        }
     }, [notifications])
 
     return (

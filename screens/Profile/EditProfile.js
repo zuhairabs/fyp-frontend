@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import {
     View,
     StyleSheet,
@@ -21,23 +21,24 @@ import ImagePicker from 'react-native-image-picker';
 import ImageResizer from 'react-native-image-resizer';
 import RNFS from 'react-native-fs'
 
+import { GlobalContext } from '../../providers/GlobalContext'
+
 import StatusBarWhite from '../../components/StatusBar'
 import NavbarBackButton from '../../components/Header/NavbarBackButton'
 
 const EditProfile = (props) => {
-    const { cachedUser } = props.route.params
+    const { state } = useContext(GlobalContext)
     const navigation = props.navigation
 
-    const [user, setUser] = useState(cachedUser)
+    const [user, setUser] = useState({})
 
-    const [firstName, setFirstName] = useState(cachedUser.firstName || "")
-    const [lastName, setLastName] = useState(cachedUser.lastName || "")
-    const [phone, setPhone] = useState(cachedUser.phone || null)
-    const [email, setEmail] = useState(cachedUser.email || "")
+    const [firstName, setFirstName] = useState("")
+    const [lastName, setLastName] = useState("")
+    const [email, setEmail] = useState("")
     const [location, setLocation] = useState()
-    const [avatar, setAvatar] = useState(cachedUser.avatar || "");
+    const [avatar, setAvatar] = useState("");
 
-    async function requestPermission() {
+    const requestPermission = async () => {
         try {
             const granted = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE)
             return (granted === PermissionsAndroid.RESULTS.GRANTED)
@@ -46,48 +47,90 @@ const EditProfile = (props) => {
         }
     }
 
-    const selectPicture = () => {
+    const exceptionHandler = (exception) => {
+        ToastAndroid.show(exception, ToastAndroid.SHORT)
+    }
+
+    const pickImageFromLocalStorage = () => {
         const ImagePickerOptions = {
             title: "Select Avatar"
         }
+        return new Promise((resolve, reject) => {
+            ImagePicker.launchImageLibrary(ImagePickerOptions, (pickedImage) => {
+                if (pickedImage.didCancel) reject("No image selected")
+                else if (pickedImage.error) reject(`Error: ${pickedImage.error}`)
+                else resolve(pickedImage.uri)
+            })
+        })
+    }
+
+    const jpegToBase64 = uri => {
+        return new Promise((resolve, reject) => {
+            RNFS.readFile(uri, 'base64')
+                .then(base64Image => resolve(base64Image))
+                .catch(err => reject(err))
+        })
+    }
+
+    const compressUserAvatarImage = uri => {
+        const USER_IMAGE_SIZE = {
+            height: 400,
+            width: 400
+        }
+        const USER_IMAGE_SCALE_PERCENTAGE = 50
+        const USER_IMAGE_FORMAT = "JPEG"
+        const USER_IMAGE_ROTATION = 0
+
+        return new Promise((resolve, reject) => {
+            ImageResizer.createResizedImage(uri,
+                USER_IMAGE_SIZE.width,
+                USER_IMAGE_SIZE.height,
+                USER_IMAGE_FORMAT,
+                USER_IMAGE_SCALE_PERCENTAGE,
+                USER_IMAGE_ROTATION)
+                .then(async compressedImage => resolve(compressedImage.uri))
+                .catch(err => reject(err));
+        })
+    }
+
+    const selectPicture = () => {
         requestPermission()
             .then(granted => {
-                if (granted)
-                    ImagePicker.launchImageLibrary(ImagePickerOptions, (response) => {
-                        if (response.didCancel)
-                            console.log('User cancelled image picker');
-                        else if (response.error)
-                            ToastAndroid.show(`Error: ${response.error}`, ToastAndroid.SHORT);
-                        else {
-                            ImageResizer.createResizedImage(response.uri, 400, 400, "JPEG", 50, 0)
-                                .then(async compressedImage => {
-                                    const base64Image = await RNFS.readFile(compressedImage.uri, 'base64');
-                                    setAvatar(base64Image)
+                if (granted) {
+                    pickImageFromLocalStorage()
+                        .then(pickedImageUri => {
+                            compressUserAvatarImage(pickedImageUri)
+                                .then(compressedImageUri => {
+                                    jpegToBase64(compressedImageUri)
+                                        .then(convertedImage => setAvatar(convertedImage))
+                                        .catch(conversionError => exceptionHandler(conversionError))
                                 })
-                                .catch(err => {
-                                    ToastAndroid.show(err, ToastAndroid.SHORT)
-                                });
-                        }
-                    });
-                else ToastAndroid.show("File permission required to upload image", ToastAndroid.LONG)
-            })
+                                .catch(compressionError => exceptionHandler(compressionError))
+                        })
+                        .catch(pickerError => exceptionHandler(pickerError))
+                }
+                else exceptionHandler("File permission required to upload image")
+            });
+    }
+
+    const getUserFromAsyncStorage = async () => {
+        return storedUser = JSON.parse(await AsyncStorage.getItem("user"))
+    }
+
+    const setInputBoxValues = (user) => {
+        setUser(user)
+        setFirstName(user.firstName)
+        setLastName(user.lastName)
+        setEmail(user.email)
+        setAvatar(user.avatar)
     }
 
     useEffect(() => {
-        const bootstraper = async () => {
-            let storedUser = JSON.parse(await AsyncStorage.getItem("user"))
-            return storedUser
-        }
-        if (user === {})
-            bootstraper()
-                .then((storedUser) => {
-                    setUser(storedUser);
-                    setFirstName(storedUser.firstName)
-                    setLastName(storedUser.lastName)
-                    setPhone(storedUser.phone)
-                    setEmail(storedUser.email)
-                    setAvatar(storedUser.avatar)
-                })
+        if (state.user)
+            setInputBoxValues(state.user)
+        else
+            getUserFromAsyncStorage()
+                .then(storedUser => setInputBoxValues(storedUser))
     }, [])
 
     const save = () => {

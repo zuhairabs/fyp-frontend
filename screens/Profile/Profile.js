@@ -12,25 +12,25 @@ import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler'
 import Icon from 'react-native-vector-icons/dist/MaterialIcons'
 import AsyncStorage from '@react-native-community/async-storage'
 
-import { AuthContext } from '../../App'
+import { GlobalContext } from '../../providers/GlobalContext'
 
 import StatusBarWhite from '../../components/StatusBar'
 import MenuBackground from '../../components/Backgrounds/MenuBackground'
 
-
 const Profile = ({ navigation }) => {
-    const { signOut } = React.useContext(AuthContext);
+    const { authActions, state } = React.useContext(GlobalContext);
     const [user, setUser] = useState({})
 
+    const getUserFromAsyncStorage = async () => {
+        return storedUser = JSON.parse(await AsyncStorage.getItem("user"))
+    }
+
     useEffect(() => {
-        const bootstraper = async () => {
-            let storedUser = JSON.parse(await AsyncStorage.getItem("user"))
-            return storedUser
-        }
-        bootstraper()
-            .then((storedUser) => {
-                setUser(storedUser);
-            })
+        if (state.user)
+            setUser(state.user)
+        else
+            getUserFromAsyncStorage()
+                .then(storedUser => setUser(storedUser))
     }, [])
 
     return (
@@ -109,7 +109,7 @@ const Profile = ({ navigation }) => {
                                         },
                                         {
                                             text: "YES",
-                                            onPress: () => { signOut() },
+                                            onPress: () => { authActions.signOut() },
                                             style: "default"
                                         }
                                     ]

@@ -1,5 +1,5 @@
-import React, { useState, useEffect, lazy, Suspense } from 'react'
-import { View, Text, StyleSheet, Dimensions, ActivityIndicator } from 'react-native'
+import React, { useState, useEffect, lazy, Suspense, useContext } from 'react'
+import { View, Text, StyleSheet, Dimensions } from 'react-native'
 import Icon from 'react-native-vector-icons/dist/Feather'
 import { TouchableWithoutFeedback, TouchableOpacity, ScrollView } from 'react-native-gesture-handler'
 import AsyncStorage from '@react-native-community/async-storage'
@@ -8,24 +8,28 @@ import { NotificationLoadingEffect } from '../Cards/NotificationCard/Notificatio
 const NotificationCard = lazy(() => import('../Cards/NotificationCard/NotificationCard'))
 import NotificationBell from './svg/notifications.svg'
 
+import { GlobalContext } from '../../providers/GlobalContext'
+
 const Dropdown = ({ navigation }) => {
-    const [notifications, setNotifications] = useState([])
-    const [loading, setLoading] = useState(false)
+    const { state } = useContext(GlobalContext)
+
+    const [notifications, setNotifications] = useState(state.user.notifications ? state.user.notifications : [])
+    const [loading, setLoading] = useState(true)
 
     const loadNotificationsFromAsyncStorage = async () => {
-        let storedNotifications = JSON.parse(await AsyncStorage.getItem("user")).notifications
-        return storedNotifications
+        return storedNotifications = JSON.parse(await AsyncStorage.getItem("user")).notifications
     }
 
     useEffect(() => {
-        setLoading(true)
-        loadNotificationsFromAsyncStorage()
-            .then(storedNotifications => {
-                if (storedNotifications) setNotifications(storedNotifications)
-                else setNotifications([])
-                setLoading(false)
-            })
-    }, [])
+        setLoading(false)
+        if (notifications === []) {
+            loadNotificationsFromAsyncStorage()
+                .then(storedNotifications => {
+                    if (storedNotifications && storedNotifications !== []) setNotifications(storedNotifications)
+                    setLoading(false)
+                })
+        }
+    }, [notifications])
 
     return (
         <View style={styles.dropdown}>
@@ -64,7 +68,7 @@ const Dropdown = ({ navigation }) => {
                 }
                 <TouchableOpacity
                     style={styles.footer}
-                    onPress={() => navigation.navigate("NotificationsFull", { notifications: notifications })}
+                    onPress={() => navigation.navigate("NotificationsFull")}
                 >
                     <Text>View All</Text>
                 </TouchableOpacity>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react'
+import React, { useEffect, useState, useRef, useContext } from 'react'
 import {
     View,
     Text,
@@ -11,9 +11,9 @@ import {
     ActivityIndicator,
     Image
 } from 'react-native'
-import AsyncStorage from '@react-native-community/async-storage'
 import { TouchableWithoutFeedback, TouchableOpacity } from 'react-native-gesture-handler'
 import Icon from 'react-native-vector-icons/dist/MaterialIcons'
+import { GlobalContext } from '../../providers/GlobalContext'
 
 import StatusBarWhite from '../../components/StatusBar'
 import StoreCard from '../../components/Cards/StoreCard/StoreCard'
@@ -22,6 +22,7 @@ const DEVICE_HEIGHT = Dimensions.get('window').height;
 
 const SearchFull = (props) => {
     const inputBox = useRef()
+    const { state } = useContext(GlobalContext)
 
     const [dropdownOpen, setDropdown] = useState(false)
     const [results, setResults] = useState([])
@@ -38,9 +39,7 @@ const SearchFull = (props) => {
 
     useEffect(() => {
         setLoading(true)
-        const bootstrapper = async () => {
-            // let token = await AsyncStorage.getItem("jwt")
-            let user = JSON.parse(await AsyncStorage.getItem("user"))
+        const bootstrap = async () => {
             fetch("https://shopout.herokuapp.com/user/store/history/fetch", {
                 method: "POST",
                 headers: {
@@ -48,7 +47,7 @@ const SearchFull = (props) => {
                 },
                 body: JSON.stringify({
                     cred: {
-                        phone: user.phone,
+                        phone: state.user.phone,
                     }
                 }),
             }).then((res) => {
@@ -62,13 +61,12 @@ const SearchFull = (props) => {
                     });
                 }
                 else {
-                    console.log(res.statusText)
                     setLoading(false)
                     setResults([])
                 }
             });
         }
-        bootstrapper();
+        bootstrap();
     }, [])
 
     const getUniqueHistoryResults = async (history) => {
@@ -105,18 +103,16 @@ const SearchFull = (props) => {
         setLoading(true);
         setDropdown(false);
         clearPartialSearchResults();
-        const bootstrapper = async () => {
-            let token = await AsyncStorage.getItem("jwt")
-            let user = JSON.parse(await AsyncStorage.getItem("user"))
+        const bootstrap = async () => {
             fetch("https://shopout.herokuapp.com/user/search/full", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    authorization: "Bearer " + token,
+                    authorization: "Bearer " + state.token,
                 },
                 body: JSON.stringify({
                     cred: {
-                        phone: user.phone,
+                        phone: state.user.phone,
                     },
                     query: query,
                     model: model,
@@ -145,41 +141,36 @@ const SearchFull = (props) => {
                 }
             });
         }
-        bootstrapper();
+        bootstrap();
     }
 
 
     const partialSearch = (query) => {
         const fetchPartialSearch = async () => {
-            let token = await AsyncStorage.getItem("jwt")
-            let user = JSON.parse(await AsyncStorage.getItem("user"))
             fetch("https://shopout.herokuapp.com/user/search/partial", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    authorization: "Bearer " + token,
+                    authorization: "Bearer " + state.token,
                 },
                 body: JSON.stringify({
                     cred: {
-                        phone: user.phone,
+                        phone: state.user.phone,
                     },
                     query: query,
                     city: "Mumbai",
                 }),
             }).then((res) => {
-                if (res.status === 200) {
-                    res.json().then((data) => {
+                if (res.status === 200)
+                    res.json().then(data => {
                         if (data.response[3]) setTags(data.response[3]);
                         if (data.response[2]) setCategories(data.response[2]);
                         if (data.response[1]) setBrands(data.response[1]);
                         if (data.response[0]) setStores(data.response[0]);
                         setDropdown(true)
                     });
-                }
-                else {
-                    console.log(JSON.parse(AsyncStorage.getItem("user").toString()))
+                else
                     Alert.alert(res.statusText)
-                }
             });
         }
         if (query.length > 0)
