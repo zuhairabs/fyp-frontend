@@ -42,6 +42,11 @@ export const GlobalContextProvider = props => {
                         ...prevState,
                         welcomeShown: true
                     }
+                case 'SET_LOCATION':
+                    return {
+                        ...prevState,
+                        location: action.location
+                    }
             }
         },
         {
@@ -49,7 +54,8 @@ export const GlobalContextProvider = props => {
             signedIn: false,
             welcomeShown: false,
             token: null,
-            user: null
+            user: null,
+            location: {}
         }
     );
 
@@ -216,6 +222,12 @@ export const GlobalContextProvider = props => {
                     console.error(e)
                     dispatch({ type: 'RESTORE_TOKEN', token: null, user: null })
                 }
+            },
+
+            changeLocation: async (long, lat) => {
+                const location = { long, lat }
+                await AsyncStorage.setItem("location", JSON.stringify(location))
+                dispatch({ type: 'SET_LOCATION', location: location })
             },
 
             addFavouriteStore: (_id) => {

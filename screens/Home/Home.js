@@ -29,9 +29,8 @@ import { GlobalContext } from '../../providers/GlobalContext'
 const DEVICE_HEIGHT = Dimensions.get("window").height;
 
 const Home = ({ navigation }) => {
-    const { state } = useContext(GlobalContext)
+    const { state, authActions } = useContext(GlobalContext)
 
-    const [location, setLocation] = useState({})
     const [loading, setLoading] = useState(true)
     const [locationPermissionStatus, setLocationPermissionStatus] = useState(false)
 
@@ -46,15 +45,13 @@ const Home = ({ navigation }) => {
                 PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
             )
             if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-                console.log("You can use the location")
                 setLocationPermissionStatus(true);
                 Geolocation.getCurrentPosition(info => {
                     let locationInfo = {
-                        lat: info.coords.latitude,
-                        long: info.coords.longitude
+                        long: info.coords.longitude,
+                        lat: info.coords.latitude
                     }
-                    setLocation(locationInfo)
-                    console.log(location)
+                    authActions.changeLocation(locationInfo.long, locationInfo.lat)
                 },
                     error => {
                         console.log(error)
@@ -201,7 +198,7 @@ const Home = ({ navigation }) => {
                             <ActivityIndicator size="large" color="#0062FF" />
                         </View> :
                             <>
-                                <Location location={location} />
+                                <Location />
                                 <CategoryScroll categories={categories} />
                                 <CardScroll navigation={navigation} stores={dataBigCard} />
                                 <Text style={styles.mainSubHeading}>Near Me</Text>

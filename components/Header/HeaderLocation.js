@@ -1,18 +1,21 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { View, Text, StyleSheet } from 'react-native'
 import Icon from 'react-native-vector-icons/dist/MaterialIcons'
 
-const Location = (props) => {
+import { GlobalContext } from '../../providers/GlobalContext'
+
+const Location = () => {
+    const { state } = useContext(GlobalContext)
+
     return (
         <View>
             <View style={Styles.location}>
                 <Icon name="location-on" size={16} color='#666' />
                 <Text style={{ color: '#666', fontSize: 12 }}>
                     {
-                        props.location.short ? <Text>
-                            {/* Latitude: {props.location.lat}
-                            Longitude: {props.location.long} */}
-                            {props.location.short}
+                        state.location ? <Text>
+                            Long: {state.location.long} Lat: {state.location.lat}
+                            {/* {state.location.short} */}
                         </Text>
                             : <Text>
                                 Powai, Mumbai
