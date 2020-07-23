@@ -1,8 +1,25 @@
 import React, { useState, createRef } from 'react'
-import { View, Text, StyleSheet, Dimensions, Platform, StatusBar, Alert, KeyboardAvoidingView, ActivityIndicator } from 'react-native'
+import {
+    View,
+    Text,
+    StyleSheet,
+    Dimensions,
+    Platform,
+    StatusBar,
+    Alert,
+    KeyboardAvoidingView,
+    ActivityIndicator,
+    ToastAndroid,
+    PermissionsAndroid,
+    TouchableHighlight,
+    Image
+} from 'react-native'
 import { TouchableOpacity, ScrollView, TextInput } from 'react-native-gesture-handler'
 import Icon from 'react-native-vector-icons/dist/MaterialIcons'
 import Modal from 'react-native-modalbox';
+import ImagePicker from 'react-native-image-picker';
+import ImageResizer from 'react-native-image-resizer';
+import RNFS from 'react-native-fs'
 
 import Navbar from '../../components/Header/Navbar'
 import StatusBarWhite from '../../components/StatusBar'
@@ -16,6 +33,7 @@ const SignUp = ({ navigation }) => {
     const [firstName, setFirstName] = useState("")
     const [lastName, setLastName] = useState("")
     const [email, setEmail] = useState("")
+    const [avatar, setAvatar] = useState("")
 
 
     const [loading, setLoading] = useState(false)
@@ -28,6 +46,81 @@ const SignUp = ({ navigation }) => {
     const input4 = createRef();
     const input5 = createRef();
     const input6 = createRef();
+
+    const requestPermission = async () => {
+        try {
+            const granted = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE)
+            return (granted === PermissionsAndroid.RESULTS.GRANTED)
+        } catch (err) {
+            console.warn(err)
+        }
+    }
+
+    const exceptionHandler = (exception) => {
+        ToastAndroid.show(exception, ToastAndroid.SHORT)
+    }
+
+    const pickImageFromLocalStorage = () => {
+        const ImagePickerOptions = {
+            title: "Select Avatar"
+        }
+        return new Promise((resolve, reject) => {
+            ImagePicker.launchImageLibrary(ImagePickerOptions, (pickedImage) => {
+                if (pickedImage.didCancel) reject("No image selected")
+                else if (pickedImage.error) reject(`Error: ${pickedImage.error}`)
+                else resolve(pickedImage.uri)
+            })
+        })
+    }
+
+    const jpegToBase64 = uri => {
+        return new Promise((resolve, reject) => {
+            RNFS.readFile(uri, 'base64')
+                .then(base64Image => resolve(base64Image))
+                .catch(err => reject(err))
+        })
+    }
+
+    const compressUserAvatarImage = uri => {
+        const USER_IMAGE_SIZE = {
+            height: 400,
+            width: 400
+        }
+        const USER_IMAGE_SCALE_PERCENTAGE = 50
+        const USER_IMAGE_FORMAT = "JPEG"
+        const USER_IMAGE_ROTATION = 0
+
+        return new Promise((resolve, reject) => {
+            ImageResizer.createResizedImage(uri,
+                USER_IMAGE_SIZE.width,
+                USER_IMAGE_SIZE.height,
+                USER_IMAGE_FORMAT,
+                USER_IMAGE_SCALE_PERCENTAGE,
+                USER_IMAGE_ROTATION)
+                .then(async compressedImage => resolve(compressedImage.uri))
+                .catch(err => reject(err));
+        })
+    }
+
+    const selectPicture = () => {
+        requestPermission()
+            .then(granted => {
+                if (granted) {
+                    pickImageFromLocalStorage()
+                        .then(pickedImageUri => {
+                            compressUserAvatarImage(pickedImageUri)
+                                .then(compressedImageUri => {
+                                    jpegToBase64(compressedImageUri)
+                                        .then(convertedImage => setAvatar(convertedImage))
+                                        .catch(conversionError => exceptionHandler(conversionError))
+                                })
+                                .catch(compressionError => exceptionHandler(compressionError))
+                        })
+                        .catch(pickerError => exceptionHandler(pickerError))
+                }
+                else exceptionHandler("File permission required to upload image")
+            });
+    }
 
     const handleSubmit = async () => {
         if (validateForm()) {
@@ -46,7 +139,7 @@ const SignUp = ({ navigation }) => {
                 .then(res => {
                     if (res.status === 200) {
                         setLoading(false);
-                        navigation.navigate("Verification", {phone, password, firstName, lastName, email});
+                        navigation.navigate("Verification", { phone, password, firstName, lastName, email, avatar });
                         loadingModal.current.close();
                     }
                     else {
@@ -65,7 +158,7 @@ const SignUp = ({ navigation }) => {
 
     const validatePhone = () => {
         let phoneno = /^\d{10}$/;
-        if (phone.match(phoneno)) return true;
+        if (phone && phone.match(phoneno)) return true;
         Alert.alert("Please enter a valid 10 digit mobile number")
         return false;
     }
@@ -130,14 +223,19 @@ const SignUp = ({ navigation }) => {
                         </View>
                         <View style={styles.form}>
                             <View style={styles.userPhotoContainer}>
-                                <View
-                                    onPress={() => { savePicture() }}
-                                    style={styles.photo}
-                                >
-                                    <Icon name="person" size={80} color="#FFF" />
-                                    <View style={styles.cameraContainer}>
-                                        <Icon name="camera-alt" size={20} color="#BDBDBD" />
-                                    </View>
+                                <View style={styles.photo}>
+                                    {
+                                        avatar && avatar.length > 0 ?
+                                            <Image source={{ uri: `data:image/gif;base64,${avatar}` }} style={styles.avatar} />
+                                            :
+                                            <Icon name="person" size={80} color="#FFF" />
+                                    }
+                                    <TouchableHighlight
+                                        style={styles.cameraContainer}
+                                        onPress={() => { selectPicture() }}
+                                    >
+                                        <Icon name="camera-alt" size={18} color="#BDBDBD" />
+                                    </TouchableHighlight>
                                 </View>
                             </View>
                             <TextInput
@@ -294,6 +392,11 @@ const styles = StyleSheet.create({
         backgroundColor: "#0062FF",
         justifyContent: "center",
         alignItems: "center"
+    },
+    avatar: {
+        height: 100,
+        width: 100,
+        borderRadius: 50,
     },
     cameraContainer: {
         height: 30,
