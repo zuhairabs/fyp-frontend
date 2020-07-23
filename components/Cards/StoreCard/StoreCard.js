@@ -1,6 +1,6 @@
 import React from 'react'
-import { Text, View, StyleSheet, Image, ToastAndroid, TouchableOpacity, Alert } from 'react-native'
-import { TouchableWithoutFeedback } from 'react-native-gesture-handler'
+import { Text, View, StyleSheet, Image, ToastAndroid, Alert } from 'react-native'
+import { TouchableWithoutFeedback, TouchableOpacity } from 'react-native-gesture-handler'
 import AsyncStorage from '@react-native-community/async-storage'
 import Icon from 'react-native-vector-icons/dist/MaterialIcons'
 
@@ -181,6 +181,8 @@ const styles = StyleSheet.create({
     imageContainer: {
         flex: 2,
         justifyContent: "space-around",
+        width: 80,
+        borderRadius: 6
     },
     imageFiller: {
         flex: 1,

@@ -9,10 +9,10 @@ import {
     Dimensions,
     ActivityIndicator,
     Alert,
-    Image
+    Image,
 } from 'react-native'
 import Icon from 'react-native-vector-icons/dist/MaterialIcons'
-import { TouchableOpacity } from 'react-native-gesture-handler'
+import { TouchableOpacity, TouchableWithoutFeedback } from 'react-native-gesture-handler'
 
 import { GlobalContext } from '../../providers/GlobalContext'
 
@@ -99,6 +99,7 @@ const Favourites = (props) => {
                     <ScrollView
                         style={styles.container}
                     >
+
                         <View style={styles.headerContainer}>
                             <Text style={{
                                 color: "#666",
@@ -200,6 +201,9 @@ const Favourites = (props) => {
                                     </View>
                             }
                         </View>
+
+
+
                     </ScrollView>
             }
         </View>
@@ -218,6 +222,7 @@ const styles = StyleSheet.create({
     dropdown: {
         position: "absolute",
         zIndex: 5,
+        elevation: 3,
         maxHeight: DEVICE_HEIGHT / 2.8,
         backgroundColor: "#FFF",
         borderRadius: 6,
@@ -235,7 +240,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
         marginBottom: 20,
         marginHorizontal: 20,
-        zIndex: 5,
+        zIndex: 2,
     },
     dropdownTextBox: {
         paddingHorizontal: 20,

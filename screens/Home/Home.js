@@ -222,7 +222,7 @@ const Home = ({ navigation }) => {
                                 We need your device's location to provide you a catered experience
                             </Text>
                             <TouchableHighlight
-                                onPress={() => { locationPermission() }}
+                                onPress={() => { requestLocationPermission() }}
                                 style={{
                                     backgroundColor: "#0062FF",
                                     padding: 5,

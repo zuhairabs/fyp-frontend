@@ -50,7 +50,7 @@ const RatingParameter = ({ name, index }) => {
             }}>
                 {
                     Array.from({ length: 5 }, (_, k) => {
-                        return <Star i={k} />
+                        return <Star i={k + 1} />
                     })
                 }
             </View>

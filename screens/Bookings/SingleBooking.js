@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { View, Text, StyleSheet, StatusBar, Dimensions, Platform, ActivityIndicator, Alert } from 'react-native'
 import QRCode from 'react-native-qrcode-svg';
 import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler'
