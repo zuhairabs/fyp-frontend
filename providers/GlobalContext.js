@@ -1,6 +1,7 @@
 import React, { createContext, useReducer } from 'react'
 import AsyncStorage from '@react-native-community/async-storage'
 import messaging from '@react-native-firebase/messaging';
+import { stat } from 'react-native-fs';
 
 export const GlobalContext = createContext();
 
@@ -46,6 +47,11 @@ export const GlobalContextProvider = props => {
                     return {
                         ...prevState,
                         location: action.location
+                    }
+                case 'UPDATE_USER':
+                    return {
+                        ...prevState,
+                        user: action.user
                     }
             }
         },
@@ -228,6 +234,11 @@ export const GlobalContextProvider = props => {
                 const location = { long, lat }
                 await AsyncStorage.setItem("location", JSON.stringify(location))
                 dispatch({ type: 'SET_LOCATION', location: location })
+            },
+
+            setNotifications: async () => {
+                let user = JSON.parse(await AsyncStorage.getItem("user"))
+                dispatch({ type: 'UPDATE_USER', user })
             },
 
             addFavouriteStore: (_id) => {

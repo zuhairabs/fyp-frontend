@@ -1,7 +1,9 @@
 import React from 'react'
 import { Text, View, StyleSheet, Image, TouchableOpacity, ToastAndroid } from 'react-native'
 
-const DAY_LENGTH = 24 * 60 * 60 * 1000;
+const MINUTE_LENGTH = 60 * 1000;
+const HOUR_LENGTH = 60 * MINUTE_LENGTH;
+const DAY_LENGTH = 24 * HOUR_LENGTH;
 const WEEK_LENGTH = 7 * DAY_LENGTH;
 const MONTH_LENGTH = 30 * DAY_LENGTH;
 
@@ -21,12 +23,14 @@ export const NotificationLoadingEffect = () => {
 
 const NotificationCard = ({ notification, navigation }) => {
 
-    const calculateNotificationTime = (time) => {
+    const calculateNotificationTime = time => {
         let generatedTime = new Date(time).getTime()
         let currentTime = new Date().getTime();
         let offset = currentTime - generatedTime;
 
-        if (offset < DAY_LENGTH) return "Today"
+        if (offset < MINUTE_LENGTH) return 'Just now';
+        else if (offset < HOUR_LENGTH) return `${Math.floor(offset / MINUTE_LENGTH)} minutes ago`;
+        else if (offset < DAY_LENGTH) return `${Math.floor(offset / HOUR_LENGTH)} hours ago`;
         else if (offset / DAY_LENGTH < 2) return "Yesterday"
         else if (offset < WEEK_LENGTH) return `${Math.floor(offset / DAY_LENGTH)} days ago`
         else if (offset / WEEK_LENGTH < 2) return "1 week ago"

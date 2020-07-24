@@ -245,10 +245,11 @@ const AppNavigation = () => {
                     .then(res => {
                         if (res.status === 200) {
                             res.json().then(async data => {
-                                let user = JSON.parse(await AsyncStorage.getItem("user"));
+                                let user = state.user;
                                 let notifs = data.notifications
                                 user.notifications = notifs.reverse();
                                 await AsyncStorage.setItem("user", JSON.stringify(user));
+                                authActions.setNotifications();
                             })
                         }
                     })
