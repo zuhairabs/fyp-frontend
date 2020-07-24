@@ -81,8 +81,7 @@ const styles = StyleSheet.create({
     },
     cardTitle: {
         fontSize: 14,
-        fontWeight: "bold",
-        fontFamily: "serif",
+        fontFamily: "PTSerif-Bold",
     },
     cardSubtitle: {
         flexDirection: "row",
@@ -95,6 +94,7 @@ const styles = StyleSheet.create({
         fontSize: 10,
         flexWrap: "wrap",
         flexDirection: "row",
+        fontFamily: "Roboto-Medium"
     },
     cardHeader: {
         width: "100%",

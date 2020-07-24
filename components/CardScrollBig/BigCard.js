@@ -92,16 +92,14 @@ const styles = StyleSheet.create({
     cardTitleText: {
         color: '#1162FB',
         fontSize: 24,
-        fontWeight: "bold",
-        fontFamily: 'serif',
         lineHeight: 24,
+        fontFamily: 'PTSerif-Bold'
     },
     cardTitleTextBlack: {
         color: '#000',
         fontSize: 24,
-        fontWeight: "bold",
-        fontFamily: 'serif',
         lineHeight: 24,
+        fontFamily: 'PTSerif-Bold'
     },
     cardTitleSubtext: {
         textTransform: 'uppercase',

@@ -372,8 +372,7 @@ const styles = StyleSheet.create({
     },
     storeName: {
         fontSize: 26,
-        fontWeight: "bold",
-        fontFamily: "serif",
+        fontFamily: "PTSerif-Bold",
     },
     reviewCountHeading: {
         color: "#666",
@@ -399,6 +398,7 @@ const styles = StyleSheet.create({
     subheading: {
         marginTop: 20,
         fontSize: 20,
+        fontFamily: "Roboto-Medium"
     },
     safetyContainer: {
         marginTop: 10,
@@ -414,7 +414,7 @@ const styles = StyleSheet.create({
     safetyElementText: {
         marginLeft: 5,
         fontSize: 12,
-        color: "#666"
+        color: "#666",
     },
     detailsContainer: {
         marginTop: 30,
@@ -435,7 +435,8 @@ const styles = StyleSheet.create({
         marginBottom: DEVICE_HEIGHT - WINDOW_HEIGHT - 30
     },
     buttonText: {
-        color: "#fff"
+        color: "#fff",
+        fontFamily: "Roboto-Medium"
     }
 })
 
