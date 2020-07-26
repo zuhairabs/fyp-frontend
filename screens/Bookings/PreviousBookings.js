@@ -5,6 +5,7 @@ import { ScrollView, TouchableWithoutFeedback } from 'react-native-gesture-handl
 import StatusBarWhite from '../../components/StatusBar'
 import BookingCardSmall from '../../components/Cards/BookingCard/bookingCardSmall'
 import { GlobalContext } from '../../providers/GlobalContext'
+import { COLORS, textStyles } from '../../styles/styles'
 
 const UpcomingBookings = ({ navigation }) => {
     const { state } = useContext(GlobalContext)
@@ -159,10 +160,9 @@ const UpcomingBookings = ({ navigation }) => {
     )
 }
 
-const styles = StyleSheet.create({
+export const styles = StyleSheet.create({
     screenContainer: {
-        // paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
-        backgroundColor: "#FFF",
+        backgroundColor: COLORS.WHITE,
     },
     container: {
         height: Dimensions.get('window').height,
@@ -186,26 +186,26 @@ const styles = StyleSheet.create({
     tabNavigationObject: {
         alignItems: "center",
         borderBottomWidth: 1,
-        borderBottomColor: "#6666666F"
+        borderBottomColor: COLORS.SECONDARY_TRANSPARENT
     },
     tabNavigationObjectSelected: {
         borderBottomWidth: 3,
-        borderColor: "#0062FF",
+        borderColor: COLORS.PRIMARY,
         alignItems: "center"
     },
     tabNavigationText: {
-        fontSize: 18,
-        color: "#6666666F",
+        ...textStyles.paragraphLarge,
+        color: COLORS.SECONDARY_TRANSPARENT,
         borderBottomWidth: 1,
-        borderColor: "#00000000",
+        borderColor: COLORS.TRANSPARENT,
         paddingBottom: 10,
         paddingHorizontal: 15,
     },
     tabNavigationTextSelected: {
-        fontSize: 18,
-        color: "#0062FF",
+        ...textStyles.paragraphLarge,
+        color: COLORS.PRIMARY,
         borderBottomWidth: 1,
-        borderColor: "#00000000",
+        borderColor: COLORS.TRANSPARENT,
         paddingBottom: 10,
         paddingHorizontal: 15,
     },
@@ -224,7 +224,8 @@ const styles = StyleSheet.create({
         alignItems: "center",
     },
     selectedMonth: {
-        color: "#666",
+        color: COLORS.SECONDARY,
+        ...textStyles.paragraphSmall
     },
     results: {
         marginTop: 20,

@@ -22,6 +22,8 @@ import MainBackground from '../../components/Backgrounds/MainBackground'
 import BookSlotSlider from '../../components/BookSlotSlider/BookSlot'
 import RatingBadge from '../../components/RatingBadge/RatingBadge';
 import ImageHeader from './ImageHeader'
+import LargeButton from '../../components/Buttons/LargeButton'
+import { COLORS, textStyles } from '../../styles/styles'
 
 const WINDOW_HEIGHT = Dimensions.get('window').height;
 const WINDOW_WIDTH = Dimensions.get('window').width;
@@ -210,7 +212,6 @@ const Store = (props) => {
         <View style={styles.screenContainer}>
             <MainBackground />
             <StatusBarWhite />
-            <NavbarBackButton navigation={props.navigation} />
 
 
             {
@@ -225,6 +226,7 @@ const Store = (props) => {
                     </View>
                     : [
                         (<ScrollView style={styles.container}>
+                            <NavbarBackButton navigation={props.navigation} />
 
                             <View style={styles.contentContainer} contentContainerStyle={{ justifyContent: "center", alignItems: "center" }}>
 
@@ -241,7 +243,7 @@ const Store = (props) => {
                                     contentContainerStyle={{ justifyContent: "center", alignItems: "flex-start" }}>
                                     <View style={styles.heading}>
                                         <View style={styles.headingText}>
-                                            <Text style={styles.storeName}>
+                                            <Text style={textStyles.serifHeader}>
                                                 {storeData.business.display_name}
                                             </Text>
                                             {
@@ -338,7 +340,7 @@ const styles = StyleSheet.create({
         paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
         // backgroundColor: "#F8F9FD",
         height: Dimensions.get("screen").height,
-        backgroundColor: "#fff",
+        backgroundColor: COLORS.WHITE,
         justifyContent: "center"
     },
     container: {
@@ -370,14 +372,10 @@ const styles = StyleSheet.create({
     headingText: {
         justifyContent: "center",
     },
-    storeName: {
-        fontSize: 26,
-        fontFamily: "PTSerif-Bold",
-    },
     reviewCountHeading: {
-        color: "#666",
-        fontSize: 12,
+        color: COLORS.SECONDARY,
         textDecorationLine: "underline",
+        ...textStyles.paragraphSmallBold
     },
     headingRight: {
         justifyContent: "center",
@@ -386,19 +384,18 @@ const styles = StyleSheet.create({
     favouriteIcon: {
         marginBottom: 10,
         elevation: 5,
-        backgroundColor: "#FFF",
+        backgroundColor: COLORS.WHITE,
         padding: 10,
         borderRadius: 40 / 2,
     },
     location: {
         marginTop: 10,
-        fontSize: 12,
-        color: "#666",
+        color: COLORS.SECONDARY,
+        ...textStyles.paragraphSmallBold
     },
     subheading: {
         marginTop: 20,
-        fontSize: 20,
-        fontFamily: "Roboto-Medium"
+        ...textStyles.paragraphLargeBold
     },
     safetyContainer: {
         marginTop: 10,
@@ -413,12 +410,14 @@ const styles = StyleSheet.create({
     },
     safetyElementText: {
         marginLeft: 5,
-        fontSize: 12,
-        color: "#666",
+        color: COLORS.SECONDARY,
+        ...textStyles.paragraphSmallBold
     },
     detailsContainer: {
         marginTop: 30,
-        fontSize: 16,
+    },
+    details: {
+        ...textStyles.paragraphMedium
     },
     button: {
         position: "relative",
@@ -426,17 +425,16 @@ const styles = StyleSheet.create({
         top: 0,
         width: WINDOW_WIDTH,
         height: Math.floor(WINDOW_HEIGHT / 20),
-        backgroundColor: "#0062FF",
+        backgroundColor: COLORS.PRIMARY,
         alignItems: "center",
         justifyContent: "flex-end",
         padding: NAVIGATION_HEIGHT > 0 ? 30 : 40,
-        borderTopRightRadius: 50,
-        borderTopLeftRadius: 50,
+        borderTopRightRadius: 30,
+        borderTopLeftRadius: 30,
         marginBottom: DEVICE_HEIGHT - WINDOW_HEIGHT - 30
     },
     buttonText: {
-        color: "#fff",
-        fontFamily: "Roboto-Medium"
+        ...textStyles.primaryButtonText
     }
 })
 

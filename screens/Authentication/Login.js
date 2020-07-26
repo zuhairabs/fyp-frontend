@@ -7,6 +7,7 @@ import Navbar from '../../components/Header/Navbar'
 import StatusBarWhite from '../../components/StatusBar'
 import SecondaryBackground from '../../components/Backgrounds/SecondaryBackground'
 
+import { COLORS, buttons, textStyles } from '../../styles/styles'
 import { GlobalContext } from '../../providers/GlobalContext'
 
 const Login = ({ navigation }) => {
@@ -59,12 +60,12 @@ const Login = ({ navigation }) => {
                 backdropPressToClose={!loading}
             >
                 <View style={{ flexDirection: "row", justifyContent: "space-around", alignItems: "center" }}>
-                    <Text style={{ fontSize: 20, marginHorizontal: 20 }}>
+                    <Text style={{ marginHorizontal: 20, ...textStyles.paragraphLarge, color: COLORS.BLACK }}>
                         {modalText}
                     </Text>
                     {
                         loading ?
-                            <ActivityIndicator size="large" color="#0062FF" />
+                            <ActivityIndicator size="large" color={COLORS.PRIMARY} />
                             : null
                     }
                 </View>
@@ -78,15 +79,17 @@ const Login = ({ navigation }) => {
                 <View style={styles.contentContainer} contentContainerStyle={{ justifyContent: "center", alignItems: "center" }}>
                     <View style={styles.tabNavigation}>
                         <TouchableOpacity style={styles.tabNavigationObjectSelected}>
-                            <Text style={styles.tabNavigationText}>Login</Text>
+                            <Text style={{ ...styles.tabNavigationText, ...textStyles.paragraphLargeBold }}>
+                                Login
+                            </Text>
                         </TouchableOpacity>
                         <TouchableOpacity style={styles.tabNavigationObject} onPress={() => { navigation.navigate("SignUp") }}>
-                            <Text style={styles.tabNavigationText}>Register</Text>
+                            <Text style={{ ...styles.tabNavigationText, ...textStyles.paragraphLarge }}>Register</Text>
                         </TouchableOpacity>
                     </View>
                     <View style={styles.form}>
                         <TextInput
-                            style={styles.textInput}
+                            style={{ ...styles.textInput, }}
                             placeholder="Phone Number"
                             keyboardType='numeric'
                             autoCompleteType="tel"
@@ -110,17 +113,17 @@ const Login = ({ navigation }) => {
                         />
                     </View>
                     <View style={styles.buttonArea}>
-                        <TouchableOpacity style={styles.defaultButton} onPress={() => { handleSubmit() }}>
-                            <Text style={styles.defaultButtonText}>Login</Text>
+                        <TouchableOpacity style={buttons.roundedPrimaryButton} onPress={() => { handleSubmit() }}>
+                            <Text style={textStyles.roundedButtonText}>Login</Text>
                         </TouchableOpacity>
                     </View>
                     <View style={styles.forgotPassword}>
                         <TouchableOpacity>
-                            <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
+                            <Text style={textStyles.link}>Forgot Password?</Text>
                         </TouchableOpacity>
                     </View>
                     <View style={styles.terms}>
-                        <Text style={styles.termsText}>
+                        <Text style={{ ...styles.termsText, ...textStyles.paragraphSmall }}>
                             By clicking Login, you acknowledge to reading & agreement to our
                             <Text style={{ color: "#0062FF" }}
                                 onPress={() => { Linking.openURL("https://www.github.com") }}
@@ -143,7 +146,7 @@ const styles = StyleSheet.create({
     screenContainer: {
         paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
         height: Dimensions.get('screen').height,
-        backgroundColor: "#fff"
+        backgroundColor: COLORS.WHITE
     },
     container: {
     },
@@ -163,15 +166,14 @@ const styles = StyleSheet.create({
     },
     tabNavigationObject: {
         borderBottomWidth: 1,
-        borderColor: "#0062FF",
+        borderColor: COLORS.PRIMARY,
     },
     tabNavigationObjectSelected: {
         borderBottomWidth: 3,
-        borderColor: "#0062FF",
+        borderColor: COLORS.PRIMARY,
     },
     tabNavigationText: {
-        fontSize: 18,
-        color: "#0062FF",
+        color: COLORS.PRIMARY,
         borderBottomWidth: 1,
         borderColor: "#00000000",
         paddingBottom: 10,
@@ -187,7 +189,7 @@ const styles = StyleSheet.create({
     textInput: {
         width: "100%",
         borderWidth: 1,
-        borderColor: "#66666666",
+        borderColor: COLORS.BORDER_LIGHT,
         padding: 10,
         marginVertical: 10,
         borderRadius: 5,
@@ -200,22 +202,8 @@ const styles = StyleSheet.create({
         width: "100%",
         marginTop: 20,
     },
-    defaultButton: {
-        width: Math.floor(Dimensions.get('window').width / 2),
-        justifyContent: "center",
-        alignItems: "center",
-        borderRadius: 30,
-        backgroundColor: "#0062FF",
-        padding: 10
-    },
-    defaultButtonText: {
-        color: "#FFF"
-    },
     forgotPassword: {
         marginVertical: 20,
-    },
-    forgotPasswordText: {
-        color: "#0062FF",
     },
     terms: {
         marginTop: 20,
@@ -224,8 +212,7 @@ const styles = StyleSheet.create({
     },
     termsText: {
         textAlign: "center",
-        color: "#666",
-        fontSize: 12,
+        color: COLORS.SECONDARY,
     },
 })
 

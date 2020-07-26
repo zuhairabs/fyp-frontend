@@ -25,6 +25,7 @@ import CardScroll from '../../components/CardScrollBig/CardScroll'
 import CardScrollSmall from '../../components/CardScrollSmall/CardScrollSmall'
 
 import { GlobalContext } from '../../providers/GlobalContext'
+import { textStyles, COLORS } from '../../styles/styles'
 
 const DEVICE_HEIGHT = Dimensions.get("window").height;
 
@@ -195,7 +196,7 @@ const Home = ({ navigation }) => {
                             height: DEVICE_HEIGHT - 150,
                             padding: 20,
                         }}>
-                            <ActivityIndicator size="large" color="#0062FF" />
+                            <ActivityIndicator size="large" color={COLORS.PRIMARY} />
                         </View> :
                             <>
                                 <Location />
@@ -221,14 +222,14 @@ const Home = ({ navigation }) => {
                             <TouchableHighlight
                                 onPress={() => { requestLocationPermission() }}
                                 style={{
-                                    backgroundColor: "#0062FF",
+                                    backgroundColor: COLORS.PRIMARY,
                                     padding: 5,
                                     paddingHorizontal: 20,
                                     marginTop: 20,
                                     borderRadius: 15,
                                 }}
                             >
-                                <Text style={{ color: "#fff", fontSize: 20 }}>
+                                <Text style={{ color: COLORS.WHITE, fontSize: 20 }}>
                                     Give location permission
                                 </Text>
                             </TouchableHighlight>
@@ -243,13 +244,13 @@ const Home = ({ navigation }) => {
 const styles = StyleSheet.create({
     screenContainer: {
         paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
-        backgroundColor: "#fff"
+        backgroundColor: COLORS.WHITE
     },
     mainSubHeading: {
         marginHorizontal: 35,
         textTransform: "uppercase",
-        fontSize: 16,
-        color: "#666"
+        color: "#666",
+        ...textStyles.paragraphMediumBold
     }
 });
 

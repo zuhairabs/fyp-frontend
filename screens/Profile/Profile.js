@@ -16,6 +16,7 @@ import { GlobalContext } from '../../providers/GlobalContext'
 
 import StatusBarWhite from '../../components/StatusBar'
 import MenuBackground from '../../components/Backgrounds/MenuBackground'
+import { COLORS, textStyles } from '../../styles/styles'
 
 const Profile = ({ navigation }) => {
     const { authActions, state } = React.useContext(GlobalContext);
@@ -134,7 +135,7 @@ const Profile = ({ navigation }) => {
 const styles = StyleSheet.create({
     screenContainer: {
         paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
-        backgroundColor: "#FFF",
+        backgroundColor: COLORS.WHITE,
     },
     container: {
         height: Dimensions.get('window').height
@@ -156,9 +157,8 @@ const styles = StyleSheet.create({
         marginTop: 30,
     },
     name: {
-        fontSize: 18,
-        color: "#FFF",
-        fontWeight: "bold",
+        ...textStyles.paragraphLargeBold,
+        color: COLORS.WHITE,
     },
     userPhotoContainer: {
         height: 100,
@@ -175,7 +175,7 @@ const styles = StyleSheet.create({
         height: 80,
         width: 80,
         borderRadius: 80 / 2,
-        backgroundColor: "#FFF",
+        backgroundColor: COLORS.WHITE,
         justifyContent: "center",
         alignItems: "center"
     },
@@ -189,7 +189,6 @@ const styles = StyleSheet.create({
         justifyContent: "space-around",
         alignItems: "center",
         width: Math.floor(Dimensions.get("window").width / 1.5),
-        // borderWidth: 1,
     },
     button: {
         marginVertical: 20,
@@ -213,7 +212,7 @@ const styles = StyleSheet.create({
     buttonText: {
         flex: 8,
         paddingHorizontal: 20,
-        fontSize: 18,
+        ...textStyles.paragraphLarge
     },
 })
 

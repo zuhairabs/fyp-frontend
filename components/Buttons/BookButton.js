@@ -1,19 +1,18 @@
 import React from 'react'
 import { Text, View, StyleSheet } from 'react-native'
-
-
+import { textStyles, COLORS } from '../../styles/styles'
 
 const BookButton = (props) => {
     return (
         <View style={styles.buttonContainer}>
             <View style={styles.bookButton}>
                 {
-                    props.title ? 
-                    <Text style={styles.bookButtonText}>
-                        {props.title}
-                    </Text>
-                    :
-                    <Text style={styles.bookButtonText}>BOOK SLOT</Text>    
+                    props.title ?
+                        <Text style={styles.bookButtonText}>
+                            {props.title}
+                        </Text>
+                        :
+                        <Text style={styles.bookButtonText}>BOOK SLOT</Text>
                 }
                 <View style={styles.bookButtonUnderline}></View>
             </View>
@@ -26,14 +25,13 @@ const styles = StyleSheet.create({
         alignItems: "flex-start",
     },
     bookButton: {
-        backgroundColor: '#fff',
+        backgroundColor: COLORS.WHITE,
         paddingVertical: 5,
     },
     bookButtonText: {
-        fontFamily: 'notoserif',
         textTransform: 'uppercase',
-        fontSize: 10,
         marginBottom: 5,
+        ...textStyles.paragraphExtraSmall
     },
     bookButtonUnderline: {
         borderBottomWidth: 2,

@@ -4,6 +4,7 @@ import { TouchableOpacity, TouchableWithoutFeedback } from 'react-native-gesture
 
 import Icon from 'react-native-vector-icons/dist/MaterialIcons'
 import AsyncStorage from '@react-native-community/async-storage'
+import { textStyles, COLORS } from '../../../styles/styles'
 
 const BookingCard = (props) => {
     const mlist = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
@@ -79,7 +80,7 @@ const BookingCard = (props) => {
                         </Text>
 
                         <View style={styles.time}>
-                            <Icon name="access-time" size={16} color="#666" />
+                            <Icon name="access-time" size={16} color={COLORS.SECONDARY} />
                             <Text style={styles.timeText}>
                                 {
                                     new Date(props.booking.start)
@@ -133,6 +134,9 @@ const BookingCard = (props) => {
                             >
                                 <Text style={styles.tabText}>Delete</Text>
                             </TouchableOpacity>
+                            <TouchableOpacity style={styles.extensionTabLast}>
+                                <Icon name="share" size={16} color={COLORS.SECONDARY} />
+                            </TouchableOpacity>
                         </View>
                         : null
                 }
@@ -150,7 +154,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         borderRadius: 15,
-        backgroundColor: "#fff",
+        backgroundColor: COLORS.WHITE,
         elevation: 10,
         zIndex: 0,
     },
@@ -167,10 +171,11 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
         borderRightWidth: 1,
-        borderColor: "#7070702F"
+        borderColor: COLORS.BORDER_LIGHT
     },
     date: {
-        color: "#666",
+        color: COLORS.SECONDARY,
+        ...textStyles.paragraphMedium
     },
     imageContainer: {
         flex: 2,
@@ -192,8 +197,8 @@ const styles = StyleSheet.create({
         alignItems: "flex-start",
     },
     header: {
-        fontSize: 18,
-        color: "#666"
+        ...textStyles.paragraphLarge,
+        color: COLORS.SECONDARY
     },
     time: {
         flexDirection: "row",
@@ -201,7 +206,8 @@ const styles = StyleSheet.create({
         alignItems: "center"
     },
     timeText: {
-        color: "#666",
+        ...textStyles.paragraphSmall,
+        color: COLORS.SECONDARY,
         marginLeft: 10,
     },
     extension: {
@@ -212,16 +218,25 @@ const styles = StyleSheet.create({
         borderBottomLeftRadius: 15,
         borderBottomRightRadius: 15,
         borderTopWidth: 1,
-        borderColor: "#7070702F",
+        borderColor: COLORS.BORDER_LIGHT,
         width: "100%",
+        paddingVertical: 10,
     },
     extensionTab: {
         flex: 1,
-        paddingVertical: 20,
+        paddingVertical: 10,
+        paddingHorizontal: 30,
+        borderRightWidth: 1,
+        borderColor: COLORS.BORDER_LIGHT
+    },
+    extensionTabLast: {
+        flex: 1,
+        paddingVertical: 10,
         paddingHorizontal: 30,
     },
     tabText: {
-        color: "#666"
+        color: COLORS.SECONDARY,
+        ...textStyles.paragraphSmall
     }
 })
 

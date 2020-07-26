@@ -8,6 +8,7 @@ import StatusBarWhite from '../../components/StatusBar'
 import SecondaryBackground from '../../components/Backgrounds/SecondaryBackground'
 
 import { GlobalContext } from '../../providers/GlobalContext'
+import { textStyles, COLORS, buttons } from '../../styles/styles';
 
 const Login = (props) => {
     const { phone, password, firstName, lastName, email } = props.route.params;
@@ -60,7 +61,7 @@ const Login = (props) => {
 
 
     const verifyOtpRequest = async () => {
-        if (otp.length === 6) {
+        if (otp.toString().length === 6) {
             loadingModal.current.open();
             setModalText("Verifying OTP");
             setLoading(true);
@@ -126,7 +127,7 @@ const Login = (props) => {
                 backdropPressToClose={!loading}
             >
                 <View style={{ flexDirection: "row", justifyContent: "space-around", alignItems: "center" }}>
-                    <Text style={{ fontSize: 20, marginHorizontal: 20 }}>
+                    <Text style={{ marginHorizontal: 20, ...textStyles.paragraphLarge, color: COLORS.BLACK }}>
                         {modalText}
                     </Text>
                     {
@@ -146,7 +147,7 @@ const Login = (props) => {
                 <View style={styles.contentContainer} contentContainerStyle={{ justifyContent: "center", alignItems: "center" }}>
                     <View style={styles.tabNavigation}>
                         <TouchableOpacity style={styles.tabNavigationObjectSelected}>
-                            <Text style={styles.tabNavigationText}>
+                            <Text style={{ ...styles.tabNavigationText, ...textStyles.paragraphLargeBold }}>
                                 Verification Code
                             </Text>
                         </TouchableOpacity>
@@ -164,8 +165,8 @@ const Login = (props) => {
                         />
                     </View>
                     <View style={styles.buttonArea}>
-                        <TouchableOpacity style={styles.defaultButton} onPress={() => { verifyOtpRequest() }}>
-                            <Text style={styles.defaultButtonText}>
+                        <TouchableOpacity style={buttons.roundedPrimaryButton} onPress={() => { verifyOtpRequest() }}>
+                            <Text style={textStyles.roundedButtonText}>
                                 Verify OTP
                             </Text>
                         </TouchableOpacity>
@@ -203,7 +204,7 @@ const styles = StyleSheet.create({
         paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
         // backgroundColor: "#F8F9FD",
         height: Dimensions.get('screen').height,
-        backgroundColor: "#fff"
+        backgroundColor: COLORS.WHITE
     },
     container: {
     },
@@ -223,17 +224,16 @@ const styles = StyleSheet.create({
     },
     tabNavigationObject: {
         borderBottomWidth: 1,
-        borderColor: "#0062FF",
+        borderColor: COLORS.PRIMARY,
     },
     tabNavigationObjectSelected: {
         borderBottomWidth: 3,
         borderColor: "#0062FF",
     },
     tabNavigationText: {
-        fontSize: 18,
-        color: "#0062FF",
         borderBottomWidth: 1,
-        borderColor: "#00000000",
+        color: COLORS.PRIMARY,
+        borderColor: COLORS.TRANSPARENT,
         paddingBottom: 10,
         paddingHorizontal: 15,
     },
@@ -248,11 +248,11 @@ const styles = StyleSheet.create({
     textInput: {
         width: "100%",
         borderWidth: 1,
-        borderColor: "#66666666",
+        borderColor: COLORS.BORDER_LIGHT,
         padding: 10,
         marginVertical: 10,
         borderRadius: 5,
-        backgroundColor: "#fff",
+        backgroundColor: COLORS.WHITE,
     },
     buttonArea: {
         flex: 1,
@@ -261,26 +261,14 @@ const styles = StyleSheet.create({
         width: "100%",
         marginTop: 100,
     },
-    defaultButton: {
-        width: Math.floor(Dimensions.get('window').width / 2),
-        justifyContent: "center",
-        alignItems: "center",
-        borderRadius: 30,
-        backgroundColor: "#0062FF",
-        padding: 10,
-        borderWidth: 1,
-        borderColor: "#CAD0D8",
-    },
-    defaultButtonText: {
-        color: "#FFF"
-    },
     forgotPassword: {
         marginVertical: 20,
         justifyContent: "center",
         alignItems: "center"
     },
     forgotPasswordText: {
-        color: "#0062FF",
+        color: COLORS.PRIMARY,
+        ...textStyles.paragraphSmall
     },
     terms: {
         marginTop: 50,
@@ -289,8 +277,8 @@ const styles = StyleSheet.create({
     },
     termsText: {
         textAlign: "center",
-        color: "#666",
-        fontSize: 12,
+        color: COLORS.SECONDARY,
+        ...textStyles.paragraphSmall
     },
 })
 

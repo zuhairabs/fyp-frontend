@@ -18,6 +18,7 @@ import { GlobalContext } from '../../providers/GlobalContext'
 
 import StatusBarWhite from '../../components/StatusBar'
 import StoreCard from '../../components/Cards/StoreCard/StoreCard'
+import { COLORS, textStyles } from '../../styles/styles'
 
 const DEVICE_HEIGHT = Dimensions.get('screen').height;
 const WINDOW_HEIGHT = Dimensions.get('window').height;
@@ -93,7 +94,7 @@ const Favourites = (props) => {
                             width: "100%"
                         }}
                     >
-                        <ActivityIndicator size="large" color="#0062FF" />
+                        <ActivityIndicator size="large" color={COLORS.PRIMARY} />
                     </View>
                     :
                     <ScrollView
@@ -102,8 +103,8 @@ const Favourites = (props) => {
 
                         <View style={styles.headerContainer}>
                             <Text style={{
-                                color: "#666",
-                                fontSize: 15,
+                                color: COLORS.SECONDARY,
+                                ...textStyles.paragraphMedium,
                                 paddingHorizontal: 20,
                                 textTransform: "capitalize",
                             }}
@@ -117,8 +118,8 @@ const Favourites = (props) => {
                                 }}
                             >
                                 {
-                                    dropdown ? <Icon name="arrow-drop-up" size={20} color="#000" />
-                                        : <Icon name="arrow-drop-down" size={20} color="#000" />
+                                    dropdown ? <Icon name="arrow-drop-up" size={20} color={COLORS.BLACK} />
+                                        : <Icon name="arrow-drop-down" size={20} color={COLORS.BLACK} />
                                 }
 
                             </TouchableOpacity>
@@ -213,7 +214,7 @@ const Favourites = (props) => {
 const styles = StyleSheet.create({
     screenContainer: {
         paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
-        backgroundColor: "#fff",
+        backgroundColor: COLORS.WHITE,
     },
     container: {
         marginBottom: 50 + DEVICE_HEIGHT - WINDOW_HEIGHT,
@@ -224,16 +225,16 @@ const styles = StyleSheet.create({
         zIndex: 5,
         elevation: 3,
         maxHeight: DEVICE_HEIGHT / 2.8,
-        backgroundColor: "#FFF",
+        backgroundColor: COLORS.WHITE,
         borderRadius: 6,
         borderWidth: 1,
-        borderColor: "#CAD0D8",
+        borderColor: COLORS.BORDER_LIGHT,
         width: "100%",
         top: 50,
     },
     headerContainer: {
         borderWidth: 1,
-        borderColor: "#CAD0D8",
+        borderColor: COLORS.BORDER_LIGHT,
         borderRadius: 6,
         flexDirection: "row",
         justifyContent: "space-between",
@@ -249,7 +250,7 @@ const styles = StyleSheet.create({
     dropdownText: {
         textTransform: "capitalize",
         color: "#666",
-        fontSize: 15,
+        ...textStyles.paragraphMedium
     },
 })
 

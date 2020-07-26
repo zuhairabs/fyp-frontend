@@ -3,6 +3,7 @@ import { StyleSheet, Text, FlatList, Image, View } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
 import Other from './svg/other'
+import { COLORS, textStyles } from '../../styles/styles';
 
 const CategoryScroll = (props) => {
     const [categories, setCategories] = useState([])
@@ -72,11 +73,11 @@ const styles = StyleSheet.create({
         flex: 1,
         height: 24,
         width: 24,
-        opacity: 0.5
+        opacity: 0.6
     },
     CategoryScrollText: {
-        color: "#666",
-        fontSize: 10,
+        ...textStyles.paragraphExtraSmall,
+        color: COLORS.SECONDARY,
         textTransform: "capitalize",
     },
     categoryScrollCard: {
@@ -84,7 +85,7 @@ const styles = StyleSheet.create({
         borderRadius: 12 / 2,
         height: 50,
         width: 50,
-        backgroundColor: "#fff",
+        backgroundColor: COLORS.WHITE,
         elevation: 10,
         zIndex: 2,
         justifyContent: "center",

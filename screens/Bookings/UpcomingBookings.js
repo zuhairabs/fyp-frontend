@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useContext } from 'react'
 import { View, Text, StyleSheet, Dimensions, Alert, ActivityIndicator, Image } from 'react-native'
 import { ScrollView, TouchableWithoutFeedback } from 'react-native-gesture-handler'
-import AsyncStorage from '@react-native-community/async-storage'
 
 import StatusBarWhite from '../../components/StatusBar'
 import BookingCard from '../../components/Cards/BookingCard/bookingCard'
 
+import { styles } from './PreviousBookings'
 import { GlobalContext } from '../../providers/GlobalContext'
 
 const mlist = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
@@ -165,72 +165,5 @@ const UpcomingBookings = ({ navigation }) => {
         </View>
     )
 }
-
-const styles = StyleSheet.create({
-    screenContainer: {
-        // paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
-        backgroundColor: "#FFF",
-    },
-    container: {
-        height: Dimensions.get('window').height,
-        marginBottom: 50,
-    },
-    contentContainer: {
-        marginBottom: 100,
-    },
-    tabNavigation: {
-        width: "100%",
-        flexDirection: "row",
-        justifyContent: "space-around",
-        alignItems: "center",
-        paddingHorizontal: 20,
-        marginTop: 20,
-        marginBottom: 10,
-    },
-    tab: {
-        flex: 2,
-    },
-    tabNavigationObject: {
-        alignItems: "center",
-        borderBottomWidth: 1,
-        borderBottomColor: "#6666666F"
-    },
-    tabNavigationObjectSelected: {
-        borderBottomWidth: 3,
-        borderColor: "#0062FF",
-        alignItems: "center"
-    },
-    tabNavigationText: {
-        fontSize: 18,
-        color: "#6666666F",
-        borderBottomWidth: 1,
-        borderColor: "#00000000",
-        paddingBottom: 10,
-        paddingHorizontal: 15,
-    },
-    tabNavigationTextSelected: {
-        fontSize: 18,
-        color: "#0062FF",
-        borderBottomWidth: 1,
-        borderColor: "#00000000",
-        paddingBottom: 10,
-        paddingHorizontal: 15,
-    },
-    monthSelectorContainer: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
-        width: "100%",
-        paddingTop: 20,
-        paddingBottom: 20,
-        paddingHorizontal: 40,
-    },
-    selectedMonth: {
-        color: "#666",
-    },
-    results: {
-        marginTop: 20,
-    },
-});
 
 export default UpcomingBookings;

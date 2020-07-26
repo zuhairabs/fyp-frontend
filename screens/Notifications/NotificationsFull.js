@@ -8,6 +8,7 @@ import { NotificationLoadingEffect } from '../../components/Cards/NotificationCa
 const NotificationCard = lazy(() => import('../../components/Cards/NotificationCard/NotificationCard'))
 
 import { GlobalContext } from '../../providers/GlobalContext'
+import { COLORS } from '../../styles/styles'
 
 const NotificationsFull = (props) => {
     const { state } = useContext(GlobalContext)
@@ -51,7 +52,7 @@ const NotificationsFull = (props) => {
                                         ...styles.centerBox,
                                         padding: 20
                                     }}>
-                                        <Text style={{ color: "#666" }}>
+                                        <Text style={{ color: COLORS.SECONDARY }}>
                                             No new notifications
                                         </Text>
                                     </View>
@@ -74,7 +75,7 @@ const NotificationsFull = (props) => {
 
 const styles = StyleSheet.create({
     screenContainer: {
-        backgroundColor: "#FFF",
+        backgroundColor: COLORS.WHITE,
     },
     container: {
         height: Dimensions.get('window').height,
@@ -88,7 +89,7 @@ const styles = StyleSheet.create({
         marginBottom: 100,
     },
     small: {
-        color: "#6666666F",
+        color: COLORS.SECONDARY_TRANSPARENT,
         fontSize: 12,
     },
     footer: {
@@ -96,7 +97,7 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
         borderTopWidth: 1,
-        borderColor: "#6666662F",
+        borderColor: COLORS.SECONDARY_TRANSPARENT,
         fontSize: 18
     }
 });

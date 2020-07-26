@@ -1,5 +1,6 @@
 import React from 'react'
 import { Text, View, StyleSheet, Image, TouchableOpacity, ToastAndroid } from 'react-native'
+import { COLORS, textStyles } from '../../../styles/styles';
 
 const MINUTE_LENGTH = 60 * 1000;
 const HOUR_LENGTH = 60 * MINUTE_LENGTH;
@@ -11,12 +12,12 @@ export const NotificationLoadingEffect = () => {
     return (
         <TouchableOpacity style={{
             ...styles.container,
-            backgroundColor: "#FFF"
+            backgroundColor: COLORS.WHITE
         }}>
             <View
-                style={{ ...styles.imageContainer, backgroundColor: "#666", opacity: 0.3 }} />
+                style={{ ...styles.imageContainer, backgroundColor: COLORS.SECONDARY, opacity: 0.3 }} />
             <View
-                style={{ ...styles.contentContainer, backgroundColor: "#666", opacity: 0.3 }} />
+                style={{ ...styles.contentContainer, backgroundColor: COLORS.SECONDARY, opacity: 0.3 }} />
         </TouchableOpacity >
     )
 }
@@ -58,7 +59,7 @@ const NotificationCard = ({ notification, navigation }) => {
         <TouchableOpacity
             style={{
                 ...styles.container,
-                backgroundColor: notification.readStatus ? "#FFF" : "#0062FF05"
+                backgroundColor: notification.readStatus ? COLORS.WHITE : "#0062FF05"
             }}
             onPress={() => {
                 handleNotificationCardPress();
@@ -67,7 +68,7 @@ const NotificationCard = ({ notification, navigation }) => {
             <View
                 style={{
                     ...styles.imageContainer,
-                    backgroundColor: notification.readStatus ? "#FFF" : "#0062FF05"
+                    backgroundColor: notification.readStatus ? COLORS.WHITE : "#0062FF05"
                 }}
             >
                 {
@@ -90,7 +91,7 @@ const NotificationCard = ({ notification, navigation }) => {
 
 const styles = StyleSheet.create({
     container: {
-        backgroundColor: "#fff",
+        backgroundColor: COLORS.WHITE,
         padding: 20,
         flexDirection: "row",
         justifyContent: "flex-start",
@@ -120,11 +121,12 @@ const styles = StyleSheet.create({
         flex: 3,
         color: "#666",
         marginBottom: 8,
+        ...textStyles.paragraphMedium
     },
     date: {
         flex: 1,
-        fontSize: 10,
-        color: "#666"
+        color: "#666",
+        ...textStyles.paragraphExtraSmall
     }
 })
 

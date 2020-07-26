@@ -3,6 +3,7 @@ import { Text, View, StyleSheet, Image, Dimensions } from 'react-native'
 import { TouchableOpacity, TouchableWithoutFeedback } from 'react-native-gesture-handler'
 
 import Icon from 'react-native-vector-icons/dist/MaterialIcons'
+import { textStyles, COLORS } from '../../../styles/styles'
 
 const bookingStatusColor = {
     completed: "#1AB542",
@@ -63,7 +64,8 @@ const BookingCardSmall = (props) => {
                         <Text style={{
                             marginTop: 5,
                             color: bookingStatusColor[props.booking.status],
-                            textTransform: "capitalize"
+                            textTransform: "capitalize",
+                            ...textStyles.paragraphSmallBold
                         }}>
                             {props.booking.status}
                         </Text>
@@ -97,8 +99,9 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         borderRadius: 15,
-        backgroundColor: "#fff",
+        backgroundColor: COLORS.WHITE,
         elevation: 10,
+        zIndex: 0,
     },
     mainCard: {
         flex: 2,
@@ -113,10 +116,11 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
         borderRightWidth: 1,
-        borderColor: "#7070702F"
+        borderColor: COLORS.BORDER_LIGHT
     },
     date: {
-        color: "#666"
+        color: COLORS.SECONDARY,
+        ...textStyles.paragraphMedium
     },
     imageContainer: {
         flex: 2,
@@ -138,8 +142,8 @@ const styles = StyleSheet.create({
         alignItems: "flex-start",
     },
     header: {
-        fontSize: 18,
-        color: "#666"
+        ...textStyles.paragraphLarge,
+        color: COLORS.SECONDARY
     },
     time: {
         flexDirection: "row",
@@ -147,7 +151,8 @@ const styles = StyleSheet.create({
         alignItems: "center"
     },
     timeText: {
-        color: "#666",
+        ...textStyles.paragraphSmall,
+        color: COLORS.SECONDARY,
         marginLeft: 10,
     },
     extension: {
@@ -158,16 +163,19 @@ const styles = StyleSheet.create({
         borderBottomLeftRadius: 15,
         borderBottomRightRadius: 15,
         borderTopWidth: 1,
-        borderColor: "#7070702F",
+        borderColor: COLORS.BORDER_LIGHT,
         width: "100%",
+        paddingVertical: 10,
     },
     extensionTab: {
-        paddingVertical: 20,
-        paddingHorizontal: 40
+        flex: 1,
+        paddingVertical: 10,
+        paddingHorizontal: 30,
     },
     tabText: {
-        color: "#666"
-    },
+        color: COLORS.SECONDARY,
+        ...textStyles.paragraphSmall
+    }
 })
 
 export default BookingCardSmall;

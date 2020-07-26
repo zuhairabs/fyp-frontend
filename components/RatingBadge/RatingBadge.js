@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { View, Text, StyleSheet } from 'react-native'
 
 import Icon from 'react-native-vector-icons/dist/MaterialIcons'
+import { COLORS, textStyles } from '../../styles/styles'
 
 const RatingBadge = (props) => {
     return (
@@ -25,12 +26,11 @@ const styles = StyleSheet.create({
         alignItems: "center"
     },
     ratingText: {
-        fontSize: 12,
+        ...textStyles.paragraphSmallBold,
         position: "absolute",
         top: 14,
         zIndex: 2,
-        color: "#fff",
-        fontWeight: "bold",
+        color: COLORS.WHITE
     }
 })
 

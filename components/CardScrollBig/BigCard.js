@@ -10,6 +10,7 @@ import {
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 
 import BookButton from '../Buttons/BookButton'
+import { textStyles, COLORS } from '../../styles/styles'
 const DEVICE_WIDTH = Dimensions.get('window').width;
 
 const BigCard = (props) => {
@@ -20,7 +21,6 @@ const BigCard = (props) => {
                     props.navigation.navigate("Store", { store: props.store._id, bookSlot: false })
                 }}
                 style={styles.card}
-                setOutlineAmbientShadowColor="#f00"
             >
                 <View style={styles.cardLeft}>
                     <View>
@@ -67,7 +67,7 @@ const styles = StyleSheet.create({
         width: DEVICE_WIDTH,
     },
     card: {
-        backgroundColor: "#fff",
+        backgroundColor: COLORS.WHITE,
         elevation: 8,
         borderRadius: 12,
 
@@ -91,31 +91,15 @@ const styles = StyleSheet.create({
     },
     cardTitleText: {
         color: '#1162FB',
-        fontSize: 24,
-        lineHeight: 24,
-        fontFamily: 'PTSerif-Bold'
+        ...textStyles.bigCardHeading
     },
     cardTitleTextBlack: {
         color: '#000',
-        fontSize: 24,
-        lineHeight: 24,
-        fontFamily: 'PTSerif-Bold'
+        ...textStyles.bigCardHeading
     },
     cardTitleSubtext: {
         textTransform: 'uppercase',
         fontFamily: 'notoserif',
-        fontSize: 10,
-    },
-    bookButton: {
-        backgroundColor: '#fff',
-        color: '#000',
-        padding: 5,
-        borderBottomWidth: 2,
-        borderColor: '#1162FB',
-    },
-    bookButtonText: {
-        fontFamily: 'notoserif',
-        textTransform: 'uppercase',
         fontSize: 10,
     },
     cardRight: {

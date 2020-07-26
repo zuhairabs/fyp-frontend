@@ -6,13 +6,7 @@ import Icon from 'react-native-vector-icons/dist/MaterialIcons'
 
 import RatingBadge from '../../RatingBadge/RatingBadge'
 import BookButton from '../../Buttons/BookButton'
-
-const bookingStatusColor = {
-    completed: "#1AB542",
-    upcoming: "#0062FF",
-    missed: "#FCC225",
-    cancelled: "#E50A17"
-}
+import { COLORS, textStyles } from '../../../styles/styles'
 
 const StoreCard = (props) => {
     const removeFavourite = () => {
@@ -117,16 +111,6 @@ const StoreCard = (props) => {
                             <Text style={styles.subheadingText}>
                                 {props.store.name}, {props.store.location_desc}
                             </Text>
-                            {
-                                props.status &&
-                                <Text style={{
-                                    marginTop: 5,
-                                    color: bookingStatusColor[props.status],
-                                    textTransform: "capitalize"
-                                }}>
-                                    {props.status}
-                                </Text>
-                            }
                         </View>
                     </View>
                     {
@@ -149,7 +133,7 @@ const StoreCard = (props) => {
                             onPress={() => { removeFavourite() }}
                             style={styles.favouriteIcon}
                         >
-                            <Icon name="favorite" size={16} color="#F30302" />
+                            <Icon name="favorite" size={16} color={COLORS.RED} />
                         </TouchableWithoutFeedback>
                         :
                         <RatingBadge value={props.store.avg_rating || 4.5} />
@@ -166,7 +150,7 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
         alignItems: "center",
         borderBottomWidth: 1,
-        borderColor: "#ECF0F4",
+        borderColor: COLORS.BORDER_LIGHT,
         paddingVertical: 10,
     },
     rating: {
@@ -201,20 +185,20 @@ const styles = StyleSheet.create({
         alignItems: 'flex-start',
     },
     heading: {
-        fontSize: 20,
-        color: "#666"
+        ...textStyles.paragraphLarge,
+        color: COLORS.SECONDARY,
     },
     subheading: {
         paddingVertical: 10,
     },
     subheadingText: {
-        fontSize: 14,
-        color: "#666",
+        ...textStyles.paragraphSmall,
+        color: COLORS.SECONDARY,
         textTransform: "capitalize",
     },
     favouriteIcon: {
         elevation: 5,
-        backgroundColor: "#FFF",
+        backgroundColor: COLORS.WHITE,
         padding: 10,
         borderRadius: 40 / 2,
         zIndex: 2,

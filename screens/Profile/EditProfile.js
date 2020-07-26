@@ -25,6 +25,7 @@ import { GlobalContext } from '../../providers/GlobalContext'
 
 import StatusBarWhite from '../../components/StatusBar'
 import NavbarBackButton from '../../components/Header/NavbarBackButton'
+import { COLORS, textStyles, buttons } from '../../styles/styles'
 
 const EditProfile = (props) => {
     const { state } = useContext(GlobalContext)
@@ -188,7 +189,7 @@ const EditProfile = (props) => {
                 <Circle cx="300"
                     cy="300"
                     r="300"
-                    fill="#0062FF" />
+                    fill={COLORS.PRIMARY} />
             </Svg>
 
             <NavbarBackButton color="white" navigation={navigation} />
@@ -202,7 +203,7 @@ const EditProfile = (props) => {
                                 avatar && avatar.length > 0 ?
                                     <Image source={{ uri: `data:image/gif;base64,${avatar}` }} style={styles.avatar} />
                                     :
-                                    <Icon name="person" size={80} color="#0062FF" />
+                                    <Icon name="person" size={80} color={COLORS.PRIMARY} />
                             }
                             <TouchableHighlight
                                 style={styles.cameraContainer}
@@ -277,20 +278,21 @@ const EditProfile = (props) => {
                             />
                         </View>
 
+                        <TouchableOpacity style={styles.resetLink}>
+                            <Text style={{ ...textStyles.link }}>Reset Your Password</Text>
+                        </TouchableOpacity>
+
                         <View style={styles.buttonArea}>
                             <TouchableOpacity
-                                style={styles.defaultButton}
+                                style={{ ...buttons.primaryButton, marginHorizontal: 20 }}
                                 onPress={() => { save() }}
                             >
-                                <Text style={styles.defaultButtonText}>
+                                <Text style={{ ...textStyles.primaryButtonText }}>
                                     Save Profile
                                 </Text>
                             </TouchableOpacity>
                         </View>
 
-                        <TouchableOpacity style={styles.resetLink}>
-                            <Text style={{ color: "#0062FF" }}>Reset Password</Text>
-                        </TouchableOpacity>
 
                     </View>
                 </View>
@@ -363,9 +365,8 @@ const styles = StyleSheet.create({
         borderRadius: 50,
     },
     number: {
-        color: "#FFF",
-        fontWeight: "bold",
-        fontSize: 20,
+        color: COLORS.WHITE,
+        ...textStyles.paragraphLargeBold
     },
     formContainer: {
         paddingTop: 20,
@@ -376,7 +377,7 @@ const styles = StyleSheet.create({
     },
     formObject: {
         width: Dimensions.get('window').width - 40,
-        borderColor: "#CAD0D8",
+        borderColor: COLORS.BORDER_LIGHT,
         backgroundColor: "#FFF",
         borderWidth: 1,
         borderRadius: 6,
@@ -385,24 +386,24 @@ const styles = StyleSheet.create({
         marginBottom: 20,
     },
     formLabel: {
-        fontSize: 12,
-        color: "#0062FF",
-        backgroundColor: "#FFF",
+        ...textStyles.paragraphSmall,
+        color: COLORS.PRIMARY,
+        backgroundColor: COLORS.WHITE,
     },
     inputContainer: {
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "flex-start",
-        backgroundColor: "#FFF",
+        backgroundColor: COLORS.WHITE,
     },
     formInput: {
         height: 36,
-        color: "#666666",
-        backgroundColor: "#FFF",
-        fontSize: 15,
+        color: COLORS.SECONDARY,
+        backgroundColor: COLORS.WHITE,
         paddingHorizontal: 0,
         paddingVertical: 2,
         flex: 1,
+        ...textStyles.paragraphMedium
     },
     resetLink: {
         justifyContent: "center",
@@ -414,21 +415,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
         width: "100%",
         marginTop: 20,
-    },
-    defaultButton: {
-        width: Dimensions.get("window").width - 40,
-        justifyContent: "center",
-        alignItems: "center",
-        borderRadius: 12,
-        backgroundColor: "#0062FF",
-        padding: 12,
-    },
-    defaultButtonText: {
-        color: "#FFF",
-        fontSize: 16,
-        textTransform: "uppercase",
-        fontWeight: "bold"
-    },
+    }
 })
 
 export default EditProfile;

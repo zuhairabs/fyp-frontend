@@ -7,6 +7,7 @@ import StatusBarWhite from '../../components/StatusBar'
 import StoreCard from '../../components/Cards/StoreCard/StoreCard'
 
 import { GlobalContext } from '../../providers/GlobalContext'
+import { textStyles, COLORS, buttons } from '../../styles/styles';
 
 const DEVICE_WIDTH = Dimensions.get("window").width;
 
@@ -80,8 +81,8 @@ const SingleBooking = (props) => {
                             <View style={styles.bookingData}>
                                 <View style={styles.cardContainer}>
                                     <View style={styles.card}>
-                                        <Text style={{ color: "#666" }}>Appointment Time</Text>
-                                        <Text style={{ color: "#666" }}>
+                                        <Text style={{ color: COLORS.SECONDARY, ...textStyles.paragraphMedium }}>Appointment Time</Text>
+                                        <Text style={{ color: COLORS.SECONDARY, ...textStyles.paragraphMedium }}>
                                             {
                                                 new Date(booking.start)
                                                     .toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })
@@ -94,8 +95,8 @@ const SingleBooking = (props) => {
                                         </Text>
                                     </View>
                                     <View style={styles.card}>
-                                        <Text style={{ color: "#666" }}>Appointment Date</Text>
-                                        <Text style={{ color: "#666" }}>
+                                        <Text style={{ color: COLORS.SECONDARY, ...textStyles.paragraphMedium }}>Appointment Date</Text>
+                                        <Text style={{ color: COLORS.SECONDARY, ...textStyles.paragraphMedium }}>
                                             {
                                                 new Date(booking.start).toDateString()
                                             }
@@ -113,7 +114,7 @@ const SingleBooking = (props) => {
                                                     size={180}
                                                     logoBackgroundColor='transparent'
                                                 />
-                                                <Text style={{ marginTop: 20, fontSize: 24, fontWeight: "bold" }}>{booking.bookingId}</Text>
+                                                <Text style={{ marginTop: 20, color: COLORS.SECONDARY, ...textStyles.paragraphLarge }}>{booking.bookingId}</Text>
                                             </>
                                             : <View style={{ height: 200 }}></View>
                                     }
@@ -122,13 +123,15 @@ const SingleBooking = (props) => {
                                     {
                                         booking.review ? null
                                             : <TouchableOpacity
-                                                style={booking.status === "completed" || booking.status === "missed" ? styles.defaultButton : styles.disabledButton}
+                                                style={booking.status === "completed" || booking.status === "missed"
+                                                    ? buttons.primaryButton
+                                                    : buttons.primaryButtonDisabled}
                                                 disabled={booking.status === "cancelled" || booking.status === "upcoming"}
                                                 onPress={() => {
                                                     props.navigation.navigate("Rating", { booking: booking })
                                                 }}
                                             >
-                                                <Text style={styles.defaultButtonText}>
+                                                <Text style={{ ...textStyles.primaryButtonText }}>
                                                     Rate Store
                                                 </Text>
                                             </TouchableOpacity>
@@ -145,7 +148,7 @@ const SingleBooking = (props) => {
 const styles = StyleSheet.create({
     screenContainer: {
         paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
-        backgroundColor: "#FFF",
+        backgroundColor: COLORS.WHITE,
     },
     container: {
         height: Dimensions.get('window').height,
@@ -174,9 +177,9 @@ const styles = StyleSheet.create({
         marginHorizontal: 10,
         marginVertical: 5,
         padding: 10,
-        backgroundColor: "#FFF",
+        backgroundColor: COLORS.WHITE,
         borderRadius: 8,
-        borderColor: "#6666666F",
+        borderColor: COLORS.SECONDARY_TRANSPARENT,
     },
     qrContainer: {
         flex: 3,
@@ -191,28 +194,6 @@ const styles = StyleSheet.create({
         alignItems: "center",
         width: "100%",
         marginBottom: 20,
-    },
-    defaultButton: {
-        width: DEVICE_WIDTH - 40,
-        justifyContent: "center",
-        alignItems: "center",
-        borderRadius: 12,
-        backgroundColor: "#0062FF",
-        padding: 20,
-    },
-    disabledButton: {
-        width: DEVICE_WIDTH - 40,
-        justifyContent: "center",
-        alignItems: "center",
-        borderRadius: 12,
-        backgroundColor: "#66666632",
-        padding: 20,
-    },
-    defaultButtonText: {
-        color: "#FFF",
-        fontSize: 20,
-        textTransform: "uppercase",
-        fontWeight: "bold"
     },
 })
 

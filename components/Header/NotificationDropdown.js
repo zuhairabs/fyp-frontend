@@ -9,6 +9,7 @@ const NotificationCard = lazy(() => import('../Cards/NotificationCard/Notificati
 import NotificationBell from './svg/notifications.svg'
 
 import { GlobalContext } from '../../providers/GlobalContext'
+import { COLORS, textStyles } from '../../styles/styles'
 
 const Dropdown = ({ navigation }) => {
     const { state } = useContext(GlobalContext)
@@ -50,7 +51,7 @@ const Dropdown = ({ navigation }) => {
                 {
                     !loading && notifications.length === 0
                         ? <View style={{ height: "80%", justifyContent: "center", alignItems: "center", padding: 20 }}>
-                            <Text style={{ color: "#666", fontSize: 16 }}>No new notifications</Text>
+                            <Text style={{ color: COLORS.SECONDARY, ...textStyles.paragraphMedium }}>No new notifications</Text>
                         </View>
                         : <ScrollView style={{ height: "85%" }}>
                             {
@@ -70,7 +71,7 @@ const Dropdown = ({ navigation }) => {
                     style={styles.footer}
                     onPress={() => navigation.navigate("NotificationsFull")}
                 >
-                    <Text>View All</Text>
+                    <Text style={{ ...textStyles.paragraphMedium }}>View All</Text>
                 </TouchableOpacity>
             </View>
         </View>
@@ -105,7 +106,7 @@ const styles = StyleSheet.create({
         height: Math.floor(Dimensions.get("window").height / 1.5),
         width: Math.floor(Dimensions.get("window").width) - 40,
 
-        backgroundColor: "#fff",
+        backgroundColor: COLORS.WHITE,
         elevation: 5,
         borderColor: "#E5E5E5",
         borderWidth: 1,
@@ -127,13 +128,13 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
         paddingVertical: 10,
         borderBottomWidth: 1,
-        borderColor: "#6666662F"
+        borderColor: COLORS.SECONDARY_TRANSPARENT
     },
     heading: {
-        fontSize: 20,
+        ...textStyles.paragraphLarge
     },
     small: {
-        color: "#6666666F",
+        color: COLORS.SECONDARY_TRANSPARENT,
         fontSize: 12,
     },
     footer: {
@@ -142,8 +143,7 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
         borderTopWidth: 1,
-        borderColor: "#6666662F",
-        fontSize: 18,
+        borderColor: COLORS.SECONDARY_TRANSPARENT,
     }
 })
 

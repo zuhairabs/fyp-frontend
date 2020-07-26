@@ -10,6 +10,7 @@ import {
 import Icon from 'react-native-vector-icons/dist/MaterialIcons'
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 
+import { textStyles, COLORS } from '../../styles/styles'
 import RatingBadge from '../RatingBadge/RatingBadge'
 import BookButton from '../Buttons/BookButton'
 
@@ -33,8 +34,8 @@ const CardSmall = ({ store, navigation }) => {
                             style={styles.cardImage} />
                     </View>
                     <View style={styles.cardContent}>
-                        <Text style={styles.cardTitle}>{store.business.display_name}</Text>
-                        <Text style={styles.cardTitle}>{store.name}</Text>
+                        <Text style={textStyles.smallCardHeading}>{store.business.display_name}</Text>
+                        <Text style={textStyles.smallCardHeading}>{store.name}</Text>
                         <View style={styles.cardSubtitle}>
                             <Icon name="location-on" size={10} color='#666' />
 
@@ -66,7 +67,7 @@ const styles = StyleSheet.create({
     },
     card: {
         height: 272,
-        backgroundColor: "#fff",
+        backgroundColor: COLORS.WHITE,
         justifyContent: "flex-start",
 
         elevation: 5,
@@ -79,10 +80,6 @@ const styles = StyleSheet.create({
         justifyContent: "flex-end",
         alignItems: "flex-start",
     },
-    cardTitle: {
-        fontSize: 14,
-        fontFamily: "PTSerif-Bold",
-    },
     cardSubtitle: {
         flexDirection: "row",
         alignItems: "center",
@@ -91,10 +88,9 @@ const styles = StyleSheet.create({
     },
     cardSubtitleText: {
         color: "#666",
-        fontSize: 10,
         flexWrap: "wrap",
         flexDirection: "row",
-        fontFamily: "Roboto-Medium"
+        ...textStyles.paragraphExtraSmall
     },
     cardHeader: {
         width: "100%",

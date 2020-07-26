@@ -7,6 +7,7 @@ import StoreCard from '../../components/Cards/StoreCard/StoreCard'
 
 import StarBorder from './svg/star-border'
 import StarFilled from './svg/star-filled'
+import { COLORS, textStyles, buttons } from '../../styles/styles'
 
 const DEVICE_WIDTH = Dimensions.get("window").width;
 
@@ -37,7 +38,7 @@ const RatingParameter = ({ name, index }) => {
             alignItems: "center",
             marginVertical: 20,
         }}>
-            <Text style={{ flex: 2, fontSize: 16 }}>
+            <Text style={{ flex: 2, ...textStyles.paragraphMedium }}>
                 {
                     name
                 }
@@ -108,8 +109,8 @@ const Rating = (props) => {
                             <View style={styles.bookingData}>
                                 <View style={styles.cardContainer}>
                                     <View style={styles.card}>
-                                        <Text style={{ color: "#666" }}>Appointment Time</Text>
-                                        <Text style={{ color: "#666" }}>
+                                        <Text style={{ color: COLORS.SECONDARY, ...textStyles.paragraphMedium }}>Appointment Time</Text>
+                                        <Text style={{ color: COLORS.SECONDARY, ...textStyles.paragraphMedium }}>
                                             {
                                                 new Date(booking.start)
                                                     .toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })
@@ -122,8 +123,8 @@ const Rating = (props) => {
                                         </Text>
                                     </View>
                                     <View style={styles.card}>
-                                        <Text style={{ color: "#666" }}>Appointment Date</Text>
-                                        <Text style={{ color: "#666" }}>
+                                        <Text style={{ color: COLORS.SECONDARY, ...textStyles.paragraphMedium }}>Appointment Date</Text>
+                                        <Text style={{ color: COLORS.SECONDARY, ...textStyles.paragraphMedium }}>
                                             {
                                                 new Date(booking.start).toDateString()
                                             }
@@ -131,7 +132,7 @@ const Rating = (props) => {
                                     </View>
                                 </View>
 
-                                <Text style={{ marginTop: 20, fontSize: 16, color: "#666" }}>
+                                <Text style={{ marginTop: 20, color: COLORS.SECONDARY, ...textStyles.paragraphLarge }}>
                                     Booking number: {booking.bookingId}
                                 </Text>
 
@@ -144,11 +145,11 @@ const Rating = (props) => {
                                 </View>
                                 <View style={styles.buttonArea}>
                                     <TouchableOpacity
-                                        style={styles.defaultButton}
+                                        style={buttons.primaryButton}
                                     // disabled={!booking.completed}
 
                                     >
-                                        <Text style={styles.defaultButtonText}>
+                                        <Text style={textStyles.primaryButtonText}>
                                             Submit
                                         </Text>
                                     </TouchableOpacity>
@@ -164,7 +165,7 @@ const Rating = (props) => {
 const styles = StyleSheet.create({
     screenContainer: {
         paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
-        backgroundColor: "#FFF",
+        backgroundColor: COLORS.WHITE,
     },
     container: {
         height: Dimensions.get('window').height,
@@ -193,9 +194,9 @@ const styles = StyleSheet.create({
         marginHorizontal: 10,
         marginVertical: 5,
         padding: 10,
-        backgroundColor: "#FFF",
+        backgroundColor: COLORS.WHITE,
         borderRadius: 8,
-        borderColor: "#6666666F",
+        borderColor: COLORS.SECONDARY_TRANSPARENT,
     },
     qrContainer: {
         flex: 3,
@@ -211,21 +212,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
         width: "100%",
         marginBottom: 20,
-    },
-    defaultButton: {
-        width: DEVICE_WIDTH - 40,
-        justifyContent: "center",
-        alignItems: "center",
-        borderRadius: 12,
-        backgroundColor: "#0062FF",
-        padding: 20,
-    },
-    defaultButtonText: {
-        color: "#FFF",
-        fontSize: 20,
-        textTransform: "uppercase",
-        fontWeight: "bold"
-    },
+    }
 })
 
 export default Rating

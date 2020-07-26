@@ -25,6 +25,7 @@ import Navbar from '../../components/Header/Navbar'
 import StatusBarWhite from '../../components/StatusBar'
 import SecondaryBackground from '../../components/Backgrounds/SecondaryBackground'
 
+import { COLORS, buttons, textStyles } from '../../styles/styles'
 
 const SignUp = ({ navigation }) => {
     const [phone, setPhone] = useState()
@@ -165,7 +166,7 @@ const SignUp = ({ navigation }) => {
 
     const validatePassword = () => {
         if (password.length < 8) {
-            Alert.alert("Password must be atleast 8 character long")
+            Alert.alert("Password must be at least 8 character long")
             return false
         }
         else if (password === cnfPassword) return true;
@@ -176,7 +177,7 @@ const SignUp = ({ navigation }) => {
     const validateName = () => {
         let nameRegex = /^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$/;
         if (firstName.match(nameRegex)) return true;
-        Alert.alert("Enter a valid name")
+        Alert.alert("Please enter a name")
         return false;
     }
 
@@ -193,7 +194,7 @@ const SignUp = ({ navigation }) => {
                 backdropPressToClose={!loading}
             >
                 <View style={{ flexDirection: "row", justifyContent: "space-around", alignItems: "center" }}>
-                    <Text style={{ fontSize: 20, marginHorizontal: 20 }}>
+                    <Text style={{ marginHorizontal: 20, ...textStyles.paragraphLarge, color: COLORS.BLACK }}>
                         {modalText}
                     </Text>
                     {
@@ -215,10 +216,10 @@ const SignUp = ({ navigation }) => {
                     <View style={styles.contentContainer} contentContainerStyle={{ justifyContent: "center", alignItems: "center" }}>
                         <View style={styles.tabNavigation}>
                             <TouchableOpacity style={styles.tabNavigationObject} onPress={() => { navigation.navigate("Login") }}>
-                                <Text style={styles.tabNavigationText}>Login</Text>
+                                <Text style={{ ...styles.tabNavigationText, ...textStyles.paragraphLarge }}>Login</Text>
                             </TouchableOpacity>
                             <TouchableOpacity style={styles.tabNavigationObjectSelected}>
-                                <Text style={styles.tabNavigationText}>Register</Text>
+                                <Text style={{ ...styles.tabNavigationText, ...textStyles.paragraphLargeBold }}>Register</Text>
                             </TouchableOpacity>
                         </View>
                         <View style={styles.form}>
@@ -295,7 +296,7 @@ const SignUp = ({ navigation }) => {
                                 blurOnSubmit={true}
                                 onSubmitEditing={() => { handleSubmit() }}
                                 style={styles.textInput}
-                                placeholder="Confrim Password"
+                                placeholder="Confirm Password"
                                 autoCompleteType="password"
                                 secureTextEntry
                                 passwordRules
@@ -304,12 +305,12 @@ const SignUp = ({ navigation }) => {
                             />
                         </View>
                         <View style={styles.buttonArea}>
-                            <TouchableOpacity style={styles.defaultButton} onPress={() => { handleSubmit() }}>
-                                <Text style={styles.defaultButtonText}>Register</Text>
+                            <TouchableOpacity style={buttons.roundedPrimaryButton} onPress={() => { handleSubmit() }}>
+                                <Text style={textStyles.roundedButtonText}>Register</Text>
                             </TouchableOpacity>
                         </View>
                         <View style={styles.terms}>
-                            <Text style={styles.termsText}>
+                            <Text style={{ ...styles.termsText, ...textStyles.paragraphSmall }}>
                                 By clicking Login, you acknowledge to reading & agreement to our
                                 <Text style={{ color: "#0062FF" }}> Terms of Use</Text> and
                                 <Text style={{ color: "#0062FF" }}> Privacy Policy</Text>.
@@ -330,16 +331,14 @@ const styles = StyleSheet.create({
     },
     screenContainer: {
         paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
-        backgroundColor: "#FFF",
         height: Dimensions.get('screen').height,
+        backgroundColor: COLORS.WHITE
     },
     container: {
-
     },
     contentContainer: {
         justifyContent: "center",
-        alignItems: "center",
-        elevation: 0,
+        alignItems: "center"
     },
     tabNavigation: {
         marginTop: 70,
@@ -353,15 +352,14 @@ const styles = StyleSheet.create({
     },
     tabNavigationObject: {
         borderBottomWidth: 1,
-        borderColor: "#0062FF",
+        borderColor: COLORS.PRIMARY,
     },
     tabNavigationObjectSelected: {
         borderBottomWidth: 3,
-        borderColor: "#0062FF",
+        borderColor: COLORS.PRIMARY,
     },
     tabNavigationText: {
-        fontSize: 18,
-        color: "#0062FF",
+        color: COLORS.PRIMARY,
         borderBottomWidth: 1,
         borderColor: "#00000000",
         paddingBottom: 10,
@@ -373,6 +371,34 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
         justifyContent: "center",
         alignItems: "center"
+    },
+    textInput: {
+        width: "100%",
+        borderWidth: 1,
+        borderColor: COLORS.BORDER_LIGHT,
+        padding: 10,
+        marginVertical: 10,
+        borderRadius: 5,
+        backgroundColor: COLORS.WHITE
+    },
+    buttonArea: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        width: "100%",
+        marginTop: 20,
+    },
+    forgotPassword: {
+        marginVertical: 20,
+    },
+    terms: {
+        marginTop: 20,
+        marginBottom: 160,
+        paddingHorizontal: 45,
+    },
+    termsText: {
+        textAlign: "center",
+        color: COLORS.SECONDARY,
     },
     userPhotoContainer: {
         height: 120,
@@ -409,50 +435,7 @@ const styles = StyleSheet.create({
         right: 8,
         justifyContent: "center",
         alignItems: "center",
-    },
-    textInput: {
-        width: "100%",
-        borderWidth: 1,
-        borderColor: "#66666666",
-        padding: 10,
-        marginVertical: 10,
-        borderRadius: 5,
-        backgroundColor: "#fff",
-    },
-    buttonArea: {
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-        width: "100%",
-        marginTop: 20,
-    },
-    defaultButton: {
-        width: Math.floor(Dimensions.get('window').width / 2),
-        justifyContent: "center",
-        alignItems: "center",
-        borderRadius: 30,
-        backgroundColor: "#0062FF",
-        padding: 10
-    },
-    defaultButtonText: {
-        color: "#FFF"
-    },
-    forgotPassword: {
-        marginVertical: 20,
-    },
-    forgotPasswordText: {
-        color: "#0062FF",
-    },
-    terms: {
-        marginTop: 20,
-        marginBottom: 160,
-        paddingHorizontal: 45,
-    },
-    termsText: {
-        textAlign: "center",
-        color: "#666",
-        fontSize: 12,
-    },
+    }
 })
 
 export default SignUp

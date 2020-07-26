@@ -13,6 +13,7 @@ import CheckBoxFilled from '../UXComponents/svg/CheckBoxFilled.svg'
 
 import Calendar, { monthNames } from './Calendar'
 import TimePicker, { timeToString, stringToTime, MINUTE } from './TimePicker'
+import { textStyles, COLORS, buttons } from '../../styles/styles';
 
 const WINDOW_HEIGHT = Dimensions.get('window').height;
 const WINDOW_WIDTH = Dimensions.get('window').width;
@@ -154,12 +155,12 @@ const BookSlotSlider = (props) => {
                 backdropPressToClose={errorModal}
             >
                 <View style={{ flexDirection: "row", justifyContent: "space-around", alignItems: "center" }}>
-                    <Text style={{ fontSize: 20, marginHorizontal: 20 }}>
+                    <Text style={{ marginHorizontal: 20, ...textStyles.paragraphLarge, color: COLORS.BLACK }}>
                         {modalText}
                     </Text>
                     {
                         !errorModal ?
-                            <ActivityIndicator size="large" color="#0062FF" />
+                            <ActivityIndicator size="large" color={COLORS.PRIMARY} />
                             : null
                     }
                 </View>
@@ -173,7 +174,7 @@ const BookSlotSlider = (props) => {
                     BOOK SLOT
                 </Text>
                 <TouchableWithoutFeedback onPress={() => { props.setBookSlot(false) }}>
-                    <Icon name="close" size={24} color="#fff" />
+                    <Icon name="close" size={24} color={COLORS.WHITE} />
                 </TouchableWithoutFeedback>
             </View>
             <View style={styles.body}>
@@ -182,8 +183,8 @@ const BookSlotSlider = (props) => {
                     screen === 0 ?
                         <>
                             <View style={styles.buttonArea}>
-                                <TouchableOpacity style={styles.defaultButton} onPress={() => { submitDate() }}>
-                                    <Text style={styles.defaultButtonText}>confirm</Text>
+                                <TouchableOpacity style={{ ...buttons.primaryButton }} onPress={() => { submitDate() }}>
+                                    <Text style={{ ...textStyles.primaryButtonText }}>confirm</Text>
                                 </TouchableOpacity>
                             </View>
                             <Calendar working_days={props.storeData.working_days} setSelectedDate={setSelectedDate} />
@@ -191,8 +192,8 @@ const BookSlotSlider = (props) => {
                         :
                         <>
                             <View style={styles.buttonArea}>
-                                <TouchableOpacity style={styles.defaultButton} onPress={() => { submitBooking() }}>
-                                    <Text style={styles.defaultButtonText}>confirm</Text>
+                                <TouchableOpacity style={{ ...buttons.primaryButton }} onPress={() => { submitBooking() }}>
+                                    <Text style={{ ...textStyles.primaryButtonText }}>confirm</Text>
                                 </TouchableOpacity>
                             </View>
 
@@ -275,9 +276,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 5,
     },
     headerText: {
-        fontSize: 20,
-        fontWeight: "bold",
-        color: "#FFF",
+        ...textStyles.primaryButtonText
     },
     dummyText: {
         opacity: 0,

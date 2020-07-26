@@ -12,6 +12,8 @@ import GraphicWelcome from './welcome1.svg'
 import GraphicVisit from './welcome2.svg'
 import GraphicBook from './welcome3.svg'
 
+import { textStyles, COLORS, buttons } from '../../styles/styles'
+
 const HEADINGS = ["Welcome to ShopOut!", "Visit any store on your time!", "Book your appointment!"]
 const ILLUSTRATIONS = [<GraphicWelcome />, <GraphicVisit />, <GraphicBook />]
 const TEXT = [
@@ -66,13 +68,13 @@ const Welcome = () => {
                             <View style={page > 0 ? styles.indicatorFilled : styles.indicator}></View>
                             <View style={page > 1 ? styles.indicatorFilled : styles.indicator}></View>
                         </View>
-                        <TouchableOpacity style={styles.defaultButton} onPress={() => { nextPage() }}>
-                            <Text style={styles.defaultButtonText}>Next</Text>
+                        <TouchableOpacity style={{ ...buttons.roundedPrimaryButton }} onPress={() => { nextPage() }}>
+                            <Text style={{ ...textStyles.roundedButtonText }}>Next</Text>
                         </TouchableOpacity>
                         <TouchableOpacity
                             onPress={() => { setWelcomeShown() }}
                         >
-                            <Text style={{ color: "#0062FF", marginTop: 20, }}>
+                            <Text style={{ ...textStyles.link, marginTop: 20 }}>
                                 {
                                     page < NUMBER_OF_PAGES - 1 &&
                                     "Skip"
@@ -91,7 +93,7 @@ const styles = StyleSheet.create({
     screenContainer: {
         paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
         height: Dimensions.get('screen').height,
-        backgroundColor: "#fff"
+        backgroundColor: COLORS.WHITE
     },
     contentContainer: {
         justifyContent: "space-around",
@@ -111,13 +113,13 @@ const styles = StyleSheet.create({
         alignItems: "center"
     },
     header: {
-        fontSize: 20,
-        color: "#0062FF",
+        ...textStyles.subHeaderBold,
+        color: COLORS.PRIMARY,
         marginTop: 20,
     },
     text: {
-        fontSize: 18,
-        color: "#0062FF",
+        ...textStyles.paragraphLarge,
+        color: COLORS.PRIMARY,
         marginTop: 20,
         textAlign: "center",
         fontWeight: "100",
@@ -139,9 +141,9 @@ const styles = StyleSheet.create({
         paddingHorizontal: 16,
         marginHorizontal: 10,
         borderWidth: 1,
-        borderColor: "#0062FF",
+        borderColor: COLORS.PRIMARY,
         borderRadius: 6,
-        backgroundColor: "#0062FF",
+        backgroundColor: COLORS.PRIMARY,
         opacity: 0.5,
     },
     indicatorFilled: {
@@ -149,21 +151,10 @@ const styles = StyleSheet.create({
         paddingHorizontal: 16,
         marginHorizontal: 10,
         borderWidth: 1,
-        borderColor: "#0062FF",
+        borderColor: COLORS.PRIMARY,
         borderRadius: 6,
-        backgroundColor: "#0062FF",
-    },
-    defaultButton: {
-        width: Math.floor(Dimensions.get('window').width / 2),
-        justifyContent: "center",
-        alignItems: "center",
-        borderRadius: 30,
-        backgroundColor: "#0062FF",
-        padding: 10
-    },
-    defaultButtonText: {
-        color: "#FFF"
-    },
+        backgroundColor: COLORS.PRIMARY,
+    }
 })
 
 export default Welcome;
