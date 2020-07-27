@@ -54,13 +54,13 @@ const Home = ({ navigation }) => {
                     }
                     authActions.changeLocation(locationInfo.long, locationInfo.lat)
                     setLocationPermissionStatus(true);
-                    resolve(true)
+                    resolve(locationInfo)
                 },
                     error => {
                         console.log(error)
                         Alert.alert(error.message)
                         setLocationPermissionStatus(false)
-                        reject(false);
+                        reject();
                     },
                     {
                         timeout: 15000,
@@ -68,7 +68,7 @@ const Home = ({ navigation }) => {
                     })
             } else {
                 setLocationPermissionStatus(false)
-                reject(false)
+                reject()
             }
         })
     }
@@ -92,14 +92,14 @@ const Home = ({ navigation }) => {
         }
     }
 
-    const getFeaturedStores = (options) => {
+    const getFeaturedStores = (options, locationInfo) => {
         try {
             fetch('https://shopout.herokuapp.com/user/home/featured', options)
                 .then(res => {
                     if (res.status === 200) {
                         res.json().then(data => {
                             setDataBigCard(data.response)
-                            getNearestStores(options)
+                            getNearestStores(options, locationInfo)
                         })
                     }
                     else {
@@ -112,12 +112,12 @@ const Home = ({ navigation }) => {
         }
     }
 
-    const getNearestStores = (options) => {
+    const getNearestStores = (options, locationInfo) => {
         try {
             let uri = 'https://shopout.herokuapp.com/user/home/nearest';
-            const lat = state.location.lat, long = state.location.long;
-            console.log(lat, long)
+            const lat = locationInfo.lat, long = locationInfo.long;
             if (lat && long) uri = `https://shopout.herokuapp.com/user/home/nearest?lat=${lat}&lng=${long}`
+
             fetch(uri, options)
                 .then(res => {
                     if (res.status === 200) {
@@ -192,12 +192,10 @@ const Home = ({ navigation }) => {
             })
         }
         requestLocationPermission()
-            .then(granted => {
-                if (granted === true) {
-                    getFeaturedStores(requestOptions)
-                    getCategories(requestOptions)
-                    // getStoreList(requestOptions)
-                }
+            .then(locationInfo => {
+                getFeaturedStores(requestOptions, locationInfo)
+                getCategories(requestOptions)
+                // getStoreList(requestOptions)
             })
     }, [])
 

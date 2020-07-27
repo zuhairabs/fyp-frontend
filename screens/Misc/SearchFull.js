@@ -9,16 +9,43 @@ import {
     Dimensions,
     TextInput,
     ActivityIndicator,
-    Image
+    Image,
+    ToastAndroid
 } from 'react-native'
 import { TouchableWithoutFeedback, TouchableOpacity } from 'react-native-gesture-handler'
 import Icon from 'react-native-vector-icons/dist/MaterialIcons'
+import AwesomeDebouncePromise from 'awesome-debounce-promise';
+
 import { GlobalContext } from '../../providers/GlobalContext'
 
 import StatusBarWhite from '../../components/StatusBar'
 import StoreCard from '../../components/Cards/StoreCard/StoreCard'
 
 const DEVICE_HEIGHT = Dimensions.get('window').height;
+
+const partialSearchAPI = (phone, token, query) => {
+    return new Promise((resolve, reject) => {
+        fetch("https://shopout.herokuapp.com/user/search/partial", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                authorization: "Bearer " + token,
+            },
+            body: JSON.stringify({
+                cred: {
+                    phone: phone,
+                },
+                query: query,
+                city: "Mumbai",
+            }),
+        })
+            .then(res => {
+                if (res.status === 200) resolve(res)
+                else reject(res.statusText)
+            })
+    })
+}
+const partialSearchDelayed = AwesomeDebouncePromise(partialSearchAPI, 30);
 
 const SearchFull = (props) => {
     const inputBox = useRef()
@@ -55,7 +82,7 @@ const SearchFull = (props) => {
                     res.json().then((data) => {
                         getUniqueHistoryResults(data.response.storeHistory)
                             .then(history => {
-                                setResults(history)
+                                setResults(history.reverse())
                                 setLoading(false)
                             })
                     });
@@ -98,6 +125,7 @@ const SearchFull = (props) => {
         setDropdown(false)
         setText("")
     }
+
 
     const fullSearch = (query, model, id) => {
         setLoading(true);
@@ -144,37 +172,19 @@ const SearchFull = (props) => {
         bootstrap();
     }
 
-
-    const partialSearch = (query) => {
-        const fetchPartialSearch = async () => {
-            fetch("https://shopout.herokuapp.com/user/search/partial", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    authorization: "Bearer " + state.token,
-                },
-                body: JSON.stringify({
-                    cred: {
-                        phone: state.user.phone,
-                    },
-                    query: query,
-                    city: "Mumbai",
-                }),
-            }).then((res) => {
-                if (res.status === 200)
-                    res.json().then(data => {
-                        if (data.response[3]) setTags(data.response[3]);
-                        if (data.response[2]) setCategories(data.response[2]);
-                        if (data.response[1]) setBrands(data.response[1]);
-                        if (data.response[0]) setStores(data.response[0]);
-                        setDropdown(true)
-                    });
-                else
-                    Alert.alert(res.statusText)
-            });
-        }
-        if (query.length > 0)
-            fetchPartialSearch();
+    const handleTextChange = async query => {
+        setText(query);
+        partialSearchDelayed(state.user.phone, state.token, query)
+            .then(result => {
+                result.json().then(data => {
+                    if (data.response[0]) setStores(data.response[0]);
+                    if (data.response[1]) setBrands(data.response[1]);
+                    if (data.response[2]) setCategories(data.response[2]);
+                    if (data.response[3]) setTags(data.response[3]);
+                    setDropdown(true)
+                });
+            })
+            .catch(e => ToastAndroid.show(e), ToastAndroid.SHORT);
     }
 
     const getDropDownStyles = () => {
@@ -202,7 +212,7 @@ const SearchFull = (props) => {
                         style={styles.searchInputText}
                         value={text}
                         autoCapitalize="none"
-                        onChangeText={(query) => { setText(query); partialSearch(query); }}
+                        onChangeText={(query) => { handleTextChange(query) }}
                         autoCompleteType='off'
                         placeholder={placeholder}
                         onBlur={() => { clearPartialSearchResults(); }}
