@@ -26,6 +26,7 @@ import CardScrollSmall from '../../components/CardScrollSmall/CardScrollSmall'
 
 import { GlobalContext } from '../../providers/GlobalContext'
 import { textStyles, COLORS } from '../../styles/styles'
+import { stat } from 'react-native-fs';
 
 const DEVICE_HEIGHT = Dimensions.get("window").height;
 
@@ -41,33 +42,35 @@ const Home = ({ navigation }) => {
     const [dataNewStores, setDataNewStores] = useState([])
 
     const requestLocationPermission = async () => {
-        try {
+        return new Promise(async (resolve, reject) => {
             const granted = await PermissionsAndroid.request(
                 PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
             )
             if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-                setLocationPermissionStatus(true);
                 Geolocation.getCurrentPosition(info => {
                     let locationInfo = {
                         long: info.coords.longitude,
                         lat: info.coords.latitude
                     }
                     authActions.changeLocation(locationInfo.long, locationInfo.lat)
+                    setLocationPermissionStatus(true);
+                    resolve(true)
                 },
                     error => {
                         console.log(error)
                         Alert.alert(error.message)
                         setLocationPermissionStatus(false)
+                        reject(false);
                     },
                     {
                         timeout: 15000,
                         enableHighAccuracy: true
                     })
-            } else
+            } else {
                 setLocationPermissionStatus(false)
-        } catch (err) {
-            console.warn(err)
-        }
+                reject(false)
+            }
+        })
     }
 
     const getCategories = (options) => {
@@ -95,14 +98,35 @@ const Home = ({ navigation }) => {
                 .then(res => {
                     if (res.status === 200) {
                         res.json().then(data => {
-                            setDataBigCard(data.response.slice(0, 5))
-                            setDataSmallCard(data.response.slice(5, 10))
-                            getLatestStores(options)
+                            setDataBigCard(data.response)
+                            getNearestStores(options)
                         })
                     }
                     else {
                         console.log(res.statusText)
                     }
+                })
+        }
+        catch (e) {
+            console.log(e)
+        }
+    }
+
+    const getNearestStores = (options) => {
+        try {
+            let uri = 'https://shopout.herokuapp.com/user/home/nearest';
+            const lat = state.location.lat, long = state.location.long;
+            console.log(lat, long)
+            if (lat && long) uri = `https://shopout.herokuapp.com/user/home/nearest?lat=${lat}&lng=${long}`
+            fetch(uri, options)
+                .then(res => {
+                    if (res.status === 200) {
+                        res.json().then(data => {
+                            setDataSmallCard(data.response)
+                            getLatestStores(options)
+                        })
+                    }
+                    else console.log(res.statusText)
                 })
         }
         catch (e) {
@@ -153,7 +177,6 @@ const Home = ({ navigation }) => {
     // }
 
     useEffect(() => {
-        requestLocationPermission();
         const requestOptions = {
             method: "POST",
             headers: {
@@ -168,9 +191,14 @@ const Home = ({ navigation }) => {
                 "number": 50,
             })
         }
-        getFeaturedStores(requestOptions)
-        getCategories(requestOptions)
-        // getStoreList(requestOptions)
+        requestLocationPermission()
+            .then(granted => {
+                if (granted === true) {
+                    getFeaturedStores(requestOptions)
+                    getCategories(requestOptions)
+                    // getStoreList(requestOptions)
+                }
+            })
     }, [])
 
     return (

@@ -11,9 +11,12 @@ import { GlobalContext } from './providers/GlobalContext'
 import Home from './screens/Home/Home'
 import Store from './screens/Store/Store'
 
-import Login from './screens/Authentication/Login'
-import SignUp from './screens/Authentication/SignUp'
+// import Login from './screens/Authentication/Login'
+// import SignUp from './screens/Authentication/SignUp'
 import Verification from './screens/Authentication/Verification'
+// import ResetPassword from './screens/Authentication/ResetPassword'
+import Authentication from './screens/Authentication/Authentication'
+import Success from './screens/Authentication/Success'
 
 import EditProfile from './screens/Profile/EditProfile';
 import Profile from './screens/Profile/Profile'
@@ -33,6 +36,7 @@ import Support from './screens/Misc/Support';
 import Welcome from './screens/OnBoarding/OnBoarding';
 
 import BackButton from './components/Buttons/BackButton';
+import ResetPassword from './screens/Authentication/ResetPassword';
 
 const Stack = createStackNavigator();
 export const navigationRef = React.createRef();
@@ -54,7 +58,7 @@ const AuthStack = ({ state }) => {
                 headerShown: false
             }}
         >
-            <Stack.Screen
+            {/* <Stack.Screen
                 name="Login"
                 component={Login}
                 options={{
@@ -67,10 +71,22 @@ const AuthStack = ({ state }) => {
                 options={{
                     animationTypeForReplace: state.loggedIn ? 'push' : 'pop',
                 }}
+            /> */}
+            <Stack.Screen
+                name='Authentication'
+                component={Authentication}
             />
             <Stack.Screen
-                name="Verification"
+                name='Verification'
                 component={Verification}
+            />
+            <Stack.Screen
+                name='ResetPassword'
+                component={ResetPassword}
+            />
+            <Stack.Screen
+                name='Success'
+                component={Success}
             />
         </Stack.Navigator>
     else
