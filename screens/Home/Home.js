@@ -128,7 +128,7 @@ const Home = ({ navigation }) => {
                 {
                     locationPermissionStatus
                         ? <>
-                            <Location />
+                            <Location location={location} />
                             <Suspense fallback={<ActivityIndicator />}>
                                 <CategoryScroll categories={categoryList} />
                             </Suspense>

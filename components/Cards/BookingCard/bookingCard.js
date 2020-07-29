@@ -7,14 +7,15 @@ import Share from 'react-native-share'
 
 import { textStyles, COLORS } from '../../../styles/styles'
 
-const BookingCard = (props) => {
-    const mlist = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+const mlist = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
+const BookingCard = (props) => {
     const [extended, setExtended] = useState(false)
 
     const shareBooking = async () => {
         const display_name = props.booking.store.business.display_name
-        const display_date = new Date(props.booking.start).toLocaleString()
+        const date = new Date(props.booking.start)
+        const display_date = date.toDateString() + ", " + date.toLocaleTimeString().slice(0, 5)
         const options = {
             message: `I am heading to shop at ${display_name} on ${display_date}, want to join me? Click here!`,
             title: 'Try out the ShopOut app',
