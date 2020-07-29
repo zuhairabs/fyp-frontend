@@ -1,15 +1,27 @@
 import React, { useState } from 'react'
 import { Text, View, StyleSheet, Image, Dimensions, Alert, ToastAndroid } from 'react-native'
 import { TouchableOpacity, TouchableWithoutFeedback } from 'react-native-gesture-handler'
-
 import Icon from 'react-native-vector-icons/dist/MaterialIcons'
 import AsyncStorage from '@react-native-community/async-storage'
+import Share from 'react-native-share'
+
 import { textStyles, COLORS } from '../../../styles/styles'
 
 const BookingCard = (props) => {
     const mlist = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
     const [extended, setExtended] = useState(false)
+
+    const shareBooking = async () => {
+        const options = {
+            message: `I have made a booking with ${props.booking.store.business.display_name} at ${new Date(props.booking.start).toLocaleString()}`,
+            title: 'Try out the ShopOut app',
+            url: 'https://drive.google.com/file/d/1VhF8vPWW_ZdCEtWyv5KHbGvGbB17u6iR/view'
+        }
+        Share.open(options)
+            .then((res) => { console.log(res) })
+            .catch((err) => { err && console.log(err); });
+    }
 
     const cancelBooking = async () => {
         const bootstrapper = async () => {
@@ -134,7 +146,10 @@ const BookingCard = (props) => {
                             >
                                 <Text style={styles.tabText}>Delete</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity style={styles.extensionTabLast}>
+                            <TouchableOpacity
+                                style={styles.extensionTabLast}
+                                onPress={() => { shareBooking() }}
+                            >
                                 <Icon name="share" size={16} color={COLORS.SECONDARY} />
                             </TouchableOpacity>
                         </View>

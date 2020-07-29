@@ -202,10 +202,15 @@ export const GlobalContextProvider = props => {
                                     },
                                 }),
                             }
-                            fetch('https://shopout.herokuapp.com/user/verify', requestOptions)
+                            fetch('https://shopout.herokuapp.com/user/verify/refresh', requestOptions)
                                 .then(response => {
-                                    if (response.status === 200)
-                                        dispatch({ type: 'RESTORE_TOKEN', token: token, user: user, welcomeShown: true });
+                                    if (response.status === 200) {
+                                        response.json()
+                                            .then(async data => {
+                                                await AsyncStorage.setItem("jwt", data.token)
+                                                dispatch({ type: 'RESTORE_TOKEN', token: data.token, user: user, welcomeShown: true });
+                                            })
+                                    }
                                     else
                                         response.json()
                                             .then(data => {
