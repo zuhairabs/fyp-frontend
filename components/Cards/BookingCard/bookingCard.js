@@ -13,8 +13,10 @@ const BookingCard = (props) => {
     const [extended, setExtended] = useState(false)
 
     const shareBooking = async () => {
+        const display_name = props.booking.store.business.display_name
+        const display_date = new Date(props.booking.start).toLocaleString()
         const options = {
-            message: `I have made a booking with ${props.booking.store.business.display_name} at ${new Date(props.booking.start).toLocaleString()}`,
+            message: `I am heading to shop at ${display_name} on ${display_date}, want to join me? Click here!`,
             title: 'Try out the ShopOut app',
             url: 'https://drive.google.com/file/d/1VhF8vPWW_ZdCEtWyv5KHbGvGbB17u6iR/view'
         }

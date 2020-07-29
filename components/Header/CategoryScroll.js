@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, FlatList, Image, View } from 'react-native';
 import { TouchableNativeFeedback } from 'react-native-gesture-handler';
 
-import Other from './svg/other'
+import ShoppingBag from './svg/shopping-bag'
 import { COLORS, textStyles } from '../../styles/styles';
 
 import { navigationRef } from '../../Navigation'
@@ -40,7 +40,7 @@ const CategoryScroll = ({ categories }) => {
                         {
                             item.icon
                                 ? <Image source={{ uri: `data:image/png;base64,${item.icon}` }} style={styles.image} />
-                                : <Other height={24} width={24} />
+                                : <ShoppingBag height={24} width={24} />
                         }
                     </TouchableNativeFeedback>
                     <Text style={styles.CategoryScrollText}>
@@ -80,8 +80,7 @@ const styles = StyleSheet.create({
         resizeMode: "contain",
         flex: 1,
         height: 24,
-        width: 24,
-        opacity: 0.6
+        width: 24
     },
     CategoryScrollText: {
         ...textStyles.paragraphExtraSmall,
