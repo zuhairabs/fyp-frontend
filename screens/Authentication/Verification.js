@@ -12,7 +12,7 @@ import styles from './AuthStyles'
 import { textStyles, COLORS, buttons } from '../../styles/styles';
 
 const Verification = (props) => {
-    const { phone, password, firstName, lastName, email } = props.route.params;
+    const { phone, password, firstName, lastName, email, avatar, key } = props.route.params;
     const { authActions } = useContext(GlobalContext);
 
     const [otp, setOtp] = useState()
@@ -23,7 +23,7 @@ const Verification = (props) => {
     const loadingModal = createRef();
 
     const sendOtpRequest = async () => {
-        fetch(`https://2factor.in/API/V1/01300eab-b6d0-11ea-9fa5-0200cd936042/SMS/${phone}/AUTOGEN`, {
+        fetch(`https://2factor.in/API/V1/${key}/SMS/${phone}/AUTOGEN`, {
             "method": "GET",
             "port": null,
             "async": true,
@@ -66,7 +66,7 @@ const Verification = (props) => {
             loadingModal.current.open();
             setModalText("Verifying OTP");
             setLoading(true);
-            fetch(`https://2factor.in/API/V1/01300eab-b6d0-11ea-9fa5-0200cd936042/SMS/VERIFY/${session}/${otp}`, {
+            fetch(`https://2factor.in/API/V1/${key}/SMS/VERIFY/${session}/${otp}`, {
                 "method": "GET",
                 "port": null,
                 "async": true,
@@ -104,8 +104,8 @@ const Verification = (props) => {
 
     const callSignUp = async () => {
         setLoading(true)
-        setModalText("Loggin in")
-        let result = await authActions.signUp({ phone, password, firstName, lastName, email });
+        setModalText("Logging in")
+        let result = await authActions.signUp({ phone, password, firstName, lastName, email, avatar });
         if (result[0] === false) {
             setLoading(false)
             setModalText(result[1])
@@ -114,6 +114,7 @@ const Verification = (props) => {
 
     useEffect(() => {
         sendOtpRequest()
+        console.log(key)
     }, [])
 
     return (

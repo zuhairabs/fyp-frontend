@@ -124,9 +124,12 @@ const SignUp = ({ actions, loadingModal }) => {
             })
                 .then(res => {
                     if (res.status === 200) {
-                        actions.setLoading(false);
-                        loadingModal.current?.close();
-                        actions.navigateToVerification({ phone, password, firstName, lastName, email, avatar })
+                        res.json()
+                            .then(data => {
+                                actions.setLoading(false);
+                                loadingModal.current?.close();
+                                actions.navigateToVerification({ phone, password, firstName, lastName, email, avatar, key: data.key })
+                            })
                     }
                     else {
                         actions.setLoading(false)

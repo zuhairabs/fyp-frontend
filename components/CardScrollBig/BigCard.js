@@ -5,20 +5,36 @@ import {
     View,
     Image,
     TouchableOpacity,
-    Dimensions
+    Dimensions,
+    ActivityIndicator
 } from 'react-native';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
+
+import { navigationRef } from '../../Navigation'
 
 import BookButton from '../Buttons/BookButton'
 import { textStyles, COLORS } from '../../styles/styles'
 const DEVICE_WIDTH = Dimensions.get('window').width;
+
+export const BigCardLoading = () => {
+    return (
+        <View style={styles.container}>
+            <TouchableWithoutFeedback style={styles.card}>
+                <View style={styles.cardLeft}>
+                    <ActivityIndicator />
+                </View>
+                <View style={styles.cardRight} />
+            </TouchableWithoutFeedback>
+        </View>
+    )
+}
 
 const BigCard = (props) => {
     return (
         <View style={styles.container}>
             <TouchableWithoutFeedback
                 onPress={() => {
-                    props.navigation.navigate("Store", { store: props.store._id, bookSlot: false })
+                    navigationRef.current?.navigate("Store", { store: props.store._id, bookSlot: false })
                 }}
                 style={styles.card}
             >
@@ -38,7 +54,7 @@ const BigCard = (props) => {
                     </View>
                     <TouchableOpacity
                         onPress={() => {
-                            props.navigation.navigate("Store", { store: props.store._id, bookSlot: true })
+                            navigationRef.current?.navigate("Store", { store: props.store._id, bookSlot: true })
                         }}
                     >
                         <BookButton />

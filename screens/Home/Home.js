@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState, useContext, lazy, Suspense } from 'react';
 import {
     StyleSheet,
     Text,
@@ -9,195 +9,106 @@ import {
     PermissionsAndroid,
     Alert,
     ActivityIndicator,
-    Dimensions
+    Dimensions,
+    FlatList
 } from 'react-native';
 import Geolocation from 'react-native-geolocation-service';
 import { TouchableHighlight } from 'react-native-gesture-handler';
 
 import MainBackground from '../../components/Backgrounds/MainBackground'
 import StatusBarWhite from '../../components/StatusBar'
-
 import Navbar from '../../components/Header/Navbar';
 import SearchBarIdle from '../../components/Header/SearchBarIdle'
 import Location from '../../components/Header/HeaderLocation'
-import CategoryScroll from '../../components/Header/CategoryScroll'
 import CardScroll from '../../components/CardScrollBig/CardScroll'
-import CardScrollSmall from '../../components/CardScrollSmall/CardScrollSmall'
+// import CardScrollSmall from '../../components/CardScrollSmall/CardScrollSmall'
+const CardScrollSmall = lazy(() => import('../../components/CardScrollSmall/CardScrollSmall'))
+const CategoryScroll = lazy(() => import('../../components/Header/CategoryScroll'))
 
 import { GlobalContext } from '../../providers/GlobalContext'
 import { textStyles, COLORS } from '../../styles/styles'
-import { stat } from 'react-native-fs';
 
 const DEVICE_HEIGHT = Dimensions.get("window").height;
 
 const Home = ({ navigation }) => {
-    const { state, authActions } = useContext(GlobalContext)
+    const { authActions } = useContext(GlobalContext)
 
-    const [loading, setLoading] = useState(true)
+    const [location, setLocation] = useState({})
     const [locationPermissionStatus, setLocationPermissionStatus] = useState(false)
+    const [dataList, setDataList] = useState([])
 
+    const [offset, setOffset] = useState(0)
     const [categories, setCategories] = useState([])
-    const [dataBigCard, setDataBigCard] = useState([])
-    const [dataSmallCard, setDataSmallCard] = useState([])
-    const [dataNewStores, setDataNewStores] = useState([])
+    const [categoryList, setCategoryList] = useState([])
 
     const requestLocationPermission = async () => {
-        return new Promise(async (resolve, reject) => {
-            const granted = await PermissionsAndroid.request(
-                PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
-            )
-            if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-                Geolocation.getCurrentPosition(info => {
-                    let locationInfo = {
-                        long: info.coords.longitude,
-                        lat: info.coords.latitude
-                    }
-                    authActions.changeLocation(locationInfo.long, locationInfo.lat)
-                    setLocationPermissionStatus(true);
-                    resolve(locationInfo)
+        const granted = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION)
+        if (granted === PermissionsAndroid.RESULTS.GRANTED)
+            Geolocation.getCurrentPosition(info => {
+                let locationInfo = {
+                    long: info.coords.longitude,
+                    lat: info.coords.latitude
+                }
+                setLocation(locationInfo)
+                authActions.changeLocation(locationInfo.long, locationInfo.lat)
+                setLocationPermissionStatus(true);
+            },
+                error => {
+                    Alert.alert(error.message)
+                    setLocationPermissionStatus(false)
                 },
-                    error => {
-                        console.log(error)
-                        Alert.alert(error.message)
-                        setLocationPermissionStatus(false)
-                        reject();
-                    },
-                    {
-                        timeout: 15000,
-                        enableHighAccuracy: true
-                    })
-            } else {
-                setLocationPermissionStatus(false)
-                reject()
-            }
-        })
-    }
-
-    const getCategories = (options) => {
-        try {
-            fetch('https://shopout.herokuapp.com/user/home/categories', options)
-                .then(res => {
-                    if (res.status === 200) {
-                        res.json().then(data => {
-                            setCategories(data.response)
-                        })
-                    }
-                    else {
-                        console.log(res.statusText)
-                    }
+                {
+                    timeout: 15000,
+                    enableHighAccuracy: true
                 })
-        }
-        catch (e) {
-            console.log(e)
-        }
+        else
+            setLocationPermissionStatus(false)
     }
 
-    const getFeaturedStores = (options, locationInfo) => {
-        try {
-            fetch('https://shopout.herokuapp.com/user/home/featured', options)
-                .then(res => {
-                    if (res.status === 200) {
-                        res.json().then(data => {
-                            setDataBigCard(data.response)
-                            getNearestStores(options, locationInfo)
-                        })
-                    }
-                    else {
-                        console.log(res.statusText)
-                    }
-                })
-        }
-        catch (e) {
-            console.log(e)
-        }
-    }
-
-    const getNearestStores = (options, locationInfo) => {
-        try {
-            let uri = 'https://shopout.herokuapp.com/user/home/nearest';
-            const lat = locationInfo.lat, long = locationInfo.long;
-            if (lat && long) uri = `https://shopout.herokuapp.com/user/home/nearest?lat=${lat}&lng=${long}`
-
-            fetch(uri, options)
-                .then(res => {
-                    if (res.status === 200) {
-                        res.json().then(data => {
-                            setDataSmallCard(data.response)
-                            getLatestStores(options)
-                        })
-                    }
-                    else console.log(res.statusText)
-                })
-        }
-        catch (e) {
-            console.log(e)
-        }
-    }
-
-    const getLatestStores = (options) => {
-        try {
-            fetch('https://shopout.herokuapp.com/user/home/new', options)
-                .then(res => {
-                    if (res.status === 200) {
-                        res.json().then(data => {
-                            setDataNewStores(data.response)
-                            setLoading(false);
-                        })
-                    }
-                    else {
-                        setLoading(false);
-                        console.log(res.statusText)
-                    }
-                })
-        }
-        catch (e) {
-            console.log(e)
-        }
-    }
-
-    // const getStoreList = (options) => {
-    //     try {
-    //         fetch('https://shopout.herokuapp.com/user/home/list', options)
-    //             .then(res => {
-    //                 if (res.status === 200) {
-    //                     res.json().then(data => {
-    //                         // console.log(data)
-    //                         console.log("Store list fetched")
-    //                     })
-    //                 }
-    //                 else {
-    //                     console.log(res.statusText)
-    //                 }
-    //             })
-    //     }
-    //     catch (e) {
-    //         console.log("Here error")
-    //         console.log(e)
-    //     }
-    // }
-
-    useEffect(() => {
+    const getCategories = () => {
         const requestOptions = {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": "Bearer " + state.token
-            },
-            body: JSON.stringify({
-                "cred": {
-                    "phone": state.user.phone
-                },
-                "city": "Mumbai",
-                "number": 50,
-            })
+            }
         }
-        requestLocationPermission()
-            .then(locationInfo => {
-                getFeaturedStores(requestOptions, locationInfo)
-                getCategories(requestOptions)
-                // getStoreList(requestOptions)
+        return new Promise((resolve, reject) => {
+            fetch('https://shopout.herokuapp.com/user/home/categories', requestOptions)
+                .then(res => {
+                    if (res.status === 200)
+                        res.json().then(data => {
+                            resolve(data.response)
+                        })
+                    else
+                        reject(res.statusText)
+                })
+        })
+    }
+
+    useEffect(() => {
+        requestLocationPermission();
+        getCategories()
+            .then(response => {
+                setCategoryList(response)
+                let res = [];
+                response.forEach(element => {
+                    res.push({
+                        title: element.name,
+                        uri: `/category?name=${element.name}`
+                    })
+                });
+                setCategories(res)
+                setDataList([res[0]])
+                setOffset(1)
             })
     }, [])
+
+    const onListEnd = () => {
+        if (offset < categories.length - 1) {
+            setDataList(prev => [...prev, categories[offset + 1]])
+            setOffset(prev => prev + 1)
+        }
+    }
 
     return (
         <View style={styles.screenContainer}>
@@ -215,25 +126,37 @@ const Home = ({ navigation }) => {
                 <SearchBarIdle navigation={navigation} />
 
                 {
-                    locationPermissionStatus ? [
-                        (loading ? <View style={{
-                            justifyContent: "center",
-                            alignItems: "center",
-                            height: DEVICE_HEIGHT - 150,
-                            padding: 20,
-                        }}>
-                            <ActivityIndicator size="large" color={COLORS.PRIMARY} />
-                        </View> :
-                            <>
-                                <Location />
-                                <CategoryScroll categories={categories} />
-                                <CardScroll navigation={navigation} stores={dataBigCard} />
-                                <Text style={styles.mainSubHeading}>Near Me</Text>
-                                <CardScrollSmall navigation={navigation} stores={dataSmallCard} />
-                                <Text style={styles.mainSubHeading}>new onboard</Text>
-                                <CardScrollSmall navigation={navigation} stores={dataNewStores} />
-                            </>
-                        )]
+                    locationPermissionStatus
+                        ? <>
+                            <Location />
+                            <Suspense fallback={<ActivityIndicator />}>
+                                <CategoryScroll categories={categoryList} />
+                            </Suspense>
+                            <CardScroll />
+                            <Suspense fallback={<ActivityIndicator />}>
+                                <CardScrollSmall item={{ title: 'near me', uri: '/home/nearest' }} location={location} />
+                            </Suspense>
+                            <Suspense fallback={<ActivityIndicator />}>
+                                <CardScrollSmall item={{ title: 'new onboard', uri: '/home/new' }} />
+                            </Suspense>
+                            {/* {
+                                dataList.map((item, _) => {
+                                    return <Suspense fallback={<ActivityIndicator />}>
+                                        <CardScrollSmall item={item} />
+                                    </Suspense>
+                                })
+                            } */}
+                            <FlatList
+                                onEndReached={onListEnd}
+                                onEndReachedThreshold={0.7}
+                                data={dataList}
+                                renderItem={({ item }) =>
+                                    <Suspense fallback={<ActivityIndicator />}>
+                                        <CardScrollSmall item={item} />
+                                    </Suspense>
+                                }
+                            />
+                        </>
                         : <View
                             style={{
                                 justifyContent: "center",
@@ -261,7 +184,6 @@ const Home = ({ navigation }) => {
                             </TouchableHighlight>
                         </View>
                 }
-
             </ScrollView>
         </View>
     );

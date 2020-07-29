@@ -1,20 +1,33 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { StyleSheet, Alert, ScrollView, View, FlatList, ActivityIndicator, Dimensions } from 'react-native';
+import { StyleSheet, ScrollView, View, ActivityIndicator } from 'react-native';
 
-import BigCard from './BigCard'
+import BigCard, { BigCardLoading } from './BigCard'
+
+export const CardScrollLoading = () => {
+    return (
+        <View style={styles.container}>
+            <ScrollView
+                horizontal
+                pagingEnabled
+                showsHorizontalScrollIndicator={false}
+                scrollEnabled={false}
+            >
+                <BigCardLoading />
+            </ScrollView>
+        </View>
+    )
+}
 
 const CardScroll = (props) => {
-
-    const [stores, setStores] = useState(props.stores)
-    const [loading, setLoading] = useState([])
+    const [stores, setStores] = useState([])
+    const [loading, setLoading] = useState(true)
 
     const scrollRef = useRef();
     const [current, setCurrent] = useState(0)
 
     useEffect(() => {
-        setLoading(false)
-        changeCard();
-    }, [props.stores])
+        getFeaturedStores();
+    }, [])
 
     const changeCard = () => {
         // const changeCurrent = async () => {
@@ -35,6 +48,29 @@ const CardScroll = (props) => {
         const viewSize = event.nativeEvent.layoutMeasurement.width;
         const contentOffset = event.nativeEvent.contentOffset.x;
         setCurrent(Math.floor(contentOffset / viewSize));
+    }
+
+    const getFeaturedStores = () => {
+        const requestOptions = {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                "city": "Mumbai",
+            })
+        }
+        try {
+            fetch('https://shopout.herokuapp.com/user/home/featured', requestOptions)
+                .then(res => {
+                    if (res.status === 200) {
+                        res.json().then(data => setStores(data.response))
+                        setLoading(false)
+                    }
+                    else console.log(res.statusText)
+                })
+        }
+        catch (e) { console.log(e) }
     }
 
     return (
@@ -62,12 +98,8 @@ const CardScroll = (props) => {
                 }}
             >
                 {
-                    loading ? <View style={{
-                        justifyContent: "center",
-                        alignItems: "center"
-                    }}>
-                        <ActivityIndicator size="large" color="#0062FF" />
-                    </View>
+                    loading
+                        ? <BigCardLoading />
                         : <>
                             {
                                 stores.map((store, _) => {

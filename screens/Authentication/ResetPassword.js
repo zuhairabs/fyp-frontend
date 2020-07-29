@@ -140,6 +140,7 @@ const ResetPassword = ({ navigation }) => {
     const { authActions } = useContext(GlobalContext);
     const [otp, setOtp] = useState();
     const [session, setSession] = useState("")
+    const [key, setKey] = useState()
 
     const [credentialsEntered, setCredentialsEntered] = useState(false);
     const [verified, setVerification] = useState(false);
@@ -164,11 +165,15 @@ const ResetPassword = ({ navigation }) => {
                 })
             })
                 .then(res => {
-                    if (res.status !== 200) {
-                        loadingModal.current?.close();
-                        setLoading(false);
-                        setCredentialsEntered(true)
-                        sendOtpRequest();
+                    if (res.status === 403) {
+                        res.json()
+                            .then(data => {
+                                setKey(data.key)
+                                loadingModal.current?.close();
+                                setLoading(false);
+                                setCredentialsEntered(true)
+                                sendOtpRequest(data.key);
+                            })
                     }
                     else {
                         setLoading(false)
@@ -178,9 +183,9 @@ const ResetPassword = ({ navigation }) => {
         }
     }
 
-    const sendOtpRequest = async () => {
-        if (phone)
-            fetch(`https://2factor.in/API/V1/e869386e-bd2a-11ea-9fa5-0200cd936042/SMS/${phone}/AUTOGEN`, {
+    const sendOtpRequest = async (otpKey) => {
+        if (phone && otpKey)
+            fetch(`https://2factor.in/API/V1/${otpKey}/SMS/${phone}/AUTOGEN`, {
                 "method": "GET",
                 "port": null,
                 "async": true,
@@ -226,7 +231,7 @@ const ResetPassword = ({ navigation }) => {
             loadingModal.current?.open();
             setModalText("Verifying OTP");
             setLoading(true);
-            fetch(`https://2factor.in/API/V1/e869386e-bd2a-11ea-9fa5-0200cd936042/SMS/VERIFY/${session}/${otp}`, {
+            fetch(`https://2factor.in/API/V1/${key}/SMS/VERIFY/${session}/${otp}`, {
                 "method": "GET",
                 "port": null,
                 "async": true,

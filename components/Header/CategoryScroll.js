@@ -1,43 +1,50 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, FlatList, Image, View } from 'react-native';
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import { TouchableNativeFeedback } from 'react-native-gesture-handler';
 
 import Other from './svg/other'
 import { COLORS, textStyles } from '../../styles/styles';
 
-const CategoryScroll = (props) => {
-    const [categories, setCategories] = useState([])
+import { navigationRef } from '../../Navigation'
+
+const CategoryScroll = ({ categories }) => {
+    const [dataList, setDataList] = useState([])
+
+    const formatData = async (arr) => {
+        let data = []
+        arr.forEach(element => {
+            data.push({
+                key: element._id,
+                name: element.name.toLowerCase(),
+                icon: element.icon
+            })
+        });
+        return data
+    }
 
     useEffect(() => {
-        const formatData = async () => {
-            let data = []
-            props.categories.forEach(element => {
-                data.push({
-                    key: element._id,
-                    name: element.name,
-                    icon: element.icon
-                })
-            });
-            return data
-        }
-        formatData().then(data => {
-            setCategories(data)
-        })
-    }, [props.categories])
+        formatData(categories)
+            .then(data => { setDataList(data) })
+    }, [categories])
 
     const renderItem = (item) => {
         return (
             <View style={styles.scrollCardContainer}>
                 <>
-                    <TouchableOpacity style={styles.categoryScrollCard}>
+                    <TouchableNativeFeedback
+                        style={styles.categoryScrollCard}
+                        onPress={() => {
+                            navigationRef.current?.navigate("Categories", { title: item.name, list: categories })
+                        }}
+                    >
                         {
                             item.icon
                                 ? <Image source={{ uri: `data:image/png;base64,${item.icon}` }} style={styles.image} />
                                 : <Other height={24} width={24} />
                         }
-                    </TouchableOpacity>
+                    </TouchableNativeFeedback>
                     <Text style={styles.CategoryScrollText}>
-                        {item.name.toLowerCase()}
+                        {item.name}
                     </Text>
                 </>
             </View>
@@ -49,8 +56,9 @@ const CategoryScroll = (props) => {
             horizontal={true}
             showsHorizontalScrollIndicator={false}
             style={styles.CategoryScroll}
-            data={categories}
-            renderItem={({ item }) => renderItem(item)} />
+            data={dataList}
+            renderItem={({ item }) => renderItem(item)}
+        />
     );
 };
 

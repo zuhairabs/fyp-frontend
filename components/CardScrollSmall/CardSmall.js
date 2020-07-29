@@ -10,20 +10,22 @@ import {
 import Icon from 'react-native-vector-icons/dist/MaterialIcons'
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 
+import { navigationRef } from '../../Navigation'
+
 import { textStyles, COLORS } from '../../styles/styles'
 import RatingBadge from '../RatingBadge/RatingBadge'
 import BookButton from '../Buttons/BookButton'
 
 const DEVICE_WIDTH = Dimensions.get('window').width;
 
-const CardSmall = ({ store, navigation }) => {
+const CardSmall = ({ store }) => {
     return (
         <View style={styles.container}>
 
             <View style={styles.card}>
                 <TouchableWithoutFeedback
                     onPress={() => {
-                        navigation.navigate("Store", { store: store._id })
+                        navigationRef.current?.navigate("Store", { store: store._id })
                     }}
                 >
                     <View style={styles.cardHeader}>
@@ -43,7 +45,7 @@ const CardSmall = ({ store, navigation }) => {
                                 {store.location_desc}
                             </Text>
                         </View>
-                        <TouchableOpacity onPress={() => { navigation.navigate("Store", { store: store._id, bookSlot: true }) }}>
+                        <TouchableOpacity onPress={() => { navigationRef.current?.navigate("Store", { store: store._id, bookSlot: true }) }}>
                             <BookButton />
                         </TouchableOpacity>
                     </View>

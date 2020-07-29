@@ -22,6 +22,7 @@ import EditProfile from './screens/Profile/EditProfile';
 import Profile from './screens/Profile/Profile'
 
 import Favourites from './screens/Favourites/Favourites'
+import Categories from './screens/Favourites/Categories'
 
 import PreviousBookings from './screens/Bookings/PreviousBookings';
 import Rating from './screens/Bookings/Rating';
@@ -125,6 +126,14 @@ const MainStack = () => (
             component={Favourites}
             options={{
                 title: "Favourites",
+                ...SCREEN_HEADER_OPTIONS
+            }}
+        />
+        <Stack.Screen
+            name="Categories"
+            component={Categories}
+            options={{
+                title: "Categories",
                 ...SCREEN_HEADER_OPTIONS
             }}
         />

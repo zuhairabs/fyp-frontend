@@ -1,82 +1,69 @@
-import React, { useEffect, useState } from 'react';
-import { StyleSheet, ScrollView, View, ActivityIndicator } from 'react-native';
+import React, { useEffect, useState, useContext } from 'react';
+import { StyleSheet, ScrollView, View, ActivityIndicator, Text } from 'react-native';
 
 import CardSmall from './CardSmall'
+import { textStyles } from '../../styles/styles';
+
+import { GlobalContext } from '../../providers/GlobalContext'
 
 const CardScrollSmall = (props) => {
+    const { state } = useContext(GlobalContext)
 
-    const [stores] = useState(props.stores)
+    const [stores, setStores] = useState([])
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
-        if (props.url) {
-            const getUserFromStorage = async () => {
-                const user = JSON.parse(await AsyncStorage.getItem("user"))
-                const token = await AsyncStorage.getItem("jwt")
-                return { user, token }
+        const requestOptions = {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                "city": "Mumbai",
+            })
+        }
+        try {
+            let uri = `https://shopout.herokuapp.com/user${props.item.uri}`
+            if (props.location && props.location) {
+                const lat = props.location.lat, long = props.location.long
+                uri = `https://shopout.herokuapp.com/user${props.item.uri}?lat=${lat}&lng=${long}`
             }
-            getUserFromStorage()
-                .then(({ user, token }) => {
-                    const requestOptions = {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json",
-                            "Authorization": "Bearer " + token
-                        },
-                        body: JSON.stringify({
-                            "cred": {
-                                "phone": user.phone
-                            },
-                            "city": "Mumbai"
-                        })
+            fetch(uri, requestOptions)
+                .then(res => {
+                    if (res.status === 200) {
+                        res.json().then(data => setStores(data.response))
+                        setLoading(false)
                     }
-                    try {
-                        fetch(`https://shopout.herokuapp.com/user/category/${url}`, requestOptions)
-                            .then(res => {
-                                if (res.status === 200) {
-                                    res.json().then(data => {
-                                        setDataNewStores(data.response)
-                                        setLoading(false);
-                                    })
-                                }
-                                else {
-                                    setLoading(false);
-                                    console.log(res.statusText)
-                                }
-                            })
-                    }
-                    catch (e) {
-                        console.log(e)
-                    }
+                    else console.log(res.statusText)
                 })
-
         }
-        else {
-            setLoading(false)
-        }
-
-    }, [props.stores])
+        catch (e) { console.log(e) }
+    }, [props.location])
 
     return (
-        <View style={styles.container}>
-            {
-                loading ?
-                    <ActivityIndicator size="large" color="#0062FF" />
-                    : (
-                        <ScrollView
-                            horizontal
-                        // showsHorizontalScrollIndicator={false}
-                        >
-                            {
-                                stores.map(store => {
-                                    return <CardSmall key={store._id} store={store} navigation={props.navigation} />
-                                })
-                            }
-                        </ScrollView>
-                    )
-            }
-
-        </View>
+        <>
+            <Text style={styles.mainSubHeading}>
+                {props.item.title}
+            </Text>
+            <View style={styles.container}>
+                {
+                    loading ?
+                        <ActivityIndicator size="large" color="#0062FF" />
+                        : (
+                            <ScrollView
+                                horizontal
+                            // showsHorizontalScrollIndicator={false}
+                            >
+                                {
+                                    stores.map(store => {
+                                        return <CardSmall key={store._id} store={store} />
+                                    })
+                                }
+                            </ScrollView>
+                        )
+                }
+            </View>
+        </>
     );
 };
 
@@ -87,7 +74,14 @@ const styles = StyleSheet.create({
         height: 320,
         width: "100%",
         justifyContent: "center",
-        alignItems: "center"
+        alignItems: "flex-start"
+    },
+    mainSubHeading: {
+        marginHorizontal: 35,
+        marginTop: 10,
+        textTransform: "uppercase",
+        color: "#666",
+        ...textStyles.paragraphMediumBold
     }
 });
 

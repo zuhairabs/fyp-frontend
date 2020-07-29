@@ -2,7 +2,6 @@ import React, { useEffect, useState, useContext } from 'react'
 import {
     View,
     Text,
-    ScrollView,
     StyleSheet,
     Platform,
     StatusBar,
@@ -12,7 +11,7 @@ import {
     Image,
 } from 'react-native'
 import Icon from 'react-native-vector-icons/dist/MaterialIcons'
-import { TouchableOpacity } from 'react-native-gesture-handler'
+import { TouchableOpacity, ScrollView } from 'react-native-gesture-handler'
 
 import { GlobalContext } from '../../providers/GlobalContext'
 
@@ -22,18 +21,19 @@ import StoreCard from '../../components/Cards/StoreCard/StoreCard'
 const DEVICE_HEIGHT = Dimensions.get('screen').height;
 const WINDOW_HEIGHT = Dimensions.get('window').height;
 
-const Favourites = (props) => {
+const Categories = (props) => {
     const { state } = useContext(GlobalContext)
 
-    const [all, setAll] = useState([])
+    const { title, list } = props.route.params
+
     const [results, setResults] = useState([])
     const [loading, setLoading] = useState(true)
     const [dropdown, setDropdown] = useState(false)
-    const [categories, setCategories] = useState([])
-    const [current, setCurrent] = useState("all")
+    const [current, setCurrent] = useState(title)
 
-    useEffect(() => {
-        fetch("https://shopout.herokuapp.com/user/allfavourites", {
+    const fetchResults = (name) => {
+        setLoading(true)
+        fetch(`https://shopout.herokuapp.com/user/category?name=${name}`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -47,36 +47,23 @@ const Favourites = (props) => {
         }).then((res) => {
             if (res.status === 200) {
                 res.json().then((data) => {
-                    setResults(data.response.favouriteStores);
-                    setAll(data.response.favouriteStores);
+                    setResults(data.response);
                     setLoading(false)
-                    setCurrent("all")
-                    let temp = []
-                    data.response.favouriteStores.forEach(fav => {
-                        if (temp.indexOf(fav.business.category) === -1) temp.push(fav.business.category)
-                    })
-                    setCategories(temp);
+                    setCurrent(name)
+                    setDropdown(false)
                 });
             }
             else
                 Alert.alert(res.statusText)
         });
-    }, [])
-
-    const switchCategory = (cat) => {
-        if (cat === "all") setResults(all)
-        else {
-            let favs = all;
-            let temp = []
-            favs.forEach(fav => { if (fav.business.category === cat) temp.push(fav) })
-            setResults(temp)
-        }
     }
 
-    const removeFavourite = (id) => {
-        setResults(prev => {
-            return prev.filter(item => item._id != id)
-        })
+    useEffect(() => {
+        fetchResults(title)
+    }, [props.route.params])
+
+    const switchCategory = (cat) => {
+        fetchResults(cat)
     }
 
     return (
@@ -124,28 +111,18 @@ const Favourites = (props) => {
                             </TouchableOpacity>
                             {
                                 dropdown ? <ScrollView style={styles.dropdown}>
-                                    <TouchableOpacity
-                                        style={styles.dropdownTextBox}
-                                        onPress={() => {
-                                            setDropdown(false)
-                                            setCurrent("all")
-                                            switchCategory("all")
-                                        }}
-                                    >
-                                        <Text style={styles.dropdownText}>All</Text>
-                                    </TouchableOpacity>
                                     {
-                                        categories.map(cat => {
+                                        list.map(item => {
                                             return <TouchableOpacity
-                                                key={cat}
+                                                key={item._id}
                                                 style={styles.dropdownTextBox}
                                                 onPress={() => {
                                                     setDropdown(false)
-                                                    setCurrent(cat)
-                                                    switchCategory(cat)
+                                                    setCurrent(item.name)
+                                                    switchCategory(item.name)
                                                 }}
                                             >
-                                                <Text style={styles.dropdownText}>{cat}</Text>
+                                                <Text style={styles.dropdownText}>{item.name}</Text>
                                             </TouchableOpacity>
                                         })
                                     }
@@ -166,8 +143,6 @@ const Favourites = (props) => {
                                             key={index}
                                             store={item}
                                             navigation={props.navigation}
-                                            favourite={true}
-                                            removeFavourite={removeFavourite}
                                         />
                                     })
                                     :
@@ -253,4 +228,4 @@ const styles = StyleSheet.create({
     },
 })
 
-export default Favourites
+export default Categories
