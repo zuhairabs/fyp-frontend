@@ -25,11 +25,10 @@ const CardSmall = ({ store }) => {
             <View style={styles.card}>
                 <TouchableWithoutFeedback
                     onPress={() => {
-                        navigationRef.current?.navigate("Store", { store: store._id })
+                        navigationRef.current?.navigate("Store", { store: store._id, data: store })
                     }}
                 >
                     <View style={styles.cardHeader}>
-                        {/* <Image source={require('./cafe.png')} style={styles.cardImage} /> */}
                         <Image source={{
                             uri: `data:image/gif;base64,${store.business.title_image || store.business.logo}`
                         }}
@@ -45,7 +44,13 @@ const CardSmall = ({ store }) => {
                                 {store.location_desc}
                             </Text>
                         </View>
-                        <TouchableOpacity onPress={() => { navigationRef.current?.navigate("Store", { store: store._id, bookSlot: true }) }}>
+                        <TouchableOpacity onPress={() => {
+                            navigationRef.current?.navigate("Store", {
+                                store: store._id,
+                                data: store,
+                                bookSlot: true
+                            })
+                        }}>
                             <BookButton />
                         </TouchableOpacity>
                     </View>

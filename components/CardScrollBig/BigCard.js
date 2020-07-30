@@ -34,7 +34,7 @@ const BigCard = (props) => {
         <View style={styles.container}>
             <TouchableWithoutFeedback
                 onPress={() => {
-                    navigationRef.current?.navigate("Store", { store: props.store._id, bookSlot: false })
+                    navigationRef.current?.navigate("Store", { store: props.store._id, data: props.store, bookSlot: false })
                 }}
                 style={styles.card}
             >
@@ -54,7 +54,11 @@ const BigCard = (props) => {
                     </View>
                     <TouchableOpacity
                         onPress={() => {
-                            navigationRef.current?.navigate("Store", { store: props.store._id, bookSlot: true })
+                            navigationRef.current?.navigate("Store", {
+                                store: props.store._id,
+                                data: props.store,
+                                bookSlot: true
+                            })
                         }}
                     >
                         <BookButton />

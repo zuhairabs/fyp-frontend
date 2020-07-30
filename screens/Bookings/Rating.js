@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { View, Text, StyleSheet, Platform, Dimensions, StatusBar, ActivityIndicator } from 'react-native'
+import { View, Text, StyleSheet, Platform, Dimensions, StatusBar, ActivityIndicator, ToastAndroid } from 'react-native'
 import { ScrollView, TouchableOpacity, TouchableWithoutFeedback } from 'react-native-gesture-handler'
 
 import StatusBarWhite from '../../components/StatusBar'
@@ -9,34 +9,27 @@ import StarBorder from './svg/star-border'
 import StarFilled from './svg/star-filled'
 import { COLORS, textStyles, buttons } from '../../styles/styles'
 
-const DEVICE_WIDTH = Dimensions.get("window").width;
-
-const RatingParameter = ({ name, index }) => {
-
+const RatingParameter = ({ name, index, changeRating }) => {
     const [rating, setRating] = useState(0)
 
-    const Star = ({ i }) => {
-        return <TouchableWithoutFeedback
-            onPress={() => { setRating(i) }}
-            style={{
-                paddingHorizontal: 1,
-            }}
+    const Star = ({ i }) => (
+        <TouchableWithoutFeedback
+            onPress={() => { setRating(i); changeRating(index, i); }}
+            style={{ paddingHorizontal: 1 }}
         >
-            {
-                rating >= i ?
-                    <StarFilled />
-                    :
-                    <StarBorder />
+            {rating >= i
+                ? <StarFilled />
+                : <StarBorder />
             }
         </TouchableWithoutFeedback>
-    }
+    )
 
     return (
         <View style={{
             flexDirection: "row",
             justifyContent: "space-around",
             alignItems: "center",
-            marginVertical: 20,
+            marginVertical: 20
         }}>
             <Text style={{ flex: 2, ...textStyles.paragraphMedium }}>
                 {
@@ -62,21 +55,55 @@ const RatingParameter = ({ name, index }) => {
 const Rating = (props) => {
     const booking = props.route.params.booking
     const [loading, setLoading] = useState(true);
+    const [parameters, setParameters] = useState([])
 
-    const parameters = [
-        "Social distancing maintained",
-        "Temperature checks for everyone",
-        "Priority Billing Queues",
-        "No Mask No Entry",
-        "Shop Sanitized regularly",
-        "No-touch packing",
-        "Staff followed safety",
-        "Assistance in shopping",
-        "ePayment options"
-    ]
+    const formatParams = () => {
+        let temp = []
+        if (booking.store.parameters)
+            booking.store.parameters.forEach(param => {
+                temp.push({
+                    title: param.title,
+                    score: 0
+                })
+            });
+        return (temp)
+    }
+
+    const changeRating = (index, score) => {
+        setParameters(prev => {
+            prev[index].score = score
+            return prev
+        })
+    }
+
+    const submitReview = () => {
+        const reviewData = {
+            "user": booking.user,
+            "store": booking.store,
+            "booking": booking._id,
+            "params": parameters
+        }
+        fetch("https://shopout.herokuapp.com/user/review/submit", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                reviewData
+            }),
+        }).then((res) => {
+            if (res.status === 200)
+                res.json().then(data => {
+                    ToastAndroid.show("Thank you!", ToastAndroid.SHORT)
+                    props.navigation.navigate('Home')
+                });
+            else ToastAndroid.show(res.statusText, ToastAndroid.SHORT)
+        });
+    }
 
     useEffect(() => {
         setLoading(false)
+        setParameters(formatParams())
     }, [])
 
     return (
@@ -84,7 +111,6 @@ const Rating = (props) => {
             <StatusBarWhite />
 
             <ScrollView style={styles.container}>
-                {/* <NavbarBackButton header="Booking" navigation={props.navigation} /> */}
 
                 {
                     loading
@@ -139,15 +165,18 @@ const Rating = (props) => {
                                 <View style={styles.qrContainer} >
                                     {
                                         parameters.map((param, index) => {
-                                            return <RatingParameter name={param} key={index} />
+                                            return <RatingParameter
+                                                changeRating={changeRating}
+                                                name={param.title}
+                                                index={index}
+                                                key={index} />
                                         })
                                     }
                                 </View>
                                 <View style={styles.buttonArea}>
                                     <TouchableOpacity
                                         style={buttons.primaryButton}
-                                    // disabled={!booking.completed}
-
+                                        onPress={() => { submitReview() }}
                                     >
                                         <Text style={textStyles.primaryButtonText}>
                                             Submit

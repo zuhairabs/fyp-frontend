@@ -4,7 +4,7 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import AsyncStorage from '@react-native-community/async-storage'
 import messaging from '@react-native-firebase/messaging';
 import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
+import { createStackNavigator, TransitionPresets, CardStyleInterpolators } from '@react-navigation/stack';
 
 import { GlobalContext } from './providers/GlobalContext'
 
@@ -38,9 +38,41 @@ import Welcome from './screens/OnBoarding/OnBoarding';
 
 import BackButton from './components/Buttons/BackButton';
 import ResetPassword from './screens/Authentication/ResetPassword';
+import { Easing } from 'react-native-reanimated';
 
 const Stack = createStackNavigator();
 export const navigationRef = React.createRef();
+
+const openAnimationConfig = {
+    animation: 'spring',
+    config: {
+        stiffness: 1000,
+        damping: 500,
+        mass: 3,
+        overshootClamping: false,
+        restDisplacementThreshold: 0.01,
+        restSpeedThreshold: 0.01,
+    },
+};
+
+const closeAnimationConfig = {
+    animation: 'timing',
+    config: {
+        duration: 500,
+        easing: Easing.linear
+    }
+}
+
+const SCREEN_OPTIONS = {
+    headerShown: false,
+    gestureEnabled: true,
+    gestureDirection: 'horizontal',
+    cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+    // transitionSpec: {
+    //     open: openAnimationConfig,
+    //     close: closeAnimationConfig
+    // }
+}
 
 const SCREEN_HEADER_OPTIONS = {
     headerShown: true,
@@ -55,24 +87,8 @@ const SCREEN_HEADER_OPTIONS = {
 const AuthStack = ({ state }) => {
     if (state.welcomeShown)
         return <Stack.Navigator
-            screenOptions={{
-                headerShown: false
-            }}
+            screenOptions={SCREEN_OPTIONS}
         >
-            {/* <Stack.Screen
-                name="Login"
-                component={Login}
-                options={{
-                    animationTypeForReplace: state.loggedIn ? 'push' : 'pop',
-                }}
-            />
-            <Stack.Screen
-                name="SignUp"
-                component={SignUp}
-                options={{
-                    animationTypeForReplace: state.loggedIn ? 'push' : 'pop',
-                }}
-            /> */}
             <Stack.Screen
                 name='Authentication'
                 component={Authentication}
@@ -92,9 +108,7 @@ const AuthStack = ({ state }) => {
         </Stack.Navigator>
     else
         return <Stack.Navigator
-            screenOptions={{
-                headerShown: false
-            }}
+            screenOptions={SCREEN_OPTIONS}
         >
             <Stack.Screen
                 name="Welcome"
@@ -109,9 +123,7 @@ const clearNotifications = async () => {
 
 const MainStack = () => (
     <Stack.Navigator
-        screenOptions={{
-            headerShown: false
-        }}
+        screenOptions={SCREEN_OPTIONS}
     >
         <Stack.Screen
             name="Home"
@@ -156,6 +168,10 @@ const MainStack = () => (
         <Stack.Screen
             name="SearchFull"
             component={SearchFull}
+            options={{
+                gestureDirection: 'vertical',
+                cardStyleInterpolator: CardStyleInterpolators.forRevealFromBottomAndroid,
+            }}
         />
         <Stack.Screen
             name="UpcomingBookings"

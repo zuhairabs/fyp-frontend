@@ -49,7 +49,7 @@ const Location = (params) => {
                         {location}
                     </Text>
                     : <Text style={Styles.text} >
-                        Fetching location...
+                        Getting your location...
                     </Text>
             }
         </View>

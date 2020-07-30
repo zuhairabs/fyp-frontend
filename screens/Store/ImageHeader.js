@@ -1,4 +1,4 @@
-import React, { useState, createRef } from 'react'
+import React, { useState, createRef, useEffect } from 'react'
 import {
     View,
     StyleSheet,
@@ -10,8 +10,29 @@ import { TouchableOpacity, ScrollView } from 'react-native-gesture-handler'
 const WINDOW_HEIGHT = Dimensions.get('window').height;
 const WINDOW_WIDTH = Dimensions.get('window').width;
 
-const ImageHeader = ({ images, height }) => {
+const fetchImages = (_id) => {
+    return new Promise((resolve, reject) => {
+        fetch("https://shopout.herokuapp.com/store/fetch/images", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ storeData: { _id } })
+        })
+            .then(res => {
+                if (res.status === 200) {
+                    res.json().then(data => {
+                        resolve(data)
+                    })
+                }
+                else
+                    reject(res.statusText)
+            })
+    })
+}
 
+const ImageHeader = ({ title_image, height, store }) => {
+    const [images, setImages] = useState([])
     const [headerImage, setHeaderImage] = useState(0)
     const scrollRef = createRef();
 
@@ -29,6 +50,14 @@ const ImageHeader = ({ images, height }) => {
         const contentOffset = event.nativeEvent.contentOffset.x;
         setHeaderImage(Math.floor(contentOffset / viewSize));
     }
+
+    useEffect(() => {
+        setImages([title_image])
+        fetchImages(store)
+            .then(res => {
+                setImages(res.store.business.images)
+            })
+    }, [])
 
     return (
         <View>
@@ -74,7 +103,9 @@ const ImageHeader = ({ images, height }) => {
                                 <Image
                                     source={{ uri: `data:image/gif;base64,${img}` }}
                                     style={
-                                        headerImage === index ? styles.carouselImageSelected : styles.carouselImage
+                                        headerImage === index
+                                            ? styles.carouselImage
+                                            : { ...styles.carouselImage, opacity: 0.3 }
                                     }
                                 />
                             </TouchableOpacity>
@@ -99,7 +130,7 @@ const styles = StyleSheet.create({
     },
     carousel: {
         flexDirection: "row",
-        justifyContent: "space-around",
+        justifyContent: "flex-start",
         alignItems: "center",
         width: "100%",
         height: Math.floor(WINDOW_HEIGHT / 9),
@@ -109,24 +140,17 @@ const styles = StyleSheet.create({
         marginHorizontal: 8,
         borderColor: "#66666666",
         borderRadius: 15,
-        flex: 1,
+        width: WINDOW_WIDTH / 4 - 16,
     },
     carouselTouchable: {
         height: "100%"
-    },
-    carouselImageSelected: {
-        width: undefined,
-        height: undefined,
-        flex: 1,
-        borderRadius: 15
     },
     carouselImage: {
         width: undefined,
         height: undefined,
         flex: 1,
-        opacity: 0.3,
         borderRadius: 15
-    },
+    }
 });
 
 export default ImageHeader

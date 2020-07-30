@@ -76,6 +76,7 @@ const StoreCard = (props) => {
                     onPress={() => {
                         props.navigation.navigate("Store", {
                             store: props.store._id,
+                            data: props.store,
                             searched: props.searched ? true : false
                         })
                     }}
@@ -93,6 +94,7 @@ const StoreCard = (props) => {
                     onPress={() => {
                         props.navigation.navigate("Store", {
                             store: props.store._id,
+                            data: props.store,
                             searched: props.searched ? true : false
                         })
                     }}
@@ -117,7 +119,11 @@ const StoreCard = (props) => {
                         props.noBookButton ? null
                             :
                             <TouchableOpacity onPress={() => {
-                                props.navigation.navigate("Store", { store: props.store._id, bookSlot: true })
+                                props.navigation.navigate("Store", {
+                                    store: props.store._id,
+                                    data: props.store,
+                                    bookSlot: true
+                                })
                             }}
                             >
                                 <BookButton />

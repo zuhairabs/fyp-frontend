@@ -10,7 +10,7 @@ import {
     ActivityIndicator,
     ToastAndroid
 } from 'react-native'
-import { ScrollView, TouchableNativeFeedback, TouchableWithoutFeedback } from 'react-native-gesture-handler'
+import { ScrollView, TouchableNativeFeedback, TouchableWithoutFeedback, FlatList } from 'react-native-gesture-handler'
 import AsyncStorage from '@react-native-community/async-storage'
 import Icon from 'react-native-vector-icons/dist/MaterialIcons'
 
@@ -22,7 +22,6 @@ import MainBackground from '../../components/Backgrounds/MainBackground'
 import BookSlotSlider from '../../components/BookSlotSlider/BookSlot'
 import RatingBadge from '../../components/RatingBadge/RatingBadge';
 import ImageHeader from './ImageHeader'
-import LargeButton from '../../components/Buttons/LargeButton'
 import { COLORS, textStyles } from '../../styles/styles'
 
 const WINDOW_HEIGHT = Dimensions.get('window').height;
@@ -42,23 +41,40 @@ const dayList = [
 
 const headerHeight = Math.floor(WINDOW_HEIGHT / 2.8)
 
-const Store = (props) => {
-    const { store, searched } = props.route.params;
-    const { state, authActions } = useContext(GlobalContext)
+const SafetyElement = ({ item }) => (
+    <View style={styles.safetyElement}>
+        <Icon name="check" size={12} color="#4DEB96" />
+        <Text style={styles.safetyElementText}>
+            {item.title}
+        </Text>
+    </View>
+)
 
-    const [loading, setLoading] = useState(true)
+const Store = (props) => {
+    const { store, searched, data } = props.route.params;
+    const { state } = useContext(GlobalContext)
+
+    const [loading, setLoading] = useState(false)
     const [storeData, setStoreData] = useState({})
-    const [images, setImages] = useState([])
     const [bookSlot, setBookSlot] = useState(props.route.params.bookSlot || false)
     const [favourite, setFavourite] = useState(false)
 
     useEffect(() => {
+        getStoreData();
         if (searched)
-            saveStoreHistory()
+            saveStoreHistory(store, state.user.phone)
         if (state.user.favouriteStores && state.user.favouriteStores.indexOf(store) > -1)
             setFavourite(true);
+    }, [store, data])
 
-        fetch("https://shopout.herokuapp.com/store/fetch", {
+    const getStoreData = () => {
+        if (data)
+            setStoreData(data)
+        fetchMissingData();
+    }
+
+    const fetchMissingData = () => {
+        fetch("https://shopout.herokuapp.com/store/fetch/details", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -72,34 +88,13 @@ const Store = (props) => {
             .then(res => {
                 if (res.status === 200) {
                     res.json().then(data => {
-                        setStoreData(data.store)
-                        setImages(data.store.business.images)
-                        setLoading(false)
+                        setStoreData(prev => ({ ...prev, ...data.store }))
                     })
                 }
                 else
                     Alert.alert("Something went wrong", res.status)
             })
-    }, [store])
-
-    const saveStoreHistory = () => {
-        fetch("https://shopout.herokuapp.com/user/store/history/add", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                storeData: store,
-                cred: {
-                    phone: state.user.phone
-                }
-            })
-        })
-            .catch(e => {
-                console.log(e)
-            })
     }
-
 
     const getWorkingDaysText = () => {
         const working_days = storeData.working_days
@@ -213,123 +208,110 @@ const Store = (props) => {
             <MainBackground />
             <StatusBarWhite />
 
+            <ScrollView style={styles.container}>
+                <NavbarBackButton navigation={props.navigation} />
 
-            {
-                loading
-                    ? <View
-                        style={{
-                            height: DEVICE_HEIGHT - StatusBar.currentHeight - 50,
-                            justifyContent: "center",
-                            alignItems: "center"
-                        }} >
-                        <ActivityIndicator size="large" color="#0062FF" />
+                <View style={styles.contentContainer} contentContainerStyle={{ justifyContent: "center", alignItems: "center" }}>
+
+                    <View style={styles.ratingBadge}>
+                        <RatingBadge color="orange" value={storeData.avg_rating || false} />
                     </View>
-                    : [
-                        (<ScrollView style={styles.container}>
-                            <NavbarBackButton navigation={props.navigation} />
 
-                            <View style={styles.contentContainer} contentContainerStyle={{ justifyContent: "center", alignItems: "center" }}>
+                    {
+                        storeData.business &&
+                        <ImageHeader
+                            height={headerHeight}
+                            title_image={storeData.business.title_image || null}
+                            store={store}
+                        />
+                    }
 
-                                <View style={styles.ratingBadge}>
-                                    <RatingBadge color="orange" value={storeData.avg_rating} />
-                                </View>
-
-                                <ImageHeader
-                                    images={images}
-                                    height={headerHeight}
-                                />
-
-                                <ScrollView style={styles.storeDetails}
-                                    contentContainerStyle={{ justifyContent: "center", alignItems: "flex-start" }}>
-                                    <View style={styles.heading}>
-                                        <View style={styles.headingText}>
-                                            <Text style={textStyles.serifHeader}>
-                                                {storeData.business.display_name}
-                                            </Text>
-                                            {
-                                                storeData.name === storeData.location_desc
-                                                    ? <Text style={styles.location}>{storeData.name}</Text>
-                                                    : <Text style={styles.location}>
-                                                        {storeData.name}, {storeData.location_desc}
-                                                    </Text>
-                                            }
-                                        </View>
-                                        <View style={styles.headingRight}>
-                                            <TouchableWithoutFeedback
-                                                onPress={() => {
-                                                    toggleFavourite()
-                                                }}
-                                                style={styles.favouriteIcon}
-                                            >
-                                                {
-                                                    favourite ? <Icon name="favorite" size={16} color="#F30302" />
-                                                        : <Icon name="favorite-border" size={16} color="#F30302" />
-
-                                                }
-                                            </TouchableWithoutFeedback>
-                                            <Text style={styles.reviewCountHeading}>45 Reviews</Text>
-                                        </View>
-                                    </View>
-
-                                    <Text style={styles.subheading}>
-                                        Safety First
+                    <ScrollView style={styles.storeDetails}
+                        contentContainerStyle={{ justifyContent: "center", alignItems: "flex-start" }}>
+                        <View style={styles.heading}>
+                            <View style={styles.headingText}>
+                                {
+                                    storeData.business &&
+                                    <Text style={textStyles.serifHeader}>
+                                        {storeData.business.display_name}
                                     </Text>
-                                    <View style={styles.safetyContainer}>
-                                        <View style={styles.safetyElement}>
-                                            <Icon name="check" size={12} color="#4DEB96" />
-                                            <Text style={styles.safetyElementText}>Sanitized Environment</Text>
-                                        </View>
-                                        <View style={styles.safetyElement}>
-                                            <Icon name="check" size={12} color="#4DEB96" />
-                                            <Text style={styles.safetyElementText}>Trained Staff</Text>
-                                        </View>
-                                    </View>
-                                    <View style={styles.safetyContainer}>
-                                        <View style={styles.safetyElement}>
-                                            <Icon name="check" size={12} color="#4DEB96" />
-                                            <Text style={styles.safetyElementText}>Safe Practices</Text>
-                                        </View>
-                                        <View style={styles.safetyElement}>
-                                            <Icon name="check" size={12} color="#4DEB96" />
-                                            <Text style={styles.safetyElementText}>Temperature Checks Daily</Text>
-                                        </View>
-                                    </View>
-                                    <Text style={styles.subheading}>
-                                        Store Time
-                                    </Text>
-                                    <View style={styles.safetyContainer}>
-                                        <View style={styles.safetyElement}>
-                                            <Icon name="access-time" size={12} color="#0062FF" />
-                                            <Text style={styles.safetyElementText}>
-                                                {getWorkingDaysText()}
-                                            </Text>
-                                        </View>
-                                    </View>
+                                }
+                                {
+                                    storeData.name === storeData.location_desc
+                                        ? <Text style={styles.location}>{storeData.name}</Text>
+                                        : <Text style={styles.location}>
+                                            {storeData.name}, {storeData.location_desc}
+                                        </Text>
+                                }
+                            </View>
+                            <View style={styles.headingRight}>
+                                <TouchableWithoutFeedback
+                                    onPress={() => {
+                                        toggleFavourite()
+                                    }}
+                                    style={styles.favouriteIcon}
+                                >
+                                    {
+                                        favourite ? <Icon name="favorite" size={16} color="#F30302" />
+                                            : <Icon name="favorite-border" size={16} color="#F30302" />
 
-                                    <View style={styles.detailsContainer}>
-                                        <Text style={styles.details}>
-                                            {
-                                                storeData.description ?
-                                                    storeData.description
-                                                    : <Text style={{ color: "#666" }}>
-                                                        No description available
-                                                        </Text>
-                                            }
+                                    }
+                                </TouchableWithoutFeedback>
+                                <Text style={styles.reviewCountHeading}>45 Reviews</Text>
+                            </View>
+                        </View>
+
+                        <Text style={styles.subheading}>
+                            Safety First
+                                    </Text>
+                        <View style={styles.safetyContainer}>
+                            {
+                                storeData.parameters
+                                    ? <FlatList
+                                        data={storeData.parameters}
+                                        renderItem={({ item }) => <SafetyElement item={item} />}
+                                        numColumns={2}
+                                    />
+                                    : <ActivityIndicator />
+                            }
+                        </View>
+
+                        <Text style={styles.subheading}>
+                            Store Time
+                                    </Text>
+                        <View style={styles.safetyContainer}>
+                            {
+                                storeData.active_hours
+                                    ? <View style={styles.safetyElement}>
+                                        <Icon name="access-time" size={12} color="#0062FF" />
+                                        <Text style={styles.safetyElementText}>
+                                            {getWorkingDaysText()}
                                         </Text>
                                     </View>
+                                    : <ActivityIndicator />
+                            }
+                        </View>
 
-                                </ScrollView>
+                        <View style={styles.detailsContainer}>
+                            <Text style={styles.details}>
+                                {
+                                    storeData.description
+                                        ? storeData.description
+                                        : "No description available"
+                                }
+                            </Text>
+                        </View>
 
-                            </View>
-                        </ScrollView>),
-                        (
-                            bookSlot
-                                ? <BookSlotSlider setBookSlot={setBookSlot} storeData={storeData} navigation={props.navigation} />
-                                : <TouchableNativeFeedback onPress={() => { setBookSlot(true) }} style={styles.button}>
-                                    <Text style={styles.buttonText}>BOOK SLOT</Text>
-                                </TouchableNativeFeedback>
-                        )
-                    ]
+                    </ScrollView>
+
+                </View>
+            </ScrollView>
+            {
+                bookSlot && storeData.active_hours
+                    ? <BookSlotSlider setBookSlot={setBookSlot} storeData={storeData} navigation={props.navigation} />
+                    : <TouchableNativeFeedback onPress={() => { setBookSlot(true) }} style={styles.button}>
+                        <Text style={styles.buttonText}>BOOK SLOT</Text>
+                    </TouchableNativeFeedback>
             }
         </View>
     );
@@ -338,7 +320,6 @@ const Store = (props) => {
 const styles = StyleSheet.create({
     screenContainer: {
         paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
-        // backgroundColor: "#F8F9FD",
         height: Dimensions.get("screen").height,
         backgroundColor: COLORS.WHITE,
         justifyContent: "center"
@@ -401,12 +382,14 @@ const styles = StyleSheet.create({
         marginTop: 10,
         flexDirection: "row",
         justifyContent: "space-evenly",
-        alignItems: "center"
+        alignItems: "center",
+        marginBottom: 10,
     },
     safetyElement: {
         flexDirection: "row",
         alignItems: "center",
         flex: 1,
+        marginTop: 10,
     },
     safetyElementText: {
         marginLeft: 5,
@@ -439,3 +422,22 @@ const styles = StyleSheet.create({
 })
 
 export default Store
+
+const saveStoreHistory = (store, phone) => {
+    fetch("https://shopout.herokuapp.com/user/store/history/add", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            storeData: store,
+            cred: {
+                phone: phone
+            }
+        })
+    })
+        .catch(e => {
+            console.log(e)
+        })
+}
+
