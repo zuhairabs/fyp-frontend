@@ -235,6 +235,11 @@ export const GlobalContextProvider = props => {
                 }
             },
 
+            updateUser: async () => {
+                let user = JSON.parse(await AsyncStorage.getItem("user"))
+                dispatch({ type: 'UPDATE_USER', user })
+            },
+
             changeLocation: async (long, lat) => {
                 const location = { long, lat }
                 await AsyncStorage.setItem("location", JSON.stringify(location))

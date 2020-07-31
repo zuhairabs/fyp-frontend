@@ -28,7 +28,7 @@ import NavbarBackButton from '../../components/Header/NavbarBackButton'
 import { COLORS, textStyles, buttons } from '../../styles/styles'
 
 const EditProfile = (props) => {
-    const { state } = useContext(GlobalContext)
+    const { state, authActions } = useContext(GlobalContext)
     const navigation = props.navigation
 
     const [user, setUser] = useState({})
@@ -166,6 +166,7 @@ const EditProfile = (props) => {
                     user.avatar = avatar
                     saveToAsync(user)
                         .then(() => {
+                            authActions.updateUser();
                             ToastAndroid.show("Profile updated!", ToastAndroid.LONG)
                         })
                 }

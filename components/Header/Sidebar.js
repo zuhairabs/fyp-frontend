@@ -1,23 +1,19 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { View, Text, StyleSheet, Image } from 'react-native'
-import AsyncStorage from '@react-native-community/async-storage'
+
+import { GlobalContext } from '../../providers/GlobalContext'
 
 const Sidebar = () => {
     const [user, setUser] = useState({})
     const [firstLetter, setFirstLetter] = useState("")
+    const { state } = useContext(GlobalContext)
 
     useEffect(() => {
-        const bootstrapper = async () => {
-            let storedUser = await AsyncStorage.getItem("user")
-            if (storedUser) {
-                storedUser = JSON.parse(storedUser)
-                setUser(storedUser)
-                let storedLetter = storedUser.firstName.charAt(0);
-                setFirstLetter(storedLetter);
-            }
+        if (state.user) {
+            setFirstLetter(state.user.firstName.charAt(0))
+            setUser(state.user)
         }
-        bootstrapper();
-    }, [])
+    }, [state])
 
     return (
         <View style={styles.userAvatarOuterCircle}>

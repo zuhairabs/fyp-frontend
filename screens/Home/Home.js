@@ -139,20 +139,13 @@ const Home = ({ navigation }) => {
                             <Suspense fallback={<ActivityIndicator />}>
                                 <CardScrollSmall item={{ title: 'new onboard', uri: '/home/new' }} />
                             </Suspense>
-                            {/* {
-                                dataList.map((item, _) => {
-                                    return <Suspense fallback={<ActivityIndicator />}>
-                                        <CardScrollSmall item={item} />
-                                    </Suspense>
-                                })
-                            } */}
                             <FlatList
                                 onEndReached={onListEnd}
                                 onEndReachedThreshold={0.7}
                                 data={dataList}
                                 renderItem={({ item }) =>
                                     <Suspense fallback={<ActivityIndicator />}>
-                                        <CardScrollSmall item={item} />
+                                        <CardScrollSmall item={item} multiParam={true} location={location} />
                                     </Suspense>
                                 }
                             />

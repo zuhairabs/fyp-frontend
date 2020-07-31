@@ -243,6 +243,12 @@ const Store = (props) => {
                                             {storeData.name}, {storeData.location_desc}
                                         </Text>
                                 }
+                                {
+                                    storeData.displacement &&
+                                    <Text style={styles.location}>
+                                        {Math.round(storeData.displacement * 10) / 10} km
+                                    </Text>
+                                }
                             </View>
                             <View style={styles.headingRight}>
                                 <TouchableWithoutFeedback

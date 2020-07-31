@@ -38,11 +38,19 @@ const CardSmall = ({ store }) => {
                         <Text style={textStyles.smallCardHeading}>{store.business.display_name}</Text>
                         <Text style={textStyles.smallCardHeading}>{store.name}</Text>
                         <View style={styles.cardSubtitle}>
-                            <Icon name="location-on" size={10} color='#666' />
+                            <View style={styles.cardLocation}>
+                                <Icon name="location-on" size={10} color='#666' />
 
-                            <Text style={styles.cardSubtitleText} numberOfLines={1}>
-                                {store.location_desc}
-                            </Text>
+                                <Text style={styles.cardSubtitleText} numberOfLines={1}>
+                                    {store.location_desc}
+                                </Text>
+                            </View>
+                            {
+                                store.displacement &&
+                                <Text style={styles.cardSubtitleText}>
+                                    {Math.round(store.displacement * 10) / 10} km
+                                </Text>
+                            }
                         </View>
                         <TouchableOpacity onPress={() => {
                             navigationRef.current?.navigate("Store", {
@@ -88,10 +96,12 @@ const styles = StyleSheet.create({
         alignItems: "flex-start",
     },
     cardSubtitle: {
+        marginTop: 10,
+        marginBottom: 10,
+    },
+    cardLocation: {
         flexDirection: "row",
         alignItems: "center",
-        marginTop: 10,
-        marginBottom: 20,
     },
     cardSubtitleText: {
         color: "#666",

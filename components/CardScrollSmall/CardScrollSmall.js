@@ -24,9 +24,12 @@ const CardScrollSmall = (props) => {
         }
         try {
             let uri = `https://shopout.herokuapp.com/user${props.item.uri}`
-            if (props.location && props.location) {
+            if (props.location) {
                 const lat = props.location.lat, long = props.location.long
-                uri = `https://shopout.herokuapp.com/user${props.item.uri}?lat=${lat}&lng=${long}`
+                if (props.multiParam)
+                    uri = `https://shopout.herokuapp.com/user${props.item.uri}&lat=${lat}&lng=${long}`
+                else
+                    uri = `https://shopout.herokuapp.com/user${props.item.uri}?lat=${lat}&lng=${long}`
             }
             fetch(uri, requestOptions)
                 .then(res => {
