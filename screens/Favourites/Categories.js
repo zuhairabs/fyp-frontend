@@ -14,7 +14,6 @@ import Icon from 'react-native-vector-icons/dist/MaterialIcons'
 import { TouchableOpacity, ScrollView } from 'react-native-gesture-handler'
 
 import { GlobalContext } from '../../providers/GlobalContext'
-
 import StatusBarWhite from '../../components/StatusBar'
 import StoreCard from '../../components/Cards/StoreCard/StoreCard'
 
@@ -33,7 +32,9 @@ const Categories = (props) => {
 
     const fetchResults = (name) => {
         setLoading(true)
-        fetch(`https://shopout.herokuapp.com/user/category?name=${name}`, {
+        let uri = `https://shopout.herokuapp.com/user/category?name=${name}`
+        if (state.location) uri += `&lat=${state.location.lat}&long=${state.location.long}`
+        fetch(uri, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

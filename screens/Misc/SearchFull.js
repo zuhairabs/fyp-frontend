@@ -259,10 +259,18 @@ const SearchFull = (props) => {
                                 key={result._id}
 
                             >
-                                <Text
-                                    style={styles.suggestionText}
-                                    onPress={() => { }}
-                                >
+                                <Text style={styles.suggestionText}>
+                                    {result.name}
+                                </Text>
+                            </TouchableOpacity>
+                    })}
+                    {tags.map(result => {
+                        if (result.name)
+                            return <TouchableOpacity
+                                onPress={() => { fullSearch(result.name, 'tag', result._id) }}
+                                key={result._id}
+                            >
+                                <Text style={styles.suggestionText}>
                                     {result.name}
                                 </Text>
                             </TouchableOpacity>
@@ -274,25 +282,7 @@ const SearchFull = (props) => {
                             }}
                                 key={result._id}
                             >
-                                <Text
-                                    style={styles.suggestionText}
-                                    onPress={() => { }}
-                                >
-                                    {result.name}
-                                </Text>
-                            </TouchableOpacity>
-                    })}
-                    {tags.map(result => {
-                        if (result.name)
-                            return <TouchableOpacity onPress={() => {
-                                fullSearch(result.name, 'tag', result._id)
-                            }}
-                                key={result._id}
-                            >
-                                <Text
-                                    style={styles.suggestionText}
-                                    onPress={() => { }}
-                                >
+                                <Text style={styles.suggestionText}>
                                     {result.name}
                                 </Text>
                             </TouchableOpacity>

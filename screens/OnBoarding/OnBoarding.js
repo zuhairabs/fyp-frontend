@@ -72,7 +72,7 @@ const Welcome = () => {
                             <Text style={{ ...textStyles.roundedButtonText }}>Next</Text>
                         </TouchableOpacity>
                         <TouchableOpacity
-                            onPress={() => { setWelcomeShown() }}
+                            onPress={() => { authActions.setWelcomeShown() }}
                         >
                             <Text style={{ ...textStyles.link, marginTop: 20 }}>
                                 {
