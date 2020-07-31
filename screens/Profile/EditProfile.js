@@ -132,7 +132,7 @@ const EditProfile = (props) => {
         else
             getUserFromAsyncStorage()
                 .then(storedUser => setInputBoxValues(storedUser))
-    }, [])
+    }, [state.user])
 
     const save = () => {
         const saveToAsync = async (user) => {

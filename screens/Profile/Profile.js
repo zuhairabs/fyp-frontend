@@ -32,7 +32,7 @@ const Profile = ({ navigation }) => {
         else
             getUserFromAsyncStorage()
                 .then(storedUser => setUser(storedUser))
-    }, [])
+    }, [state.user])
 
     return (
         <View style={styles.screenContainer}>
