@@ -1,6 +1,7 @@
 import React, {useState, useEffect, useRef} from 'react';
-import {StyleSheet, ScrollView, View, ActivityIndicator} from 'react-native';
+import {StyleSheet, ScrollView, View} from 'react-native';
 import {URI} from '../../api/constants';
+import {Post} from '../../api/http';
 import BigCard, {BigCardLoading} from './BigCard';
 
 export const CardScrollLoading = () => {
@@ -28,21 +29,6 @@ const CardScroll = (props) => {
     getFeaturedStores();
   }, []);
 
-  const changeCard = () => {
-    // const changeCurrent = async () => {
-    //     setCurrent(prev => (prev === stores.length - 1 ? 0 : prev + 1));
-    // }
-    // setInterval(() => {
-    //     changeCurrent().then(() => {
-    //         scrollRef.current?.scrollTo({
-    //             animated: true,
-    //             y: 0,
-    //             x: Dimensions.get('window').width * current,
-    //         })
-    //     })
-    // }, 3000);
-  };
-
   const setSelected = (event) => {
     const viewSize = event.nativeEvent.layoutMeasurement.width;
     const contentOffset = event.nativeEvent.contentOffset.x;
@@ -50,25 +36,16 @@ const CardScroll = (props) => {
   };
 
   const getFeaturedStores = () => {
-    const requestOptions = {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
+    const body = JSON.stringify({city: 'Mumbai'});
+    Post('user/home/featured', body).then(
+      (data) => {
+        setStores(data.response);
+        setLoading(false);
       },
-      body: JSON.stringify({
-        city: 'Mumbai',
-      }),
-    };
-    try {
-      fetch(`${URI}/user/home/featured`, requestOptions).then((res) => {
-        if (res.status === 200) {
-          res.json().then((data) => setStores(data.response));
-          setLoading(false);
-        } else console.log(res.statusText);
-      });
-    } catch (e) {
-      console.log(e);
-    }
+      (e) => {
+        console.log(e);
+      },
+    );
   };
 
   return (

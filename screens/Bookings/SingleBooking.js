@@ -17,6 +17,7 @@ import StoreCard from '../../components/Cards/StoreCard/StoreCard';
 
 import {GlobalContext} from '../../providers/GlobalContext';
 import {textStyles, COLORS, buttons} from '../../styles/styles';
+import {Post} from '../../api/http';
 
 const DEVICE_WIDTH = Dimensions.get('window').width;
 
@@ -29,37 +30,18 @@ const SingleBooking = (props) => {
   const [booking, setBooking] = useState({});
 
   useEffect(() => {
-    const requestOptions = {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        authorization: 'Bearer ' + state.token,
+    const body = JSON.stringify({
+      cred: {
+        phone: state.user.phone,
       },
-      body: JSON.stringify({
-        cred: {
-          phone: state.user.phone,
-        },
-        bookingData: {
-          _id: bookingId,
-        },
-      }),
-    };
-    fetch(
-      `https://shopout.herokuapp.com/user/booking/${
-        archived ? 'archived/' : ''
-      }fetchone`,
-      requestOptions,
-    ).then((res) => {
-      if (res.status === 200)
-        res.json().then((data) => {
-          setBooking(data.booking);
-          setLoading(false);
-        });
-      else {
-        res.json().then((data) => {
-          Alert.alert('Something went wrong ', data.error);
-        });
-      }
+      bookingData: {
+        _id: bookingId,
+      },
+    });
+    const route = `user/booking/${archived ? 'archived/' : ''}fetchone`;
+    Post(route, body, state.token).then((data) => {
+      setBooking(data.booking);
+      setLoading(false);
     });
   }, [bookingId, archived]);
 

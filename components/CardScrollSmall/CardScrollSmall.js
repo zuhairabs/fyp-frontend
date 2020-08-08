@@ -12,6 +12,7 @@ import {textStyles} from '../../styles/styles';
 
 import {URI} from '../../api/constants';
 import {GlobalContext} from '../../providers/GlobalContext';
+import {Post} from '../../api/http';
 
 const CardScrollSmall = (props) => {
   const {state} = useContext(GlobalContext);
@@ -20,33 +21,19 @@ const CardScrollSmall = (props) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const requestOptions = {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        city: 'Mumbai',
-      }),
-    };
-    try {
-      let uri = `${URI}/user${props.item.uri}`;
-      if (props.location) {
-        const lat = props.location.lat,
-          long = props.location.long;
-        if (props.multiParam)
-          uri = `${URI}/user${props.item.uri}&lat=${lat}&lng=${long}`;
-        else uri = `${URI}/user${props.item.uri}?lat=${lat}&lng=${long}`;
-      }
-      fetch(uri, requestOptions).then((res) => {
-        if (res.status === 200) {
-          res.json().then((data) => setStores(data.response));
-          setLoading(false);
-        } else console.log(res.statusText);
-      });
-    } catch (e) {
-      console.log(e);
+    let uri = `user${props.item.uri}`;
+    if (props.location) {
+      const lat = props.location.lat;
+      const long = props.location.long;
+      if (props.multiParam)
+        uri = `user${props.item.uri}&lat=${lat}&lng=${long}`;
+      else uri = `user${props.item.uri}?lat=${lat}&lng=${long}`;
     }
+    const body = JSON.stringify({city: 'Mumbai'});
+    Post(uri, body).then((data) => {
+      setStores(data.response);
+      setLoading(false);
+    });
   }, [props.location]);
 
   return (

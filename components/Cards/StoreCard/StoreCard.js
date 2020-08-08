@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import {Text, View, StyleSheet, Image, ToastAndroid, Alert} from 'react-native';
 import {
   TouchableWithoutFeedback,
@@ -6,19 +6,16 @@ import {
 } from 'react-native-gesture-handler';
 import AsyncStorage from '@react-native-community/async-storage';
 import Icon from 'react-native-vector-icons/dist/MaterialIcons';
-import {URI} from '../../../api/constants';
+import {Post} from '../../../api/http';
+import {GlobalContext} from '../../../providers/GlobalContext';
+
 import RatingBadge from '../../RatingBadge/RatingBadge';
 import BookButton from '../../Buttons/BookButton';
 import {COLORS, textStyles} from '../../../styles/styles';
 
 const StoreCard = (props) => {
+  const {state} = useContext(GlobalContext);
   const removeFavourite = () => {
-    const bootstrapper = async () => {
-      let user = JSON.parse(await AsyncStorage.getItem('user'));
-      let token = await AsyncStorage.getItem('jwt');
-
-      return {user, token};
-    };
     const updateAsyncStorage = async (favs) => {
       let user = JSON.parse(await AsyncStorage.getItem('user'));
       user.favouriteStores = favs;
@@ -35,38 +32,24 @@ const StoreCard = (props) => {
       {
         text: 'YES',
         onPress: () => {
-          bootstrapper().then(({user, token}) => {
-            fetch(`${URI}/user/removefavouritestore`, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                Authorization: 'Bearer ' + token,
-              },
-              body: JSON.stringify({
-                storeData: {
-                  _id: props.store._id,
-                },
-                cred: {
-                  phone: user.phone,
-                },
-              }),
-            }).then((res) => {
-              if (res.status === 200) {
-                ToastAndroid.show(
-                  'Removed from favourites',
-                  ToastAndroid.SHORT,
-                );
-                res.json().then((data) => {
-                  updateAsyncStorage(data.favouriteStores);
-                  props.removeFavourite(props.store._id);
-                });
-              } else
-                ToastAndroid.show(
-                  'Unable to remove favourite',
-                  ToastAndroid.SHORT,
-                );
-            });
+          const body = JSON.stringify({
+            storeData: {
+              _id: props.store._id,
+            },
+            cred: {
+              phone: state.user.phone,
+            },
           });
+          Post('user/removefavouritestore', body, state.token).then(
+            (data) => {
+              ToastAndroid.show('Removed from favourites', ToastAndroid.SHORT);
+              updateAsyncStorage(data.favouriteStores);
+              props.removeFavourite(props.store._id);
+            },
+            (e) => {
+              ToastAndroid.show(e, ToastAndroid.SHORT);
+            },
+          );
         },
         style: 'default',
       },

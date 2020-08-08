@@ -29,6 +29,7 @@ import BookSlotSlider from '../../components/BookSlotSlider/BookSlot';
 import RatingBadge from '../../components/RatingBadge/RatingBadge';
 import ImageHeader from './ImageHeader';
 import {COLORS, textStyles} from '../../styles/styles';
+import {Post} from '../../api/http';
 
 const WINDOW_HEIGHT = Dimensions.get('window').height;
 const WINDOW_WIDTH = Dimensions.get('window').width;
@@ -74,23 +75,10 @@ const Store = (props) => {
   };
 
   const fetchMissingData = () => {
-    fetch(`${URI}/store/fetch/details`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        storeData: {
-          _id: store,
-        },
-      }),
-    }).then((res) => {
-      if (res.status === 200) {
-        res.json().then((data) => {
-          setStoreData((prev) => ({...prev, ...data.store}));
-        });
-      } else Alert.alert('Something went wrong', res.status);
-    });
+    const body = JSON.stringify({storeData: {_id: store}});
+    Post('store/fetch/details', body).then((data) =>
+      setStoreData((prev) => ({...prev, ...data.store})),
+    );
   };
 
   const getWorkingDaysText = () => {
@@ -123,30 +111,19 @@ const Store = (props) => {
       user = JSON.stringify(user);
       await AsyncStorage.setItem('user', user);
     };
-
+    const body = JSON.stringify({
+      storeData: {
+        _id: store,
+      },
+      cred: {
+        phone: state.user.phone,
+      },
+    });
     if (!favourite) {
-      fetch(`${URI}/user/addfavouritestore`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + state.token,
-        },
-        body: JSON.stringify({
-          storeData: {
-            _id: store,
-          },
-          cred: {
-            phone: state.user.phone,
-          },
-        }),
-      }).then((res) => {
-        if (res.status === 200) {
-          ToastAndroid.show('Added to favourites', ToastAndroid.SHORT);
-          res.json().then((data) => {
-            addToStorage(data.favouriteStores);
-            setFavourite(true);
-          });
-        } else ToastAndroid.show('Something went wrong', ToastAndroid.SHORT);
+      Post('user/addfavouritestore', body, state.token).then((data) => {
+        ToastAndroid.show('Added to favourites', ToastAndroid.SHORT);
+        addToStorage(data.favouriteStores);
+        setFavourite(true);
       });
     } else {
       Alert.alert('Do you want to remove the store from your favourites?', '', [
@@ -158,33 +135,16 @@ const Store = (props) => {
         {
           text: 'YES',
           onPress: () => {
-            fetch(`${URI}/user/removefavouritestore`, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                Authorization: 'Bearer ' + state.token,
-              },
-              body: JSON.stringify({
-                storeData: {
-                  _id: store,
-                },
-                cred: {
-                  phone: state.user.phone,
-                },
-              }),
-            }).then((res) => {
-              if (res.status === 200) {
+            Post('user/removefavouritestore', body, state.token).then(
+              (data) => {
                 ToastAndroid.show(
                   'Removed from favourites',
                   ToastAndroid.SHORT,
                 );
-                res.json().then((data) => {
-                  addToStorage(data.favouriteStores);
-                  setFavourite(false);
-                });
-              } else
-                ToastAndroid.show('Something went wrong', ToastAndroid.SHORT);
-            });
+                addToStorage(data.favouriteStores);
+                setFavourite(false);
+              },
+            );
           },
           style: 'default',
         },
@@ -422,18 +382,11 @@ const styles = StyleSheet.create({
 export default Store;
 
 const saveStoreHistory = (store, phone) => {
-  fetch(`${URI}/user/store/history/add`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
+  const body = JSON.stringify({
+    storeData: store,
+    cred: {
+      phone: phone,
     },
-    body: JSON.stringify({
-      storeData: store,
-      cred: {
-        phone: phone,
-      },
-    }),
-  }).catch((e) => {
-    console.log(e);
   });
+  Post('user/store/history/add', body);
 };

@@ -19,6 +19,7 @@ import BookingCard from '../../components/Cards/BookingCard/bookingCard';
 import {styles} from './PreviousBookings';
 import {GlobalContext} from '../../providers/GlobalContext';
 import {URI} from '../../api/constants';
+import {Post} from '../../api/http';
 
 const mlist = [
   'January',
@@ -48,30 +49,16 @@ const UpcomingBookings = ({navigation}) => {
       : null;
 
   useEffect(() => {
-    const requestOptions = {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        authorization: 'Bearer ' + state.token,
+    const body = JSON.stringify({
+      cred: {
+        phone: state.user.phone,
       },
-      body: JSON.stringify({
-        cred: {
-          phone: state.user.phone,
-        },
-      }),
-    };
-    console.log(requestOptions);
-    fetch(`${URI}/user/bookings`, requestOptions).then((res) => {
-      if (res.status === 200)
-        res.json().then((data) => {
-          setBookings(data.bookings);
-          sortBookings().then(() => {
-            setLoading(false);
-          });
-        });
-      else {
-        Alert.alert('Something went wrong ', res.statusText);
-      }
+    });
+    Post('user/bookings', body, state.token).then((data) => {
+      setBookings(data.bookings);
+      sortBookings().then(() => {
+        setLoading(false);
+      });
     });
   }, []);
 

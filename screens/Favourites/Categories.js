@@ -17,6 +17,7 @@ import {GlobalContext} from '../../providers/GlobalContext';
 import {URI} from '../../api/constants';
 import StatusBarWhite from '../../components/StatusBar';
 import StoreCard from '../../components/Cards/StoreCard/StoreCard';
+import {Post} from '../../api/http';
 const DEVICE_HEIGHT = Dimensions.get('screen').height;
 const WINDOW_HEIGHT = Dimensions.get('window').height;
 
@@ -32,29 +33,19 @@ const Categories = (props) => {
 
   const fetchResults = (name) => {
     setLoading(true);
-    let uri = `${URI}/user/category?name=${name}`;
+    let route = `user/category?name=${name}`;
     if (state.location)
-      uri += `&lat=${state.location.lat}&long=${state.location.long}`;
-    fetch(uri, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        authorization: 'Bearer ' + state.token,
+      route += `&lat=${state.location.lat}&long=${state.location.long}`;
+    const body = JSON.stringify({
+      cred: {
+        phone: state.user.phone,
       },
-      body: JSON.stringify({
-        cred: {
-          phone: state.user.phone,
-        },
-      }),
-    }).then((res) => {
-      if (res.status === 200) {
-        res.json().then((data) => {
-          setResults(data.response);
-          setLoading(false);
-          setCurrent(name);
-          setDropdown(false);
-        });
-      } else Alert.alert(res.statusText);
+    });
+    Post(route, body, state.token).then((data) => {
+      setResults(data.response);
+      setLoading(false);
+      setCurrent(name);
+      setDropdown(false);
     });
   };
 

@@ -12,6 +12,7 @@ import {
 import {TextInput, TouchableOpacity} from 'react-native-gesture-handler';
 import StatusBarWhite from '../../components/StatusBar';
 import {GlobalContext} from '../../providers/GlobalContext';
+import {Post} from '../../api/http';
 
 const Support = ({navigation}) => {
   const {state} = useContext(GlobalContext);
@@ -19,26 +20,19 @@ const Support = ({navigation}) => {
   const [text, setText] = useState('');
 
   const sendRequest = () => {
-    if (title.length > 0 && text.length > 0)
-      fetch(`${URI}/user/support/submit`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+    if (title.length > 0 && text.length > 0) {
+      const body = JSON.stringify({
+        supportRequest: {
+          user: state.user._id,
+          title: title,
+          text: text,
         },
-        body: JSON.stringify({
-          supportRequest: {
-            user: state.user._id,
-            title: title,
-            text: text,
-          },
-        }),
-      }).then((res) => {
-        if (res.status === 200) {
-          ToastAndroid.show('Request Submitted', ToastAndroid.LONG);
-          navigation.goBack();
-        } else Alert.alert(res.statusText);
       });
-    else ToastAndroid.show('All fields are required', ToastAndroid.SHORT);
+      Post('user/support/submit', body).then(() => {
+        ToastAndroid.show('Request Submitted', ToastAndroid.LONG);
+        navigation.goBack();
+      });
+    } else ToastAndroid.show('All fields are required', ToastAndroid.SHORT);
   };
 
   const textField = createRef();

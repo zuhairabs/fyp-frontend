@@ -4,7 +4,6 @@ import {
   Text,
   StyleSheet,
   Dimensions,
-  Alert,
   ActivityIndicator,
   Image,
 } from 'react-native';
@@ -18,6 +17,7 @@ import BookingCardSmall from '../../components/Cards/BookingCard/bookingCardSmal
 import {GlobalContext} from '../../providers/GlobalContext';
 import {COLORS, textStyles} from '../../styles/styles';
 import {URI} from '../../api/constants';
+import {Post} from '../../api/http';
 
 const UpcomingBookings = ({navigation}) => {
   const {state} = useContext(GlobalContext);
@@ -48,32 +48,20 @@ const UpcomingBookings = ({navigation}) => {
       : null;
 
   useEffect(() => {
-    // TODO: request options to be moved into separate network request file
-    const requestOptions = {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        authorization: 'Bearer ' + state.token,
-      },
-      body: JSON.stringify({
-        cred: {
-          phone: state.user.phone,
-        },
-      }),
-    };
-    fetchBookings(requestOptions);
+    fetchBookings();
   }, []);
 
-  const fetchBookings = async (options) => {
-    fetch(`${URI}/user/archivedbookings`, options).then((res) => {
-      if (res.status === 200)
-        res.json().then((data) => {
-          setBookings(data.archivedBookings);
-          sortBookings().then(() => {
-            setLoading(false);
-          });
-        });
-      else Alert.alert('Something went wrong ', res.statusText);
+  const fetchBookings = async () => {
+    const body = JSON.stringify({
+      cred: {
+        phone: state.user.phone,
+      },
+    });
+    Post('user/archivedbookings', body, state.token).then((data) => {
+      setBookings(data.archivedBookings);
+      sortBookings().then(() => {
+        setLoading(false);
+      });
     });
   };
 

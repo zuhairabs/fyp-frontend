@@ -44,8 +44,7 @@ const BookingCard = (props) => {
     const options = {
       message: `I am heading to shop at ${display_name} on ${display_date}, want to join me? Click here!`,
       title: 'Try out the ShopOut app',
-      url:
-        'https://drive.google.com/file/d/1VhF8vPWW_ZdCEtWyv5KHbGvGbB17u6iR/view',
+      url: 'https://shopout.co.in',
     };
     Share.open(options)
       .then((res) => {

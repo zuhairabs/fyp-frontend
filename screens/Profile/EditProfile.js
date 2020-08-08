@@ -22,14 +22,14 @@ import ImageResizer from 'react-native-image-resizer';
 import RNFS from 'react-native-fs';
 
 import {GlobalContext} from '../../providers/GlobalContext';
-import {URI} from '../../api/constants';
+import {Post} from '../../api/http';
 
 import StatusBarWhite from '../../components/StatusBar';
 import NavbarBackButton from '../../components/Header/NavbarBackButton';
 import {COLORS, textStyles, buttons} from '../../styles/styles';
 
 const EditProfile = (props) => {
-  const {state, authActions} = useContext(GlobalContext);
+  const {state} = useContext(GlobalContext);
   const navigation = props.navigation;
 
   const [user, setUser] = useState({});
@@ -140,43 +140,29 @@ const EditProfile = (props) => {
   }, [state.user]);
 
   const save = () => {
-    const saveToAsync = async (user) => {
+    const saveToAsync = async (user) =>
       await AsyncStorage.setItem('user', JSON.stringify(user));
-    };
-    const bootstrapper = async () => {
-      let token = await AsyncStorage.getItem('jwt');
-      let user = JSON.parse(await AsyncStorage.getItem('user'));
-      fetch(`${URI}/user/updateprofile`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          authorization: 'Bearer ' + token,
-        },
-        body: JSON.stringify({
-          cred: {
-            phone: user.phone,
-          },
-          userData: {
-            firstName: firstName,
-            lastName: lastName,
-            email: email,
-            avatar: avatar,
-          },
-        }),
-      }).then((res) => {
-        if (res.status === 200) {
-          user.firstName = firstName;
-          user.lastName = lastName;
-          user.email = email;
-          user.avatar = avatar;
-          saveToAsync(user).then(() => {
-            authActions.updateUser();
-            ToastAndroid.show('Profile updated!', ToastAndroid.LONG);
-          });
-        } else Alert.alert(res.error);
+    const body = JSON.stringify({
+      cred: {
+        phone: user.phone,
+      },
+      userData: {
+        firstName: firstName,
+        lastName: lastName,
+        email: email,
+        avatar: avatar,
+      },
+    });
+    Post('user/updateprofile', body, state.token).then(() => {
+      user.firstName = firstName;
+      user.lastName = lastName;
+      user.email = email;
+      user.avatar = avatar;
+      saveToAsync(user).then(() => {
+        ToastAndroid.show('Profile updated!', ToastAndroid.LONG);
+        authActions.updateUser();
       });
-    };
-    bootstrapper();
+    });
   };
 
   return (

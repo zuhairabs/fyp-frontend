@@ -1,26 +1,17 @@
 import React, {useState, createRef, useEffect} from 'react';
 import {View, StyleSheet, Image, Dimensions} from 'react-native';
 import {TouchableOpacity, ScrollView} from 'react-native-gesture-handler';
-import {URI} from '../../api/constants';
+import {Post} from '../../api/http';
 
 const WINDOW_HEIGHT = Dimensions.get('window').height;
 const WINDOW_WIDTH = Dimensions.get('window').width;
 
 const fetchImages = (_id) => {
   return new Promise((resolve, reject) => {
-    fetch(`${URI}/store/fetch/images`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({storeData: {_id}}),
-    }).then((res) => {
-      if (res.status === 200) {
-        res.json().then((data) => {
-          resolve(data);
-        });
-      } else reject(res.statusText);
-    });
+    const body = JSON.stringify({storeData: {_id}});
+    Post('store/fetch/images', body)
+      .then((data) => resolve(data))
+      .catch((e) => reject(e));
   });
 };
 

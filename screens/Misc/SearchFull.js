@@ -24,6 +24,7 @@ import {URI} from '../../api/constants';
 
 import StatusBarWhite from '../../components/StatusBar';
 import StoreCard from '../../components/Cards/StoreCard/StoreCard';
+import {Post} from '../../api/http';
 
 const DEVICE_HEIGHT = Dimensions.get('window').height;
 
@@ -69,35 +70,28 @@ const SearchFull = (props) => {
 
   useEffect(() => {
     setLoading(true);
-    const bootstrap = async () => {
-      fetch(`${URI}/user/store/history/fetch`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          cred: {
-            phone: state.user.phone,
-          },
-        }),
-      }).then((res) => {
-        if (res.status === 200) {
-          res.json().then((data) => {
-            getUniqueHistoryResults(data.response.storeHistory).then(
-              (history) => {
-                setResults(history.reverse());
-                setLoading(false);
-              },
-            );
-          });
-        } else {
-          setLoading(false);
-          setResults([]);
-        }
-      });
-    };
-    bootstrap();
+    getUserHistory();
   }, []);
+
+  const getUserHistory = () => {
+    const body = JSON.stringify({
+      cred: {
+        phone: state.user.phone,
+      },
+    });
+    Post('user/store/history/fetch', body, state.token).then(
+      (data) => {
+        getUniqueHistoryResults(data.response.storeHistory).then((history) => {
+          setResults(history.reverse());
+          setLoading(false);
+        });
+      },
+      (e) => {
+        setLoading(false);
+        setResults([]);
+      },
+    );
+  };
 
   const getUniqueHistoryResults = async (history) => {
     let uniqueArray = [];
@@ -133,43 +127,32 @@ const SearchFull = (props) => {
     setLoading(true);
     setDropdown(false);
     clearPartialSearchResults();
-    const bootstrap = async () => {
-      fetch(`${URI}/user/search/full`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          authorization: 'Bearer ' + state.token,
-        },
-        body: JSON.stringify({
-          cred: {
-            phone: state.user.phone,
-          },
-          query: query,
-          model: model,
-          city: 'Mumbai',
-          _id: id,
-        }),
-      }).then((res) => {
+    const body = JSON.stringify({
+      cred: {
+        phone: state.user.phone,
+      },
+      query: query,
+      model: model,
+      city: 'Mumbai',
+      _id: id,
+    });
+    Post('user/search/full', body, state.token).then(
+      (data) => {
         clearPartialSearchResults();
-        if (res.status === 200) {
-          res.json().then((data) => {
-            let temp = [];
-            data.response.forEach((resp) => {
-              temp = temp.concat(resp);
-            });
-            shuffleArray(temp).then((array) => {
-              setResults(array);
-              setLoading(false);
-            });
-            setQuery(query);
-          });
-        } else {
+        let temp = [];
+        data.response.forEach((resp) => {
+          temp = temp.concat(resp);
+        });
+        shuffleArray(temp).then((array) => {
+          setResults(array);
           setLoading(false);
-          Alert.alert('Something went wrong', res.status.toString());
-        }
-      });
-    };
-    bootstrap();
+        });
+        setQuery(query);
+      },
+      (e) => {
+        setLoading(false);
+      },
+    );
   };
 
   const handleTextChange = async (query) => {

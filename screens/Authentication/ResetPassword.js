@@ -295,7 +295,7 @@ const ResetPassword = ({navigation}) => {
     setModalText('Please wait');
     loadingModal.current?.open();
     try {
-      fetch('https://shopout.herokuapp.com/user/password/reset', {
+      fetch(`${URI}/user/password/reset`, {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({

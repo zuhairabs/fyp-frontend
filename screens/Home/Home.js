@@ -21,7 +21,6 @@ import Navbar from '../../components/Header/Navbar';
 import SearchBarIdle from '../../components/Header/SearchBarIdle';
 import Location from '../../components/Header/HeaderLocation';
 import CardScroll from '../../components/CardScrollBig/CardScroll';
-// import CardScrollSmall from '../../components/CardScrollSmall/CardScrollSmall'
 const CardScrollSmall = lazy(() =>
   import('../../components/CardScrollSmall/CardScrollSmall'),
 );
@@ -32,6 +31,7 @@ const CategoryScroll = lazy(() =>
 import {GlobalContext} from '../../providers/GlobalContext';
 import {URI} from '../../api/constants';
 import {textStyles, COLORS} from '../../styles/styles';
+import {Post} from '../../api/http';
 
 const DEVICE_HEIGHT = Dimensions.get('window').height;
 
@@ -76,20 +76,15 @@ const Home = ({navigation}) => {
   };
 
   const getCategories = () => {
-    const requestOptions = {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    };
     return new Promise((resolve, reject) => {
-      fetch(`${URI}/user/home/categories`, requestOptions).then((res) => {
-        if (res.status === 200)
-          res.json().then((data) => {
-            resolve(data.response);
-          });
-        else reject(res.statusText);
-      });
+      Post('user/home/categories').then(
+        (data) => {
+          resolve(data.response);
+        },
+        (e) => {
+          reject(e);
+        },
+      );
     });
   };
 

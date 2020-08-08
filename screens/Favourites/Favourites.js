@@ -20,6 +20,7 @@ import {URI} from '../../api/constants';
 import StatusBarWhite from '../../components/StatusBar';
 import StoreCard from '../../components/Cards/StoreCard/StoreCard';
 import {COLORS, textStyles} from '../../styles/styles';
+import {Post} from '../../api/http';
 
 const DEVICE_HEIGHT = Dimensions.get('screen').height;
 const WINDOW_HEIGHT = Dimensions.get('window').height;
@@ -35,32 +36,22 @@ const Favourites = (props) => {
   const [current, setCurrent] = useState('all');
 
   useEffect(() => {
-    fetch(`${URI}/user/allfavourites`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        authorization: 'Bearer ' + state.token,
+    const body = JSON.stringify({
+      cred: {
+        phone: state.user.phone,
       },
-      body: JSON.stringify({
-        cred: {
-          phone: state.user.phone,
-        },
-      }),
-    }).then((res) => {
-      if (res.status === 200) {
-        res.json().then((data) => {
-          setResults(data.response.favouriteStores);
-          setAll(data.response.favouriteStores);
-          setLoading(false);
-          setCurrent('all');
-          let temp = [];
-          data.response.favouriteStores.forEach((fav) => {
-            if (temp.indexOf(fav.business.category) === -1)
-              temp.push(fav.business.category);
-          });
-          setCategories(temp);
-        });
-      } else Alert.alert(res.statusText);
+    });
+    Post('user/allfavourites', body, state.token).then((data) => {
+      setResults(data.response.favouriteStores);
+      setAll(data.response.favouriteStores);
+      setLoading(false);
+      setCurrent('all');
+      let temp = [];
+      data.response.favouriteStores.forEach((fav) => {
+        if (temp.indexOf(fav.business.category) === -1)
+          temp.push(fav.business.category);
+      });
+      setCategories(temp);
     });
   }, []);
 
