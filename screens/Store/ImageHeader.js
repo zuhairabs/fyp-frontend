@@ -1,156 +1,146 @@
-import React, { useState, createRef, useEffect } from 'react'
-import {
-    View,
-    StyleSheet,
-    Image,
-    Dimensions
-} from 'react-native'
-import { TouchableOpacity, ScrollView } from 'react-native-gesture-handler'
+import React, {useState, createRef, useEffect} from 'react';
+import {View, StyleSheet, Image, Dimensions} from 'react-native';
+import {TouchableOpacity, ScrollView} from 'react-native-gesture-handler';
+import {URI} from '../../api/constants';
 
 const WINDOW_HEIGHT = Dimensions.get('window').height;
 const WINDOW_WIDTH = Dimensions.get('window').width;
 
 const fetchImages = (_id) => {
-    return new Promise((resolve, reject) => {
-        fetch("https://shopout.herokuapp.com/store/fetch/images", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ storeData: { _id } })
-        })
-            .then(res => {
-                if (res.status === 200) {
-                    res.json().then(data => {
-                        resolve(data)
-                    })
-                }
-                else
-                    reject(res.statusText)
-            })
-    })
-}
+  return new Promise((resolve, reject) => {
+    fetch(`${URI}/store/fetch/images`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({storeData: {_id}}),
+    }).then((res) => {
+      if (res.status === 200) {
+        res.json().then((data) => {
+          resolve(data);
+        });
+      } else reject(res.statusText);
+    });
+  });
+};
 
-const ImageHeader = ({ title_image, height, store }) => {
-    const [images, setImages] = useState([])
-    const [headerImage, setHeaderImage] = useState(0)
-    const scrollRef = createRef();
+const ImageHeader = ({title_image, height, store}) => {
+  const [images, setImages] = useState([]);
+  const [headerImage, setHeaderImage] = useState(0);
+  const scrollRef = createRef();
 
-    const changeImage = (number) => {
-        scrollRef.current.scrollTo({
-            animated: true,
-            y: 0,
-            x: WINDOW_WIDTH * number
-        })
-        setHeaderImage(number)
-    }
+  const changeImage = (number) => {
+    scrollRef.current.scrollTo({
+      animated: true,
+      y: 0,
+      x: WINDOW_WIDTH * number,
+    });
+    setHeaderImage(number);
+  };
 
-    const setSelected = event => {
-        const viewSize = event.nativeEvent.layoutMeasurement.width;
-        const contentOffset = event.nativeEvent.contentOffset.x;
-        setHeaderImage(Math.floor(contentOffset / viewSize));
-    }
+  const setSelected = (event) => {
+    const viewSize = event.nativeEvent.layoutMeasurement.width;
+    const contentOffset = event.nativeEvent.contentOffset.x;
+    setHeaderImage(Math.floor(contentOffset / viewSize));
+  };
 
-    useEffect(() => {
-        setImages([title_image])
-        fetchImages(store)
-            .then(res => {
-                setImages(res.store.business.images)
-            })
-    }, [])
+  useEffect(() => {
+    setImages([title_image]);
+    fetchImages(store).then((res) => {
+      setImages(res.store.business.images);
+    });
+  }, []);
 
-    return (
-        <View>
-            <View style={styles.headerImageContainer}>
+  return (
+    <View>
+      <View style={styles.headerImageContainer}>
+        <ScrollView
+          horizontal
+          decelerationRate="fast"
+          pagingEnabled={true}
+          showsHorizontalScrollIndicator={false}
+          onMomentumScrollEnd={(e) => {
+            setSelected(e);
+          }}
+          ref={scrollRef}>
+          {images.map((img, i) => {
+            return (
+              <View
+                key={i}
+                style={{
+                  height: height,
+                  width: WINDOW_WIDTH,
+                }}>
+                <Image
+                  style={styles.headerImage}
+                  source={{uri: `data:image/gif;base64,${img}`}}
+                />
+              </View>
+            );
+          })}
+        </ScrollView>
+      </View>
 
-                <ScrollView
-                    horizontal
-                    decelerationRate="fast"
-                    pagingEnabled={true}
-                    showsHorizontalScrollIndicator={false}
-                    onMomentumScrollEnd={e => {
-                        setSelected(e)
-                    }}
-                    ref={scrollRef}
-                >
-                    {
-                        images.map((img, i) => {
-                            return <View key={i} style={{
-                                height: height,
-                                width: WINDOW_WIDTH,
-                            }}>
-                                <Image
-                                    style={styles.headerImage}
-                                    source={{ uri: `data:image/gif;base64,${img}` }}
-                                />
-                            </View>
-                        })
-                    }
-                </ScrollView>
-
+      <View style={styles.carousel}>
+        {images.map((img, index) => {
+          return (
+            <View key={index} style={styles.carouselImageContainer}>
+              <TouchableOpacity
+                style={styles.carouselTouchable}
+                onPress={() => {
+                  changeImage(index);
+                }}>
+                <Image
+                  source={{uri: `data:image/gif;base64,${img}`}}
+                  style={
+                    headerImage === index
+                      ? styles.carouselImage
+                      : {...styles.carouselImage, opacity: 0.3}
+                  }
+                />
+              </TouchableOpacity>
             </View>
-
-            <View style={styles.carousel}>
-                {
-                    images.map((img, index) => {
-                        return <View key={index} style={styles.carouselImageContainer}>
-                            <TouchableOpacity
-                                style={styles.carouselTouchable}
-                                onPress={() => {
-                                    changeImage(index)
-                                }}
-                            >
-                                <Image
-                                    source={{ uri: `data:image/gif;base64,${img}` }}
-                                    style={
-                                        headerImage === index
-                                            ? styles.carouselImage
-                                            : { ...styles.carouselImage, opacity: 0.3 }
-                                    }
-                                />
-                            </TouchableOpacity>
-                        </View>
-                    })
-                }
-            </View>
-        </View>
-    )
-}
+          );
+        })}
+      </View>
+    </View>
+  );
+};
 
 const styles = StyleSheet.create({
-    headerImageContainer: {
-        backgroundColor: "#FEFEFE6F",
-        flexDirection: "row",
-    },
-    image: {},
-    headerImage: {
-        height: undefined,
-        width: "100%",
-        flex: 1,
-    },
-    carousel: {
-        flexDirection: "row",
-        justifyContent: "flex-start",
-        alignItems: "center",
-        width: "100%",
-        height: Math.floor(WINDOW_HEIGHT / 9),
-        marginTop: 20,
-    },
-    carouselImageContainer: {
-        marginHorizontal: 8,
-        borderColor: "#66666666",
-        borderRadius: 15,
-        width: WINDOW_WIDTH / 4 - 16,
-    },
-    carouselTouchable: {
-        height: "100%"
-    },
-    carouselImage: {
-        width: undefined,
-        height: undefined,
-        flex: 1,
-        borderRadius: 15
-    }
+  headerImageContainer: {
+    backgroundColor: '#FEFEFE6F',
+    flexDirection: 'row',
+  },
+  image: {},
+  headerImage: {
+    height: undefined,
+    width: '100%',
+    flex: 1,
+  },
+  carousel: {
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    width: '100%',
+    height: Math.floor(WINDOW_HEIGHT / 9),
+    marginTop: 20,
+  },
+  carouselImageContainer: {
+    marginHorizontal: 8,
+    borderColor: '#66666666',
+    borderRadius: 15,
+    width: WINDOW_WIDTH / 4 - 16,
+  },
+  carouselTouchable: {
+    height: '100%',
+  },
+  carouselImage: {
+    width: undefined,
+    height: undefined,
+    flex: 1,
+    borderRadius: 15,
+  },
 });
 
-export default ImageHeader
+export default ImageHeader;
