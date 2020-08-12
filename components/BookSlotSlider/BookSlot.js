@@ -1,4 +1,4 @@
-import React, {useState, createRef, useContext} from 'react';
+import React, {useState, createRef, useContext, useEffect} from 'react';
 import {
   Dimensions,
   View,
@@ -24,7 +24,7 @@ import CheckBoxFilled from '../UXComponents/svg/CheckBoxFilled.svg';
 import Calendar, {monthNames} from './Calendar';
 import TimePicker, {timeToString, stringToTime, MINUTE} from './TimePicker';
 import {textStyles, COLORS, buttons} from '../../styles/styles';
-import {URI} from '../../api/constants';
+import {Post} from '../../api/http';
 
 const WINDOW_HEIGHT = Dimensions.get('window').height;
 const WINDOW_WIDTH = Dimensions.get('window').width;
@@ -75,73 +75,45 @@ const BookSlotSlider = (props) => {
 
   const getBookingApproval = () => {
     getBookingData().then(({bookingData}) => {
-      fetch(`${URI}/user/booking/approval`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          authorization: 'Bearer ' + state.token,
+      const body = JSON.stringify({
+        bookingData: bookingData,
+        cred: {
+          phone: state.user.phone,
         },
-        body: JSON.stringify({
-          bookingData: bookingData,
-          cred: {
-            phone: state.user.phone,
-          },
-        }),
-      }).then((res) => {
-        if (res.status === 200) {
-          res.json().then((data) => {
-            let tempApp = true;
-            data.response.forEach((resp) => {
-              if (resp[0] === false) tempApp = false;
-            });
-            if (tempApp === true) {
-              setModalText('Booking your slot');
-              bookSlot();
-            } else {
-              setErrorModal(true);
-              setModalText(
-                'Slots not available for selected time and visitors',
-              );
-            }
-          });
-        } else if (res.status === 404) {
+      });
+      Post('user/booking/approval/v2', body, state.token)
+        .then(() => {
+          setModalText('Booking your slot');
+          bookSlot();
+        })
+        .catch(() => {
           setErrorModal(true);
           setModalText('Slots not available for selected time and visitors');
-        } else {
-          setErrorModal(true);
-          setModalText('Something went wrong please try again later');
-        }
-      });
+        });
     });
   };
 
   const bookSlot = () => {
     getBookingData().then(({bookingData}) => {
-      fetch(`${URI}/user/book`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          authorization: 'Bearer ' + state.token,
+      const body = JSON.stringify({
+        bookingData: bookingData,
+        cred: {
+          phone: state.user.phone,
         },
-        body: JSON.stringify({
-          bookingData: bookingData,
-          cred: {
-            phone: state.user.phone,
-          },
-        }),
-      }).then((res) => {
-        if (res.status === 200) {
-          res.json().then((data) => {
-            props.navigation.navigate('Congratulations', {
-              text: 'Your booking has been successfully created',
-              booking: data.booking,
-            });
-          });
-        } else {
-          setErrorModal(true);
-          setModalText('Something went wrong');
-        }
       });
+      Post('user/book', body, state.token)
+        .then((data) => {
+          props.navigation.navigate('Congratulations', {
+            text: 'Your booking has been successfully created',
+            booking: data.booking,
+          });
+          setModalText('Booking created');
+          setErrorModal(true);
+        })
+        .catch((e) => {
+          setModalText(e);
+          setErrorModal(true);
+        });
     });
   };
 
@@ -151,6 +123,14 @@ const BookSlotSlider = (props) => {
     loadingModal.current.open();
     getBookingApproval();
   };
+
+  useEffect(() => {
+    const cleanUp = () => {
+      loadingModal.current?.close();
+      setErrorModal(false);
+    };
+    return cleanUp();
+  }, []);
 
   return (
     <View style={styles.container}>

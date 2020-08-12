@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useContext} from 'react';
 import {
   Text,
   View,
@@ -15,7 +15,9 @@ import {
 import Icon from 'react-native-vector-icons/dist/MaterialIcons';
 import AsyncStorage from '@react-native-community/async-storage';
 import Share from 'react-native-share';
+import {GlobalContext} from '../../../providers/GlobalContext';
 import {URI} from '../../../api/constants';
+import {Post} from '../../../api/http';
 import {textStyles, COLORS} from '../../../styles/styles';
 
 const mlist = [
@@ -34,6 +36,7 @@ const mlist = [
 ];
 
 const BookingCard = (props) => {
+  const {state} = useContext(GlobalContext);
   const [extended, setExtended] = useState(false);
 
   const shareBooking = async () => {
@@ -56,40 +59,22 @@ const BookingCard = (props) => {
   };
 
   const cancelBooking = async () => {
-    const bootstrapper = async () => {
-      let token = await AsyncStorage.getItem('jwt');
-      let user = JSON.parse(await AsyncStorage.getItem('user'));
-      return {user, token};
-    };
-    bootstrapper().then(({user, token}) => {
-      let bookId = props.booking._id;
-      fetch(`${URI}/user/booking/cancel`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          authorization: 'Bearer ' + token,
-        },
-        body: JSON.stringify({
-          cred: {
-            phone: user.phone,
-          },
-          bookingData: {
-            _id: bookId,
-            store: props.booking.store._id,
-            user: user._id,
-            visitors: props.booking.visitors,
-            end: props.booking.end,
-            start: props.booking.start,
-          },
-        }),
-      }).then((res) => {
-        if (res.status === 200) {
-          ToastAndroid.show('Booking deleted successfully', ToastAndroid.LONG);
-          props.removeBooking(props.booking._id);
-        } else {
-          Alert.alert('Can not delete booking. Please try again later');
-        }
-      });
+    const body = JSON.stringify({
+      cred: {
+        phone: user.phone,
+      },
+      bookingData: {
+        _id: bookId,
+        store: props.booking.store._id,
+        user: state.user._id,
+        visitors: props.booking.visitors,
+        end: props.booking.end,
+        start: props.booking.start,
+      },
+    });
+    Post('user/booking/cancel', body, state.token).then(() => {
+      ToastAndroid.show('Booking deleted successfully', ToastAndroid.LONG);
+      props.removeBooking(props.booking._id);
     });
   };
 
