@@ -28,10 +28,8 @@ import Profile from './screens/Profile/Profile';
 import Favourites from './screens/Favourites/Favourites';
 import Categories from './screens/Favourites/Categories';
 
-import PreviousBookings from './screens/Bookings/PreviousBookings';
 import Rating from './screens/Bookings/Rating';
 import SingleBooking from './screens/Bookings/SingleBooking';
-import UpcomingBookings from './screens/Bookings/UpcomingBookings';
 
 import Congratulations from './screens/Misc/Congratulations';
 import NotificationsFull from './screens/Notifications/NotificationsFull';
@@ -44,6 +42,7 @@ import BackButton from './components/Buttons/BackButton';
 import ResetPassword from './screens/Authentication/ResetPassword';
 import {Easing} from 'react-native-reanimated';
 import {URI} from './api/constants';
+import Bookings from './screens/Bookings/Bookings';
 
 const Stack = createStackNavigator();
 export const navigationRef = React.createRef();
@@ -151,19 +150,10 @@ const MainStack = () => (
       }}
     />
     <Stack.Screen
-      name="UpcomingBookings"
-      component={UpcomingBookings}
+      name="Bookings"
+      component={Bookings}
       options={{
-        title: 'Appointments',
-        ...SCREEN_HEADER_OPTIONS,
-      }}
-    />
-    <Stack.Screen
-      name="PreviousBookings"
-      component={PreviousBookings}
-      options={{
-        animationEnabled: false,
-        title: 'Appointments',
+        title: 'Appointment',
         ...SCREEN_HEADER_OPTIONS,
       }}
     />

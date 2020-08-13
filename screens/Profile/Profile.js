@@ -73,7 +73,7 @@ const Profile = ({navigation}) => {
             <TouchableOpacity
               style={styles.button}
               onPress={() => {
-                navigation.navigate('UpcomingBookings');
+                navigation.navigate('Bookings');
               }}>
               <View style={styles.buttonIcon}>
                 <Image
