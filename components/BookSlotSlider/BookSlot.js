@@ -48,8 +48,12 @@ const BookSlotSlider = (props) => {
       stringToTime(props.storeData.active_hours[0].start) + 30 * MINUTE,
     ),
   );
-  const [visitors, setVisitors] = useState(1);
-  const [assistance, setAssistance] = useState(false);
+  const [visitors, setVisitors] = useState(
+    props.previousBooking ? props.previousBooking.visitors : 1,
+  );
+  const [assistance, setAssistance] = useState(
+    props.previousBooking ? props.previousBooking.assistance : false,
+  );
 
   // error modal
   const [modalText, setModalText] = useState('');
@@ -73,6 +77,48 @@ const BookSlotSlider = (props) => {
     else ToastAndroid.show('Please select a date', ToastAndroid.SHORT);
   };
 
+  const cancelPreviousBooking = (newBooking) => {
+    const body = JSON.stringify({
+      bookingData: props.previousBooking,
+      cred: {
+        phone: state.user.phone,
+      },
+    });
+    Post('user/booking/edit', body, state.token)
+      .then(() => {
+        props.navigation.navigate('Congratulations', {
+          text: 'Your booking has been successfully edited',
+          booking: newBooking,
+        });
+        setModalText('Booking created');
+        setErrorModal(true);
+      })
+      .catch((e) => {
+        setModalText(e);
+        setErrorModal(true);
+      });
+  };
+
+  const editBooking = () => {
+    getBookingData().then(({bookingData}) => {
+      const body = JSON.stringify({
+        bookingData: bookingData,
+        cred: {
+          phone: state.user.phone,
+        },
+      });
+      Post('user/book', body, state.token)
+        .then((data) => {
+          setModalText('Booking created');
+          cancelPreviousBooking(data.booking);
+        })
+        .catch((e) => {
+          setModalText(e);
+          setErrorModal(true);
+        });
+    });
+  };
+
   const getBookingApproval = () => {
     getBookingData().then(({bookingData}) => {
       const body = JSON.stringify({
@@ -84,7 +130,8 @@ const BookSlotSlider = (props) => {
       Post('user/booking/approval/v2', body, state.token)
         .then(() => {
           setModalText('Booking your slot');
-          bookSlot();
+          if (props.editSlot) editBooking();
+          else bookSlot();
         })
         .catch(() => {
           setErrorModal(true);
@@ -186,6 +233,7 @@ const BookSlotSlider = (props) => {
             <Calendar
               working_days={props.storeData.working_days}
               setSelectedDate={setSelectedDate}
+              previousBooking={props.previousBooking}
             />
           </>
         ) : (

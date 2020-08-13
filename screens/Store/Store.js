@@ -49,10 +49,8 @@ const SafetyElement = ({item}) => (
 );
 
 const Store = (props) => {
-  const {store, searched, data} = props.route.params;
+  const {store, searched, data, editSlot, previousBooking} = props.route.params;
   const {state} = useContext(GlobalContext);
-
-  const [loading, setLoading] = useState(false);
   const [storeData, setStoreData] = useState({});
   const [bookSlot, setBookSlot] = useState(
     props.route.params.bookSlot || false,
@@ -262,6 +260,8 @@ const Store = (props) => {
           setBookSlot={setBookSlot}
           storeData={storeData}
           navigation={props.navigation}
+          previousBooking={previousBooking}
+          editSlot={editSlot}
         />
       ) : (
         <TouchableNativeFeedback

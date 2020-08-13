@@ -126,7 +126,7 @@ const styles = StyleSheet.create({
     flex: 1,
     borderRadius: 15,
     backgroundColor: COLORS.WHITE,
-    elevation: 10,
+    elevation: 3,
     zIndex: 0,
   },
   mainCard: {

@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {Calendar, LocaleConfig} from 'react-native-calendars';
 
 Date.prototype.addDays = function (days) {
@@ -67,11 +67,17 @@ const calendarTheme = {
   textDayHeaderFontWeight: 'bold',
 };
 
-export default function StoreCalendar({setSelectedDate, working_days}) {
+export default function StoreCalendar({
+  setSelectedDate,
+  working_days,
+  previousBooking,
+}) {
   const today = new Date();
   const [maxDate] = useState(today.addDays(30));
   const [minDate] = useState(today.addDays(1));
-  const [current, setCurrent] = useState(today.addDays(1));
+  const [current, setCurrent] = useState(
+    previousBooking ? new Date(previousBooking.start) : today.addDays(1),
+  );
   const [markedDate, setMarkedDate] = useState({});
 
   const getDisabledDays = () => {
@@ -100,6 +106,21 @@ export default function StoreCalendar({setSelectedDate, working_days}) {
     setMarkedDate(data);
     setSelectedDate(selected);
   };
+
+  useEffect(() => {
+    if (previousBooking) {
+      const data = {};
+      const selected = previousBooking.start.split('T')[0];
+      data[selected] = {
+        selected: true,
+        marked: true,
+        selectedColor: '#0062FF',
+        color: '#fff',
+      };
+      setMarkedDate(data);
+      setSelectedDate(selected);
+    }
+  }, []);
 
   return (
     <Calendar

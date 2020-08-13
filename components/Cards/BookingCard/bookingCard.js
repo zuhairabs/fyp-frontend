@@ -13,10 +13,8 @@ import {
   TouchableWithoutFeedback,
 } from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/dist/MaterialIcons';
-import AsyncStorage from '@react-native-community/async-storage';
 import Share from 'react-native-share';
 import {GlobalContext} from '../../../providers/GlobalContext';
-import {URI} from '../../../api/constants';
 import {Post} from '../../../api/http';
 import {textStyles, COLORS} from '../../../styles/styles';
 
@@ -90,7 +88,7 @@ const BookingCard = (props) => {
             <Text style={styles.date}>
               {new Date(props.booking.start).getUTCDate()}
             </Text>
-            <Text style={styles.date}>
+            <Text style={styles.date} numberOfLines={1}>
               {mlist[new Date(props.booking.start).getUTCMonth()]}
             </Text>
           </View>
@@ -144,7 +142,16 @@ const BookingCard = (props) => {
               style={styles.extensionTab}>
               <Text style={styles.tabText}>View</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.extensionTab}>
+            <TouchableOpacity
+              style={styles.extensionTab}
+              onPress={() => {
+                props.navigation.navigate('Store', {
+                  store: props.booking.store,
+                  bookSlot: true,
+                  editSlot: true,
+                  previousBooking: props.booking,
+                });
+              }}>
               <Text style={styles.tabText}>Edit</Text>
             </TouchableOpacity>
             <TouchableOpacity
@@ -194,7 +201,7 @@ const styles = StyleSheet.create({
     flex: 1,
     borderRadius: 15,
     backgroundColor: COLORS.WHITE,
-    elevation: 10,
+    elevation: 3,
     zIndex: 0,
   },
   mainCard: {
@@ -214,7 +221,7 @@ const styles = StyleSheet.create({
   },
   date: {
     color: COLORS.SECONDARY,
-    ...textStyles.paragraphMedium,
+    ...textStyles.paragraphSmallBold,
   },
   imageContainer: {
     flex: 2,
