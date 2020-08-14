@@ -87,13 +87,14 @@ const BookSlotSlider = (props) => {
     Post('user/booking/edit', body, state.token)
       .then(() => {
         props.navigation.reset({
-          index: 0,
+          index: 1,
           routes: [
+            {name: 'Home'},
             {
               name: 'Congratulations',
               params: {
                 text: 'Your booking has been successfully edited!',
-                booking: data.booking,
+                booking: newBooking,
               },
               screenOptions: {
                 headerShown: false,
@@ -162,8 +163,11 @@ const BookSlotSlider = (props) => {
       Post('user/book', body, state.token)
         .then((data) => {
           props.navigation.reset({
-            index: 0,
+            index: 1,
             routes: [
+              {
+                name: 'Home',
+              },
               {
                 name: 'Congratulations',
                 params: {
