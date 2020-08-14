@@ -1,4 +1,4 @@
-import React, {createRef, useContext, useState, useEffect} from 'react';
+import React, {createRef, useContext} from 'react';
 import {
   View,
   Text,
@@ -17,84 +17,6 @@ import {GlobalContext} from '../../providers/GlobalContext';
 const WINDOW_HEIGHT = Dimensions.get('window').height;
 const WINDOW_WIDTH = Dimensions.get('window').width;
 export const dropdownModal = createRef();
-
-// const Dropdown = ({navigation}) => {
-//   const {state} = useContext(GlobalContext);
-
-//   const [notifications, setNotifications] = useState(
-//     state.user.notifications ? state.user.notifications : [],
-//   );
-//   const [loading, setLoading] = useState(true);
-
-//   const loadNotificationsFromAsyncStorage = async () => {
-//     return (storedNotifications = JSON.parse(await AsyncStorage.getItem('user'))
-//       .notifications);
-//   };
-
-//   useEffect(() => {
-//     setLoading(false);
-//     if (notifications === []) {
-//       loadNotificationsFromAsyncStorage().then((storedNotifications) => {
-//         if (storedNotifications && storedNotifications !== [])
-//           setNotifications(storedNotifications);
-//         setLoading(false);
-//       });
-//     }
-//   }, [notifications]);
-
-//   return (
-//     <View style={styles.dropdown}>
-//       <View style={styles.notifications}>
-//         <View style={styles.header}>
-//           <Text style={styles.heading}>Notifications</Text>
-//         </View>
-//         {loading && (
-//           <ScrollView style={{height: '85%'}}>
-//             {Array.from({length: 5}, (_, k) => {
-//               return <NotificationLoadingEffect key={k} />;
-//             })}
-//           </ScrollView>
-//         )}
-//         {!loading && notifications.length === 0 ? (
-//           <View
-//             style={{
-//               height: '80%',
-//               justifyContent: 'center',
-//               alignItems: 'center',
-//               padding: 20,
-//             }}>
-//             <Text
-//               style={{
-//                 color: COLORS.SECONDARY,
-//                 ...textStyles.paragraphMedium,
-//               }}>
-//               No new notifications
-//             </Text>
-//           </View>
-//         ) : (
-//           <ScrollView style={{height: '85%'}}>
-//             {notifications.map((notification) => {
-//               return (
-//                 <Suspense fallback={<NotificationLoadingEffect />}>
-//                   <NotificationCard
-//                     key={notification._id}
-//                     notification={notification}
-//                     navigation={navigation}
-//                   />
-//                 </Suspense>
-//               );
-//             })}
-//           </ScrollView>
-//         )}
-//         <TouchableOpacity
-//           style={styles.footer}
-//           onPress={() => navigation.navigate('NotificationsFull')}>
-//           <Text style={{...textStyles.paragraphMedium}}>View All</Text>
-//         </TouchableOpacity>
-//       </View>
-//     </View>
-//   );
-// };
 
 const Dropdown = ({navigation}) => {
   const {state} = useContext(GlobalContext);
@@ -136,23 +58,16 @@ const Dropdown = ({navigation}) => {
   );
 };
 
-const NotificationDropdown = (props) => {
-  const toggleModalState = async () => {
-    if (dropdownModal.current?.isOpen) dropdownModal.current?.close();
-    else dropdownModal.current?.open();
-  };
-
-  return (
-    <>
-      <TouchableWithoutFeedback
-        onPress={() => toggleModalState()}
-        style={styles.container}>
-        <NotificationBell height="90%" />
-      </TouchableWithoutFeedback>
-      <Dropdown navigation={props.navigation} />
-    </>
-  );
-};
+const NotificationDropdown = (props) => (
+  <>
+    <TouchableWithoutFeedback
+      onPress={() => dropdownModal.current?.open()}
+      style={styles.container}>
+      <NotificationBell height="90%" />
+    </TouchableWithoutFeedback>
+    <Dropdown navigation={props.navigation} />
+  </>
+);
 
 const styles = StyleSheet.create({
   container: {
