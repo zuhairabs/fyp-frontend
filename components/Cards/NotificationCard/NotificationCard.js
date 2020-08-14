@@ -8,6 +8,7 @@ import {
   ToastAndroid,
 } from 'react-native';
 import {COLORS, textStyles} from '../../../styles/styles';
+import {dropdownModal} from '../../Header/NotificationDropdown';
 
 const MINUTE_LENGTH = 60 * 1000;
 const HOUR_LENGTH = 60 * MINUTE_LENGTH;
@@ -62,6 +63,7 @@ const calculateNotificationTime = (time) => {
 
 const NotificationCard = ({notification, navigation}) => {
   const handleNotificationCardPress = () => {
+    dropdownModal.current?.close();
     if (notification.booking)
       navigation.navigate('SingleBooking', {
         booking: notification.booking,

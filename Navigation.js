@@ -221,39 +221,31 @@ const AppNavigation = () => {
   }, []);
 
   const fetchNotifications = async () => {
-    const bootstrapAsync = async () => {
-      let user = JSON.parse(await AsyncStorage.getItem('user'));
-      let token = await AsyncStorage.getItem('jwt');
-      return {user, token};
-    };
-    bootstrapAsync().then(({user, token}) => {
-      fetch(`${URI}/user/notifications`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          authorization: 'Bearer ' + token,
+    fetch(`${URI}/user/notifications`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        authorization: 'Bearer ' + state.token,
+      },
+      body: JSON.stringify({
+        cred: {
+          phone: state.user.phone,
         },
-        body: JSON.stringify({
-          cred: {
-            phone: user.phone,
-          },
-        }),
+      }),
+    })
+      .then((res) => {
+        if (res.status === 200) {
+          res.json().then(async (data) => {
+            let user = state.user;
+            user.notifications = data.notifications;
+            await AsyncStorage.setItem('user', JSON.stringify(user));
+            authActions.setNotifications();
+          });
+        }
       })
-        .then((res) => {
-          if (res.status === 200) {
-            res.json().then(async (data) => {
-              let user = state.user;
-              let notifs = data.notifications;
-              user.notifications = notifs.reverse();
-              await AsyncStorage.setItem('user', JSON.stringify(user));
-              authActions.setNotifications();
-            });
-          }
-        })
-        .catch((e) => {
-          console.log(e);
-        });
-    });
+      .catch((e) => {
+        console.log(e);
+      });
   };
 
   const notificationHandler = () => {

@@ -86,8 +86,6 @@ export const GlobalContextProvider = (props) => {
                 fetch(`${URI}/user/login`, requestOptions).then((response) => {
                   if (response.status === 200) {
                     response.json().then((data) => {
-                      if (data.user.notifications)
-                        data.user.notifications = data.user.notifications.reverse();
                       AsyncStorage.setItem('jwt', data.token.toString());
                       AsyncStorage.setItem('user', JSON.stringify(data.user));
                       dispatch({
@@ -156,8 +154,6 @@ export const GlobalContextProvider = (props) => {
             fetch(`${URI}/user/signup`, requestOptions).then((response) => {
               if (response.status === 200) {
                 response.json().then((data) => {
-                  if (data.user.notifications)
-                    data.user.notifications = data.user.notifications.reverse();
                   AsyncStorage.setItem('jwt', data.token.toString());
                   AsyncStorage.setItem('user', JSON.stringify(data.user));
                   dispatch({

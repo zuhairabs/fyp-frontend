@@ -54,7 +54,8 @@ export default Authentication = ({navigation}) => {
         style={styles.bottomModal}
         position={'bottom'}
         swipeToClose={!loading}
-        backdropPressToClose={!loading}>
+        backdropPressToClose={!loading}
+        useNativeDriver={true}>
         <View
           style={{
             flexDirection: 'row',
