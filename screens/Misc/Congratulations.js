@@ -5,7 +5,7 @@ import Icon from 'react-native-vector-icons/dist/MaterialIcons';
 import Share from 'react-native-share';
 import {Post} from '../../api/http';
 import {GlobalContext} from '../../providers/GlobalContext';
-
+import StatusBarWhite from '../../components/StatusBar';
 import CongratulationsImage from './congratulations.svg';
 import {COLORS, textStyles, buttons} from '../../styles/styles';
 
@@ -68,13 +68,14 @@ const Congratulations = (props) => {
         height: Dimensions.get('window').height,
         width: Dimensions.get('window').width,
         backgroundColor: COLORS.WHITE,
-        paddingTop: 70,
       }}>
+      <StatusBarWhite />
       <View
         style={{
           flexDirection: 'row',
           justifyContent: 'flex-end',
           alignItems: 'center',
+          paddingTop: 50,
           paddingHorizontal: 50,
         }}>
         <TouchableOpacity

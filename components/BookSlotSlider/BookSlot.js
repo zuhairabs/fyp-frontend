@@ -86,9 +86,20 @@ const BookSlotSlider = (props) => {
     });
     Post('user/booking/edit', body, state.token)
       .then(() => {
-        props.navigation.navigate('Congratulations', {
-          text: 'Your booking has been successfully edited',
-          booking: newBooking,
+        props.navigation.reset({
+          index: 0,
+          routes: [
+            {
+              name: 'Congratulations',
+              params: {
+                text: 'Your booking has been successfully edited!',
+                booking: data.booking,
+              },
+              screenOptions: {
+                headerShown: false,
+              },
+            },
+          ],
         });
         setModalText('Booking created');
         setErrorModal(true);
@@ -150,9 +161,20 @@ const BookSlotSlider = (props) => {
       });
       Post('user/book', body, state.token)
         .then((data) => {
-          props.navigation.navigate('Congratulations', {
-            text: 'Your booking has been successfully created',
-            booking: data.booking,
+          props.navigation.reset({
+            index: 0,
+            routes: [
+              {
+                name: 'Congratulations',
+                params: {
+                  text: 'Your booking has been successfully created!',
+                  booking: data.booking,
+                },
+                screenOptions: {
+                  headerShown: false,
+                },
+              },
+            ],
           });
           setModalText('Booking created');
           setErrorModal(true);
