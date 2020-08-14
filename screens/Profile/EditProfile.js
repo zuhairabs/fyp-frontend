@@ -258,7 +258,13 @@ const EditProfile = (props) => {
               />
             </View>
 
-            <TouchableOpacity style={styles.resetLink}>
+            <TouchableOpacity
+              style={styles.resetLink}
+              onPress={() => {
+                props.navigation.navigate('ResetPassword', {
+                  loggedIn: true,
+                });
+              }}>
               <Text style={{...textStyles.link}}>Reset Your Password</Text>
             </TouchableOpacity>
 

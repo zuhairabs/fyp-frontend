@@ -16,8 +16,6 @@ import Modal from 'react-native-modalbox';
 import Navbar from '../../components/Header/Navbar';
 import StatusBarWhite from '../../components/StatusBar';
 import SecondaryBackground from '../../components/Backgrounds/SecondaryBackground';
-
-import {GlobalContext} from '../../providers/GlobalContext';
 import {URI} from '../../api/constants';
 
 import styles from './AuthStyles';
@@ -171,9 +169,8 @@ const ChangePassword = ({changePasswordRequest, loadingModal}) => {
   );
 };
 
-const ResetPassword = ({navigation}) => {
-  // const { phone, password, firstName, lastName, email } = props.route.params;
-  const {authActions} = useContext(GlobalContext);
+const ResetPassword = (props) => {
+  const {loggedIn} = props.route.params || false;
   const [otp, setOtp] = useState();
   const [session, setSession] = useState('');
   const [key, setKey] = useState();
@@ -185,6 +182,23 @@ const ResetPassword = ({navigation}) => {
   const [loading, setLoading] = useState(false);
   const [modalText, setModalText] = useState('Verifying');
   const loadingModal = createRef();
+
+  const navigateOnSuccess = () => {
+    props.navigation.reset({
+      index: 1,
+      routes: [
+        {
+          name: 'Home',
+        },
+        {
+          name: 'Success',
+          params: {
+            loggedIn: loggedIn,
+          },
+        },
+      ],
+    });
+  };
 
   const checkPhoneRegistered = async () => {
     setLoading(true);
@@ -305,10 +319,7 @@ const ResetPassword = ({navigation}) => {
           },
         }),
       }).then((res) => {
-        if (res.status === 200)
-          navigation.navigate('Success', {
-            text: 'Your password has been changed successfully',
-          });
+        if (res.status === 200) navigateOnSuccess();
         else {
           setLoading(false);
           setModalText(res.statusText);

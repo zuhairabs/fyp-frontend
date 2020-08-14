@@ -139,6 +139,8 @@ const MainStack = () => (
       }}
     />
     <Stack.Screen name="EditProfile" component={EditProfile} />
+    <Stack.Screen name="ResetPassword" component={ResetPassword} />
+    <Stack.Screen name="Success" component={Success} />
     <Stack.Screen name="Store" component={Store} />
     <Stack.Screen
       name="SearchFull"

@@ -9,7 +9,14 @@ const DEVICE_HEIGHT = Dimensions.get('screen').height;
 const WINDOW_HEIGHT = Dimensions.get('window').height;
 
 export default (props) => {
-  const [text] = useState(props.route.params.text || '');
+  const {loggedIn} = props.route.params;
+  const [text] = useState('Your password was changed successfully');
+
+  const updateNavigationStack = () => {
+    loggedIn
+      ? props.navigation.goBack()
+      : props.navigation.navigate('Authentication');
+  };
 
   return (
     <View
@@ -50,10 +57,12 @@ export default (props) => {
       <View style={styles.buttonArea}>
         <TouchableOpacity
           onPress={() => {
-            props.navigation.navigate('Authentication');
+            updateNavigationStack();
           }}
           style={buttons.primaryButton}>
-          <Text style={textStyles.primaryButtonText}>Login</Text>
+          <Text style={textStyles.primaryButtonText}>
+            {loggedIn ? 'Home' : 'Login'}
+          </Text>
         </TouchableOpacity>
       </View>
     </View>

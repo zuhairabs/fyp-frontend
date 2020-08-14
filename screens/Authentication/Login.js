@@ -7,12 +7,10 @@ import styles from './AuthStyles';
 import {GlobalContext} from '../../providers/GlobalContext';
 
 const Login = ({actions, loadingModal}) => {
+  const {authActions} = useContext(GlobalContext);
+  const passwordInput = createRef();
   const [phone, setPhone] = useState();
   const [password, setPassword] = useState('');
-
-  const {authActions} = useContext(GlobalContext);
-
-  const passwordInput = createRef();
 
   const validatePhone = () => {
     if (phone) {
