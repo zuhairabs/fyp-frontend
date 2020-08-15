@@ -3,7 +3,7 @@ import AppNavigation from './Navigation';
 import {GlobalContextProvider} from './providers/GlobalContext';
 
 const App = () => {
-  console.disableYellowBox = true;
+  // console.disableYellowBox = true;
   return (
     <GlobalContextProvider>
       <AppNavigation />

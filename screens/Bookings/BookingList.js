@@ -29,10 +29,7 @@ const mlist = [
   'December',
 ];
 
-export default ({navigation, smallCards, bookings}) => {
-  const {state} = useContext(GlobalContext);
-  const [loading, setLoading] = useState(false);
-
+export default ({navigation, smallCards, bookings, removeBooking}) => {
   // variable for title of month selectors on top of the booking list
   const startMonth =
     bookings && bookings.length > 0
@@ -106,6 +103,7 @@ export default ({navigation, smallCards, bookings}) => {
                     key={booking._id}
                     booking={booking}
                     navigation={navigation}
+                    removeBooking={removeBooking}
                   />
                 );
               else
@@ -114,6 +112,7 @@ export default ({navigation, smallCards, bookings}) => {
                     key={booking._id}
                     booking={booking}
                     navigation={navigation}
+                    removeBooking={removeBooking}
                   />
                 );
             })}

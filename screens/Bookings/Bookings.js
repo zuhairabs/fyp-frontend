@@ -73,6 +73,12 @@ const Bookings = ({navigation}) => {
     }
   };
 
+  const removeBooking = (itemToDelete) => {
+    setBookings((prev) => {
+      return prev.filter((item) => item._id != itemToDelete);
+    });
+  };
+
   useEffect(() => {
     fetchBookings(tabs[0].uri);
   }, []);
@@ -156,6 +162,7 @@ const Bookings = ({navigation}) => {
                 smallCards={tabs[selectedTab].smallCards}
                 navigation={navigation}
                 bookings={bookings}
+                removeBooking={removeBooking}
               />
             )}
           </>

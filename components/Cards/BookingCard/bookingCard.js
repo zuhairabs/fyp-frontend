@@ -59,10 +59,10 @@ const BookingCard = (props) => {
   const cancelBooking = async () => {
     const body = JSON.stringify({
       cred: {
-        phone: user.phone,
+        phone: state.user.phone,
       },
       bookingData: {
-        _id: bookId,
+        _id: props.booking._id,
         store: props.booking.store._id,
         user: state.user._id,
         visitors: props.booking.visitors,

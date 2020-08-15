@@ -43,6 +43,7 @@ import ResetPassword from './screens/Authentication/ResetPassword';
 import {Easing} from 'react-native-reanimated';
 import {URI} from './api/constants';
 import Bookings from './screens/Bookings/Bookings';
+import {Post} from './api/http';
 
 const Stack = createStackNavigator();
 export const navigationRef = React.createRef();
@@ -222,43 +223,36 @@ const AppNavigation = () => {
     notificationHandler();
   }, []);
 
-  const fetchNotifications = async () => {
-    fetch(`${URI}/user/notifications`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        authorization: 'Bearer ' + state.token,
-      },
-      body: JSON.stringify({
+  const getUserFromAsyncStorage = async () => {
+    const user = JSON.parse(await AsyncStorage.getItem('user'));
+    const token = await AsyncStorage.getItem('jwt');
+    return {user, token};
+  };
+
+  const fetchNotifications = () => {
+    /**
+     * for this function, global state would not work
+     * when an FCM message arrives, the state is reset
+     * because notification handler is bundled inside the navigation stack
+     * using async storage is the only robust solution to ensure stability
+     */
+    getUserFromAsyncStorage().then(({user, token}) => {
+      let body = JSON.stringify({
         cred: {
-          phone: state.user.phone,
+          phone: user.phone,
         },
-      }),
-    })
-      .then((res) => {
-        if (res.status === 200) {
-          res.json().then(async (data) => {
-            let user = state.user;
-            user.notifications = data.notifications;
-            await AsyncStorage.setItem('user', JSON.stringify(user));
-            authActions.setNotifications();
-          });
-        }
-      })
-      .catch((e) => {
-        console.log(e);
       });
+      Post('user/notifications', body, token).then(async (data) => {
+        user.notifications = data.notifications;
+        await AsyncStorage.setItem('user', JSON.stringify(user));
+        authActions.setNotifications();
+      });
+    });
   };
 
   const notificationHandler = () => {
     // Handler to control push notification interaction
     messaging().onNotificationOpenedApp((remoteMessage) => {
-      console.log(
-        'Notification caused app to open from background state:',
-        remoteMessage.notification,
-      );
-      console.log(remoteMessage.data);
-
       if (remoteMessage.data?.booking)
         navigationRef.current?.navigate('SingleBooking', {
           booking: remoteMessage.data.booking,
