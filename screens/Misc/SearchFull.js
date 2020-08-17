@@ -52,6 +52,7 @@ const partialSearchAPI = (phone, token, query) => {
 const partialSearchDelayed = AwesomeDebouncePromise(partialSearchAPI, 30);
 
 const SearchFull = (props) => {
+  const {initial, autoFocus} = props.route.params;
   const inputBox = useRef();
   const {state} = useContext(GlobalContext);
 
@@ -70,7 +71,8 @@ const SearchFull = (props) => {
 
   useEffect(() => {
     setLoading(true);
-    getUserHistory();
+    if (!initial) getUserHistory();
+    else fullSearch(initial.query, initial.model, initial.id);
   }, []);
 
   const getUserHistory = () => {
@@ -191,20 +193,20 @@ const SearchFull = (props) => {
         <View style={styles.searchInputFull}>
           <Icon name="search" size={24} color="#666" />
           <TextInput
+            autoCapitalize="none"
+            autoCompleteType="off"
+            autoFocus={autoFocus}
             style={styles.searchInputText}
             value={text}
-            autoCapitalize="none"
             onChangeText={(query) => {
               handleTextChange(query);
             }}
-            autoCompleteType="off"
             placeholder={placeholder}
             onBlur={() => {
               clearPartialSearchResults();
             }}
             blurOnSubmit={true}
             placeholderTextColor="#707070"
-            autoFocus={true}
             ref={inputBox}
           />
           <TouchableWithoutFeedback

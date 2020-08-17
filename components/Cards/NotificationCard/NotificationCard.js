@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Text,
   View,
@@ -77,13 +77,6 @@ const NotificationCard = ({notification, navigation}) => {
     else ToastAndroid.show('No actions available', ToastAndroid.SHORT);
   };
 
-  const logo =
-    notification.store && notification.store.business
-      ? notification.store.business.title_image
-        ? notification.store.business.title_image
-        : notification.store.business.logo
-      : '';
-
   return (
     <TouchableOpacity
       style={{
@@ -98,9 +91,9 @@ const NotificationCard = ({notification, navigation}) => {
           ...styles.imageContainer,
           backgroundColor: notification.readStatus ? COLORS.WHITE : '#0062FF05',
         }}>
-        {logo ? (
+        {notification.image ? (
           <Image
-            source={{uri: `data:image/gif;base64,${logo}`}}
+            source={{uri: `data:image/gif;base64,${notification.image}`}}
             style={styles.image}
           />
         ) : (

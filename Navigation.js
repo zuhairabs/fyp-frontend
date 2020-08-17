@@ -44,6 +44,7 @@ import {Easing} from 'react-native-reanimated';
 import {URI} from './api/constants';
 import Bookings from './screens/Bookings/Bookings';
 import {Post} from './api/http';
+import Video from './screens/Store/Video';
 
 const Stack = createStackNavigator();
 export const navigationRef = React.createRef();
@@ -143,6 +144,7 @@ const MainStack = () => (
     <Stack.Screen name="ResetPassword" component={ResetPassword} />
     <Stack.Screen name="Success" component={Success} />
     <Stack.Screen name="Store" component={Store} />
+    <Stack.Screen name="Video" component={Video} />
     <Stack.Screen
       name="SearchFull"
       component={SearchFull}

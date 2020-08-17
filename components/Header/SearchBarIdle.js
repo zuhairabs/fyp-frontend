@@ -12,7 +12,10 @@ const SearchBarIdle = (props) => {
       <TouchableWithoutFeedback
         style={Styles.searchInput}
         onPress={() => {
-          props.navigation.navigate('SearchFull');
+          props.navigation.navigate('SearchFull', {
+            initial: null,
+            autoFocus: true,
+          });
         }}>
         <Icon name="search" size={16} color="#666" />
         <Text style={Styles.dummyText}>{placeholder}</Text>
