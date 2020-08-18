@@ -151,7 +151,7 @@ const Home = ({navigation}) => {
             </Suspense>
             <FlatList
               onEndReached={onListEnd}
-              onEndReachedThreshold={0.7}
+              onEndReachedThreshold={0.2}
               data={dataList}
               renderItem={({item}) => (
                 <Suspense fallback={<ActivityIndicator />}>

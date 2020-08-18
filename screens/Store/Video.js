@@ -141,7 +141,6 @@ export default (props) => {
             showinfo={false}
             modestbranding
             controls={2}
-            // fullscreen={true}
             onError={(e) => console.log(e)}
             resumePlayAndroid={false}
             style={{alignSelf: 'stretch', height: calculatePlayerHeight()}}

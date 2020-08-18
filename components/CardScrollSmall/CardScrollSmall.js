@@ -71,10 +71,7 @@ const CardScrollSmall = (props) => {
         {loading ? (
           <ActivityIndicator size="large" color="#0062FF" />
         ) : (
-          <ScrollView
-            horizontal
-            // showsHorizontalScrollIndicator={false}
-          >
+          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
             {stores.map((store) => {
               return props.videos ? (
                 <VideoCard key={store._id} video={store} />
@@ -92,7 +89,6 @@ const CardScrollSmall = (props) => {
 const styles = StyleSheet.create({
   container: {
     marginBottom: 20,
-    paddingLeft: 20,
     height: 320,
     width: '100%',
     justifyContent: 'center',
