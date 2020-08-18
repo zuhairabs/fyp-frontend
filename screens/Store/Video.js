@@ -41,15 +41,15 @@ const getRandomVideo = () =>
     );
   });
 
-export default ({navigation}) => {
+export default (props) => {
+  const {loadedSnippet, loadedVideo} = props.route.params;
   const calculatePlayerHeight = () => (WINDOW_WIDTH * 9) / 16;
-  const [snippet, setSnippet] = useState();
-  const [business, setBusiness] = useState();
-  const [videoId, setVideoId] = useState();
-  const [tag, setTag] = useState();
-  const [brand, setBrad] = useState();
-  const [likes, setLikes] = useState();
-  const [dislikes, setDislikes] = useState();
+  const [snippet, setSnippet] = useState(loadedSnippet);
+  const [video, setVideo] = useState(loadedVideo);
+  const [likes, setLikes] = useState(loadedVideo ? loadedVideo.likes : null);
+  const [dislikes, setDislikes] = useState(
+    loadedVideo ? loadedVideo.dislikes : null,
+  );
   const [liked, setLiked] = useState('unliked');
 
   const getVideoDetails = (id) => {
@@ -90,8 +90,10 @@ export default ({navigation}) => {
   };
 
   const onPressCart = () => {
+    let brand = video.brand;
+    let tag = video.tag;
     if (brand && brand.name) {
-      navigation.navigate('SearchFull', {
+      props.navigation.navigate('SearchFull', {
         initial: {
           query: brand.name,
           id: brand._id,
@@ -100,7 +102,7 @@ export default ({navigation}) => {
         autoFocus: false,
       });
     } else if (tag && tag.name) {
-      navigation.navigate('SearchFull', {
+      props.navigation.navigate('SearchFull', {
         initial: {
           query: tag.name,
           id: tag._id,
@@ -112,27 +114,26 @@ export default ({navigation}) => {
   };
 
   useEffect(() => {
-    getRandomVideo()
-      .then((data) => {
-        setVideoId(data.source);
-        getVideoDetails(data.source);
-        setLikes(data.likes);
-        setDislikes(data.dislikes);
-        setBusiness(data.business);
-        setTag(data.tag);
-        setBrad(data.brand);
-      })
-      .catch((e) => {
-        console.log(e);
-      });
+    if (video) {
+      if (!snippet) getVideoDetails(video.source);
+    } else {
+      getRandomVideo()
+        .then((data) => {
+          getVideoDetails(data.source);
+          setVideo(data);
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+    }
   }, []);
 
   return (
     <View style={styles.screenContainer}>
-      {videoId && (
+      {video && (
         <>
           <YouTube
-            videoId={videoId}
+            videoId={video.source}
             apiKey="AIzaSyBFYI1ucm88RfrhyvT6a1DnTqiuSdtSwSM"
             play
             loop
@@ -161,7 +162,7 @@ export default ({navigation}) => {
               color: COLORS.SECONDARY,
               marginVertical: 8,
             }}>
-            {business && business.display_name}
+            {video && video.business.display_name}
           </Text>
           <View style={styles.buttonArea}>
             <View style={styles.buttonsLeft}>

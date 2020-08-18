@@ -11,11 +11,9 @@ import Icon from 'react-native-vector-icons/dist/MaterialIcons';
 import {TouchableWithoutFeedback} from 'react-native-gesture-handler';
 
 import {navigationRef} from '../../Navigation';
-
 import {textStyles, COLORS} from '../../styles/styles';
 import RatingBadge from '../RatingBadge/RatingBadge';
 import BookButton from '../Buttons/BookButton';
-
 const DEVICE_WIDTH = Dimensions.get('window').width;
 
 const CardSmall = ({store}) => {
@@ -82,7 +80,7 @@ const CardSmall = ({store}) => {
   );
 };
 
-const styles = StyleSheet.create({
+export const styles = StyleSheet.create({
   container: {
     width: Math.floor(DEVICE_WIDTH / 2.6),
     marginVertical: 10,
@@ -101,7 +99,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 8,
     height: 134,
-    justifyContent: 'flex-end',
+    justifyContent: 'space-around',
     alignItems: 'flex-start',
   },
   cardSubtitle: {

@@ -8,11 +8,30 @@ import {
 } from 'react-native';
 
 import CardSmall from './CardSmall';
+import VideoCard from './VideoCard';
 import {textStyles} from '../../styles/styles';
 
 import {URI} from '../../api/constants';
 import {GlobalContext} from '../../providers/GlobalContext';
 import {Post} from '../../api/http';
+
+const getFeaturedVideos = () =>
+  new Promise((resolve, reject) => {
+    fetch(`${URI}/user/video/featured`, {
+      method: 'GET',
+      headers: {
+        'content-type': 'application/JSON',
+      },
+    }).then(
+      (res) => {
+        if (res.status === 200) res.json().then((data) => resolve(data.video));
+        else reject('Not found');
+      },
+      (e) => {
+        reject(e);
+      },
+    );
+  });
 
 const CardScrollSmall = (props) => {
   const {state} = useContext(GlobalContext);
@@ -21,19 +40,28 @@ const CardScrollSmall = (props) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    let uri = `user${props.item.uri}`;
-    if (props.location) {
-      const lat = props.location.lat;
-      const long = props.location.long;
-      if (props.multiParam)
-        uri = `user${props.item.uri}&lat=${lat}&lng=${long}`;
-      else uri = `user${props.item.uri}?lat=${lat}&lng=${long}`;
+    if (props.videos) {
+      getFeaturedVideos()
+        .then((data) => {
+          setStores(data);
+          setLoading(false);
+        })
+        .catch((e) => console.log(e));
+    } else {
+      let uri = `user${props.item.uri}`;
+      if (props.location) {
+        const lat = props.location.lat;
+        const long = props.location.long;
+        if (props.multiParam)
+          uri = `user${props.item.uri}&lat=${lat}&lng=${long}`;
+        else uri = `user${props.item.uri}?lat=${lat}&lng=${long}`;
+      }
+      const body = JSON.stringify({city: 'Mumbai'});
+      Post(uri, body).then((data) => {
+        setStores(data.response);
+        setLoading(false);
+      });
     }
-    const body = JSON.stringify({city: 'Mumbai'});
-    Post(uri, body).then((data) => {
-      setStores(data.response);
-      setLoading(false);
-    });
   }, [props.location]);
 
   return (
@@ -48,7 +76,11 @@ const CardScrollSmall = (props) => {
             // showsHorizontalScrollIndicator={false}
           >
             {stores.map((store) => {
-              return <CardSmall key={store._id} store={store} />;
+              return props.videos ? (
+                <VideoCard key={store._id} video={store} />
+              ) : (
+                <CardSmall key={store._id} store={store} />
+              );
             })}
           </ScrollView>
         )}

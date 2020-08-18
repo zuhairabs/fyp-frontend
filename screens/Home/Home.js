@@ -134,6 +134,12 @@ const Home = ({navigation}) => {
             <CardScroll />
             <Suspense fallback={<ActivityIndicator />}>
               <CardScrollSmall
+                item={{title: 'featured videos', uri: '/user/video/featured'}}
+                videos={true}
+              />
+            </Suspense>
+            <Suspense fallback={<ActivityIndicator />}>
+              <CardScrollSmall
                 item={{title: 'near me', uri: '/home/nearest'}}
                 location={location}
               />
