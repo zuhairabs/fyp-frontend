@@ -44,9 +44,10 @@ const getRandomVideo = () =>
 export default ({navigation}) => {
   const calculatePlayerHeight = () => (WINDOW_WIDTH * 9) / 16;
   const [snippet, setSnippet] = useState();
-  const [business, setBusiness] = useState({display_name: ''});
+  const [business, setBusiness] = useState();
   const [videoId, setVideoId] = useState();
-  const [tag, setTag] = useState({name: ''});
+  const [tag, setTag] = useState();
+  const [brand, setBrad] = useState();
   const [likes, setLikes] = useState();
   const [dislikes, setDislikes] = useState();
   const [liked, setLiked] = useState('unliked');
@@ -88,6 +89,28 @@ export default ({navigation}) => {
     }
   };
 
+  const onPressCart = () => {
+    if (brand && brand.name) {
+      navigation.navigate('SearchFull', {
+        initial: {
+          query: brand.name,
+          id: brand._id,
+          model: 'brand',
+        },
+        autoFocus: false,
+      });
+    } else if (tag && tag.name) {
+      navigation.navigate('SearchFull', {
+        initial: {
+          query: tag.name,
+          id: tag._id,
+          model: 'tag',
+        },
+        autoFocus: false,
+      });
+    }
+  };
+
   useEffect(() => {
     getRandomVideo()
       .then((data) => {
@@ -97,6 +120,7 @@ export default ({navigation}) => {
         setDislikes(data.dislikes);
         setBusiness(data.business);
         setTag(data.tag);
+        setBrad(data.brand);
       })
       .catch((e) => {
         console.log(e);
@@ -137,7 +161,7 @@ export default ({navigation}) => {
               color: COLORS.SECONDARY,
               marginVertical: 8,
             }}>
-            {business.display_name}
+            {business && business.display_name}
           </Text>
           <View style={styles.buttonArea}>
             <View style={styles.buttonsLeft}>
@@ -176,14 +200,7 @@ export default ({navigation}) => {
                 <TouchableOpacity
                   style={styles.button}
                   onPress={() => {
-                    navigation.navigate('SearchFull', {
-                      initial: {
-                        query: tag.name,
-                        id: tag._id,
-                        model: 'tag',
-                      },
-                      autoFocus: false,
-                    });
+                    onPressCart();
                   }}>
                   <Icon name="shopping-cart" size={28} color={COLORS.PRIMARY} />
                 </TouchableOpacity>
