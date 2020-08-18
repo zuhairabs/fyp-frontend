@@ -12,6 +12,7 @@ import Icon from 'react-native-vector-icons/dist/MaterialIcons';
 import YouTube from 'react-native-youtube';
 
 import {COLORS, textStyles} from '../../styles/styles';
+import {URI} from '../../api/constants';
 const WINDOW_HEIGHT = Dimensions.get('window').height;
 const WINDOW_WIDTH = Dimensions.get('window').width;
 
@@ -22,16 +23,36 @@ const YT_API = {
   },
 };
 
+const getRandomVideo = () =>
+  new Promise((resolve, reject) => {
+    fetch(`${URI}/user/video/random`, {
+      method: 'GET',
+      headers: {
+        'content-type': 'application/JSON',
+      },
+    }).then(
+      (res) => {
+        if (res.status === 200) res.json().then((data) => resolve(data.video));
+        else reject('Not found');
+      },
+      (e) => {
+        reject(e);
+      },
+    );
+  });
+
 export default ({navigation}) => {
   const calculatePlayerHeight = () => (WINDOW_WIDTH * 9) / 16;
-  const videoId = '8IQSvodyE7c';
-  const [snippet, setSnippet] = useState({});
-  const [likes, setLikes] = useState(783);
-  const [dislikes, setDislikes] = useState(32);
+  const [snippet, setSnippet] = useState();
+  const [business, setBusiness] = useState({display_name: ''});
+  const [videoId, setVideoId] = useState();
+  const [tag, setTag] = useState({name: ''});
+  const [likes, setLikes] = useState();
+  const [dislikes, setDislikes] = useState();
   const [liked, setLiked] = useState('unliked');
 
-  const getVideoDetails = () => {
-    fetch(`${YT_API.URI.SNIPPET}&id=${videoId}&key=${YT_API.KEY}`, {
+  const getVideoDetails = (id) => {
+    fetch(`${YT_API.URI.SNIPPET}&id=${id}&key=${YT_API.KEY}`, {
       method: 'GET',
       port: null,
       async: true,
@@ -46,7 +67,7 @@ export default ({navigation}) => {
         else console.log(res.status);
       })
       .catch((e) => {
-        console.log('Error!!!', e);
+        console.log(e);
       });
   };
 
@@ -68,22 +89,40 @@ export default ({navigation}) => {
   };
 
   useEffect(() => {
-    getVideoDetails();
+    getRandomVideo()
+      .then((data) => {
+        setVideoId(data.source);
+        getVideoDetails(data.source);
+        setLikes(data.likes);
+        setDislikes(data.dislikes);
+        setBusiness(data.business);
+        setTag(data.tag);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
   }, []);
 
   return (
     <View style={styles.screenContainer}>
-      <YouTube
-        videoId="8IQSvodyE7c"
-        apiKey="AIzaSyBFYI1ucm88RfrhyvT6a1DnTqiuSdtSwSM"
-        play
-        loop
-        rel={false}
-        showinfo={false}
-        modestbranding
-        controls={2}
-        style={{alignSelf: 'stretch', height: calculatePlayerHeight()}}
-      />
+      {videoId && (
+        <>
+          <YouTube
+            videoId={videoId}
+            apiKey="AIzaSyBFYI1ucm88RfrhyvT6a1DnTqiuSdtSwSM"
+            play
+            loop
+            rel={false}
+            showinfo={false}
+            modestbranding
+            controls={2}
+            // fullscreen={true}
+            onError={(e) => console.log(e)}
+            resumePlayAndroid={false}
+            style={{alignSelf: 'stretch', height: calculatePlayerHeight()}}
+          />
+        </>
+      )}
       <ScrollView
         style={styles.container}
         showsVerticalScrollIndicator={false}
@@ -98,7 +137,7 @@ export default ({navigation}) => {
               color: COLORS.SECONDARY,
               marginVertical: 8,
             }}>
-            Hush Mattress
+            {business.display_name}
           </Text>
           <View style={styles.buttonArea}>
             <View style={styles.buttonsLeft}>
@@ -139,9 +178,9 @@ export default ({navigation}) => {
                   onPress={() => {
                     navigation.navigate('SearchFull', {
                       initial: {
-                        query: 'mattress',
-                        id: '5f0dfca6221fe6f7d91dcc14',
-                        model: 'category',
+                        query: tag.name,
+                        id: tag._id,
+                        model: 'tag',
                       },
                       autoFocus: false,
                     });
@@ -158,7 +197,7 @@ export default ({navigation}) => {
           <View style={styles.descriptionBox}>
             <Text style={textStyles.paragraphLargeBold}>Description</Text>
             <Text style={textStyles.paragraphMedium}>
-              {snippet.description}
+              {snippet ? snippet.description : ''}
             </Text>
           </View>
         </View>
