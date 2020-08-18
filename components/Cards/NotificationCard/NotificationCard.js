@@ -93,8 +93,8 @@ const NotificationCard = ({notification, navigation}) => {
         }}>
         {notification.image ? (
           <Image
-            source={{uri: `data:image/gif;base64,${notification.image}`}}
-            style={styles.image}
+            source={{uri: `data:image/png;base64,${notification.image}`}}
+            style={styles.logo}
           />
         ) : (
           <Image source={require('./shopout.png')} style={styles.image} />
@@ -126,12 +126,20 @@ const styles = StyleSheet.create({
     width: 64,
     height: 64,
     borderRadius: 64 / 2,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   image: {
     height: undefined,
     width: undefined,
     borderRadius: 64 / 2,
     flex: 1,
+  },
+  logo: {
+    flex: 1,
+    width: 56,
+    height: 56,
+    resizeMode: 'contain',
   },
   contentContainer: {
     flex: 8,
