@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useContext} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   StyleSheet,
   ScrollView,
@@ -6,13 +6,10 @@ import {
   ActivityIndicator,
   Text,
 } from 'react-native';
-
 import CardSmall from './CardSmall';
 import VideoCard from './VideoCard';
 import {textStyles} from '../../styles/styles';
-
 import {URI} from '../../api/constants';
-import {GlobalContext} from '../../providers/GlobalContext';
 import {Post} from '../../api/http';
 
 const getFeaturedVideos = () =>
@@ -34,8 +31,6 @@ const getFeaturedVideos = () =>
   });
 
 const CardScrollSmall = (props) => {
-  const {state} = useContext(GlobalContext);
-
   const [stores, setStores] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -89,6 +84,7 @@ const CardScrollSmall = (props) => {
 const styles = StyleSheet.create({
   container: {
     marginBottom: 20,
+    paddingLeft: 30,
     height: 320,
     width: '100%',
     justifyContent: 'center',

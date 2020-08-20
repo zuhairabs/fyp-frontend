@@ -28,19 +28,19 @@ const NotificationList = ({navigation, notifications}) => {
     );
   else
     return (
-      <ScrollView style={{height: '85%'}}>
-        {notifications.map((notification) => {
-          return (
-            <Suspense fallback={<NotificationLoadingEffect />}>
+      <Suspense fallback={<NotificationLoadingEffect />}>
+        <ScrollView style={{height: '85%'}}>
+          {notifications.map((notification) => {
+            return (
               <NotificationCard
                 key={notification._id}
                 notification={notification}
                 navigation={navigation}
               />
-            </Suspense>
-          );
-        })}
-      </ScrollView>
+            );
+          })}
+        </ScrollView>
+      </Suspense>
     );
 };
 

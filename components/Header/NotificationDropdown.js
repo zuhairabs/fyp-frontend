@@ -26,9 +26,10 @@ const Dropdown = ({navigation}) => {
       ref={dropdownModal}
       style={styles.dropdown}
       position={'top'}
+      entry={'top'}
+      animationDuration={300}
       backdropPressToClose={true}
       swipeToClose={false}
-      animationDuration={0}
       useNativeDriver={true}
       coverScreen={true}
       backdropOpacity={0}

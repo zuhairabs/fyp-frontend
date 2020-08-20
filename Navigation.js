@@ -1,24 +1,18 @@
 import React, {useEffect, useContext} from 'react';
 import {Text} from 'react-native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
-import AsyncStorage from '@react-native-community/async-storage';
-import messaging from '@react-native-firebase/messaging';
 import {NavigationContainer} from '@react-navigation/native';
 import {
   createStackNavigator,
-  TransitionPresets,
   CardStyleInterpolators,
 } from '@react-navigation/stack';
-
 import {GlobalContext} from './providers/GlobalContext';
+import notificationListener from './NotificationHandler';
 
 import Home from './screens/Home/Home';
 import Store from './screens/Store/Store';
 
-// import Login from './screens/Authentication/Login'
-// import SignUp from './screens/Authentication/SignUp'
 import Verification from './screens/Authentication/Verification';
-// import ResetPassword from './screens/Authentication/ResetPassword'
 import Authentication from './screens/Authentication/Authentication';
 import Success from './screens/Authentication/Success';
 
@@ -40,44 +34,16 @@ import Welcome from './screens/OnBoarding/OnBoarding';
 
 import BackButton from './components/Buttons/BackButton';
 import ResetPassword from './screens/Authentication/ResetPassword';
-import {Easing} from 'react-native-reanimated';
-import {URI} from './api/constants';
 import Bookings from './screens/Bookings/Bookings';
-import {Post} from './api/http';
 import Video from './screens/Store/Video';
 
 const Stack = createStackNavigator();
 export const navigationRef = React.createRef();
-
-const openAnimationConfig = {
-  animation: 'spring',
-  config: {
-    stiffness: 1000,
-    damping: 500,
-    mass: 3,
-    overshootClamping: false,
-    restDisplacementThreshold: 0.01,
-    restSpeedThreshold: 0.01,
-  },
-};
-
-const closeAnimationConfig = {
-  animation: 'timing',
-  config: {
-    duration: 500,
-    easing: Easing.linear,
-  },
-};
-
 const SCREEN_OPTIONS = {
   headerShown: false,
   gestureEnabled: true,
   gestureDirection: 'horizontal',
   cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
-  // transitionSpec: {
-  //     open: openAnimationConfig,
-  //     close: closeAnimationConfig
-  // }
 };
 
 const SCREEN_HEADER_OPTIONS = {
@@ -222,54 +188,8 @@ const AppNavigation = () => {
 
   useEffect(() => {
     authActions.retrieveToken();
-    notificationHandler();
+    notificationListener(authActions.setNotifications);
   }, []);
-
-  const getUserFromAsyncStorage = async () => {
-    const user = JSON.parse(await AsyncStorage.getItem('user'));
-    const token = await AsyncStorage.getItem('jwt');
-    return {user, token};
-  };
-
-  const fetchNotifications = () => {
-    /**
-     * for this function, global state would not work
-     * when an FCM message arrives, the state is reset
-     * because notification handler is bundled inside the navigation stack
-     * using async storage is the only robust solution to ensure stability
-     */
-    getUserFromAsyncStorage().then(({user, token}) => {
-      let body = JSON.stringify({
-        cred: {
-          phone: user.phone,
-        },
-      });
-      Post('user/notifications', body, token).then(async (data) => {
-        user.notifications = data.notifications;
-        await AsyncStorage.setItem('user', JSON.stringify(user));
-        authActions.setNotifications();
-      });
-    });
-  };
-
-  const notificationHandler = () => {
-    // Handler to control push notification interaction
-    messaging().onNotificationOpenedApp((remoteMessage) => {
-      if (remoteMessage.data?.booking)
-        navigationRef.current?.navigate('SingleBooking', {
-          booking: remoteMessage.data.booking,
-        });
-      else if (remoteMessage.data?.store)
-        navigationRef.current?.navigate('Store', {
-          store: remoteMessage.data.store,
-        });
-    });
-
-    // Global message handler
-    messaging().onMessage(async (_) => {
-      fetchNotifications();
-    });
-  };
 
   return (
     <NavigationContainer ref={navigationRef}>
