@@ -1,8 +1,9 @@
 import {Post} from './api/http';
 import AsyncStorage from '@react-native-community/async-storage';
 import messaging from '@react-native-firebase/messaging';
-import {navigationRef} from './Navigation/Navigation';
-// TODO: Create a state variable for notifications, separate from the user state
+import {navigationRef} from '../../Navigation/Navigation';
+
+// TODO: Create state variables for notifications, separate from the user state
 
 const getUserFromAsyncStorage = async () => {
   const user = JSON.parse(await AsyncStorage.getItem('user'));
@@ -10,7 +11,7 @@ const getUserFromAsyncStorage = async () => {
   return {user, token};
 };
 
-const notificationListener = (setNotifications) => {
+export const notificationListener = (setNotifications) => {
   // Handler to control push notification interaction
   messaging().onNotificationOpenedApp((remoteMessage) => {
     if (remoteMessage.data?.booking)
@@ -61,5 +62,3 @@ export const fetchNotificationsFromStorage = () => {
   const {user, _} = getUserFromAsyncStorage();
   return user.notifications;
 };
-
-export default notificationListener;

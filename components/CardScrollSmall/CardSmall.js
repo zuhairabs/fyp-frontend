@@ -10,7 +10,7 @@ import {
 import Icon from 'react-native-vector-icons/dist/MaterialIcons';
 import {TouchableWithoutFeedback} from 'react-native-gesture-handler';
 
-import {navigationRef} from '../../Navigation';
+import {navigationRef} from '../../Navigation/Navigation';
 import {textStyles, COLORS} from '../../styles/styles';
 import RatingBadge from '../RatingBadge/RatingBadge';
 import BookButton from '../Buttons/BookButton';

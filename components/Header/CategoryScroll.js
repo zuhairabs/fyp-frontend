@@ -5,7 +5,7 @@ import {TouchableNativeFeedback} from 'react-native-gesture-handler';
 import ShoppingBag from './svg/shopping-bag';
 import {COLORS, textStyles} from '../../styles/styles';
 
-import {navigationRef} from '../../Navigation';
+import {navigationRef} from '../../Navigation/Navigation';
 
 const CategoryScroll = ({categories}) => {
   const [dataList, setDataList] = useState([]);

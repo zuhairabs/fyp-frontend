@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import {TouchableWithoutFeedback} from 'react-native-gesture-handler';
 
-import {navigationRef} from '../../Navigation';
+import {navigationRef} from '../../Navigation/Navigation';
 
 import BookButton from '../Buttons/BookButton';
 import {textStyles, COLORS} from '../../styles/styles';
