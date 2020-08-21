@@ -22,6 +22,7 @@ import Support from '../../screens/Misc/Support';
 import ResetPassword from '../../screens/Authentication/ResetPassword';
 import Bookings from '../../screens/Bookings/Bookings';
 import Video from '../../screens/Store/Video';
+import RTCVideo from '../../screens/RTCVideo/RTCVideo';
 // NAVIGATOR OPTIONS
 import {SCREEN_HEADER_OPTIONS, SCREEN_OPTIONS} from './ScreenOptions';
 
@@ -64,6 +65,7 @@ export default () => (
     <Stack.Screen name="Success" component={Success} />
     <Stack.Screen name="Store" component={Store} />
     <Stack.Screen name="Video" component={Video} />
+    <Stack.Screen name="RTCVideo" component={RTCVideo} />
     <Stack.Screen
       name="SearchFull"
       component={SearchFull}
