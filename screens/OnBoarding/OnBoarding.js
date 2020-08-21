@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   StyleSheet,
@@ -6,6 +6,7 @@ import {
   Dimensions,
   Platform,
   Text,
+  Animated,
 } from 'react-native';
 import {ScrollView, TouchableOpacity} from 'react-native-gesture-handler';
 
@@ -39,13 +40,40 @@ const Welcome = () => {
   const [page, setPage] = useState(0);
 
   const nextPage = () => {
+    fadeOutPage();
     if (page >= NUMBER_OF_PAGES - 1) authActions.setWelcomeShown();
-    else setPage(page + 1);
+    else {
+      setTimeout(() => {
+        fadeInPage();
+        setPage((prev) => {
+          return prev + 1;
+        });
+      }, 300);
+    }
+  };
+  const fadeInPage = () => {
+    Animated.timing(opacity, {
+      toValue: 1,
+      duration: 500,
+      useNativeDriver: true,
+    }).start();
+  };
+  const fadeOutPage = () => {
+    Animated.timing(opacity, {
+      toValue: 0,
+      duration: 500,
+      useNativeDriver: true,
+    }).start();
   };
 
   const prevPage = () => {
     if (page > 0) setPage(page - 1);
   };
+  const opacity = useState(new Animated.Value(0))[0];
+
+  useEffect(() => {
+    fadeInPage();
+  }, []);
 
   return (
     <View style={styles.screenContainer}>
@@ -56,12 +84,14 @@ const Welcome = () => {
         <Navbar type="locked" />
 
         <View style={styles.contentContainer}>
-          <View style={styles.svgContainer}>{ILLUSTRATIONS[page]}</View>
+          <Animated.View style={{...styles.svgContainer, opacity}}>
+            {ILLUSTRATIONS[page]}
+          </Animated.View>
 
-          <View style={styles.textContainer}>
+          <Animated.View style={{...styles.textContainer, opacity}}>
             <Text style={styles.header}>{HEADINGS[page]}</Text>
             <Text style={styles.text}>{TEXT[page]}</Text>
-          </View>
+          </Animated.View>
 
           <View style={styles.buttonArea}>
             <View style={styles.indicatorContainer}>
