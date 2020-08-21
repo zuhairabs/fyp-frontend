@@ -1,4 +1,4 @@
-import {Post} from './api/http';
+import {Post} from '../../api/http';
 import AsyncStorage from '@react-native-community/async-storage';
 
 // TODO: Create state variables for notifications, separate from the user state

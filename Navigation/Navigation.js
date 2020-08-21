@@ -5,7 +5,7 @@ import NotificationListener from '../controllers/Notifications/NotificationListe
 import RootStack from './Stacks/RootStack';
 
 export const navigationRef = React.createRef();
-export default AppNavigation = () => {
+const AppNavigation = () => {
   const {authActions, state} = useContext(GlobalContext);
   useEffect(() => {
     authActions.retrieveToken();
@@ -19,3 +19,5 @@ export default AppNavigation = () => {
     </NavigationContainer>
   );
 };
+
+export default AppNavigation;

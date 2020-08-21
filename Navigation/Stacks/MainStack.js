@@ -31,7 +31,7 @@ const clearNotifications = async () => {
   console.log('cleared');
 };
 
-export default MainStack = () => (
+export default () => (
   <Stack.Navigator screenOptions={SCREEN_OPTIONS}>
     <Stack.Screen name="Home" component={Home} />
     <Stack.Screen name="Profile" component={Profile} />

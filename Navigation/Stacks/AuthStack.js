@@ -2,15 +2,14 @@ import React from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
 const Stack = createStackNavigator();
 // AUTH STACK SCREENS
-const DIR = '../../screens/Authentication';
-import Verification from `${DIR}/Verification`;
-import Authentication from `${DIR}/Authentication`;
-import Success from `${DIR}/Success`;
-import ResetPassword from `${DIR}/ResetPassword`;
+import Verification from '../../screens/Authentication/Verification';
+import Authentication from '../../screens/Authentication/Authentication';
+import Success from '../../screens/Authentication/Success';
+import ResetPassword from '../../screens/Authentication/ResetPassword';
 import Welcome from '../../screens/OnBoarding/OnBoarding';
 import {SCREEN_OPTIONS} from './ScreenOptions';
 
-export default AuthStack = ({state}) => {
+export default ({state}) => {
   if (state.welcomeShown)
     return (
       <Stack.Navigator screenOptions={SCREEN_OPTIONS}>
