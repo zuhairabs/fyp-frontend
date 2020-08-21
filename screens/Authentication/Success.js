@@ -15,7 +15,14 @@ export default (props) => {
   const updateNavigationStack = () => {
     loggedIn
       ? props.navigation.goBack()
-      : props.navigation.navigate('Authentication');
+      : props.navigation.reset({
+          index: 0,
+          routes: [
+            {
+              name: 'Authentication',
+            },
+          ],
+        });
   };
 
   return (
@@ -29,8 +36,9 @@ export default (props) => {
       }}>
       <View
         style={{
-          height: 100,
-        }}></View>
+          height: 70,
+        }}
+      />
 
       <View
         style={{

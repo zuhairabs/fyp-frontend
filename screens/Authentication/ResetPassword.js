@@ -1,4 +1,4 @@
-import React, {useState, useContext, createRef, useEffect} from 'react';
+import React, {useState, createRef, useEffect} from 'react';
 import {
   View,
   Text,
@@ -184,20 +184,33 @@ const ResetPassword = (props) => {
   const loadingModal = createRef();
 
   const navigateOnSuccess = () => {
-    props.navigation.reset({
-      index: 1,
-      routes: [
-        {
-          name: 'Home',
-        },
-        {
-          name: 'Success',
-          params: {
-            loggedIn: loggedIn,
+    if (loggedIn)
+      props.navigation.reset({
+        index: 1,
+        routes: [
+          {
+            name: 'Home',
           },
-        },
-      ],
-    });
+          {
+            name: 'Success',
+            params: {
+              loggedIn: true,
+            },
+          },
+        ],
+      });
+    else
+      props.navigation.reset({
+        index: 0,
+        routes: [
+          {
+            name: 'Success',
+            params: {
+              loggedIn: false,
+            },
+          },
+        ],
+      });
   };
 
   const checkPhoneRegistered = async () => {
