@@ -3,7 +3,7 @@ import {View, Text, StyleSheet, Dimensions} from 'react-native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 
 import CongratulationsImage from './congratulations.svg';
-import {COLORS, textStyles, buttons} from '../../styles/styles';
+import {COLORS, textStyles, buttons} from '../../../styles/styles';
 
 const DEVICE_HEIGHT = Dimensions.get('screen').height;
 const WINDOW_HEIGHT = Dimensions.get('window').height;

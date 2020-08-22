@@ -13,13 +13,13 @@ import {
 } from 'react-native-gesture-handler';
 import Modal from 'react-native-modalbox';
 
-import Navbar from '../../components/Header/Navbar';
-import StatusBarWhite from '../../components/StatusBar';
-import SecondaryBackground from '../../components/Backgrounds/SecondaryBackground';
-import {URI} from '../../api/constants';
+import Navbar from '../../../components/Header/Navbar';
+import StatusBarWhite from '../../../components/StatusBar';
+import SecondaryBackground from '../../../components/Backgrounds/SecondaryBackground';
+import {URI} from '../../../api/constants';
 
-import styles from './AuthStyles';
-import {textStyles, COLORS, buttons} from '../../styles/styles';
+import styles from '../styles/AuthStyles';
+import {textStyles, COLORS, buttons} from '../../../styles/styles';
 
 const PhoneNumber = ({phone, setPhone, checkPhoneRegistered}) => {
   const validatePhone = () => {

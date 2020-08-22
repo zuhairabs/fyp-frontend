@@ -12,12 +12,12 @@ import Modal from 'react-native-modalbox';
 
 import Login from './Login';
 import SignUp from './SignUp';
-import Navbar from '../../components/Header/Navbar';
-import StatusBarWhite from '../../components/StatusBar';
-import SecondaryBackground from '../../components/Backgrounds/SecondaryBackground';
+import Navbar from '../../../components/Header/Navbar';
+import StatusBarWhite from '../../../components/StatusBar';
+import SecondaryBackground from '../../../components/Backgrounds/SecondaryBackground';
 
-import styles from './AuthStyles';
-import {textStyles, COLORS} from '../../styles/styles';
+import styles from '../styles/AuthStyles';
+import {textStyles, COLORS} from '../../../styles/styles';
 
 export default Authentication = ({navigation}) => {
   const [view, changeView] = useState('login');

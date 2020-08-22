@@ -12,10 +12,10 @@ import Icon from 'react-native-vector-icons/dist/MaterialIcons';
 import ImagePicker from 'react-native-image-picker';
 import ImageResizer from 'react-native-image-resizer';
 import RNFS from 'react-native-fs';
-import {URI} from '../../api/constants';
+import {URI} from '../../../api/constants';
 
-import styles from './AuthStyles';
-import {buttons, textStyles} from '../../styles/styles';
+import styles from '../styles/AuthStyles';
+import {buttons, textStyles} from '../../../styles/styles';
 
 const SignUp = ({actions, loadingModal}) => {
   const [phone, setPhone] = useState();

@@ -2,9 +2,9 @@ import React, {useState, useContext, createRef} from 'react';
 import {View, Text} from 'react-native';
 import {TouchableOpacity, TextInput} from 'react-native-gesture-handler';
 
-import {buttons, textStyles} from '../../styles/styles';
-import styles from './AuthStyles';
-import {GlobalContext} from '../../providers/GlobalContext';
+import {buttons, textStyles} from '../../../styles/styles';
+import styles from '../styles/AuthStyles';
+import {GlobalContext} from '../../../providers/GlobalContext';
 
 const Login = ({actions, loadingModal}) => {
   const {authActions} = useContext(GlobalContext);

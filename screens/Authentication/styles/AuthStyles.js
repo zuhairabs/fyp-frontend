@@ -1,5 +1,5 @@
 import {StyleSheet, Dimensions, StatusBar} from 'react-native';
-import {COLORS, textStyles} from '../../styles/styles';
+import {COLORS, textStyles} from '../../../styles/styles';
 
 export default StyleSheet.create({
   bottomModal: {
