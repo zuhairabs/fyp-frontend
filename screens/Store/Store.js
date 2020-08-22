@@ -1,15 +1,5 @@
 import React, {useState, useEffect, useContext} from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Dimensions,
-  Platform,
-  StatusBar,
-  Alert,
-  ActivityIndicator,
-  ToastAndroid,
-} from 'react-native';
+import {View, Text, Alert, ActivityIndicator, ToastAndroid} from 'react-native';
 import {
   ScrollView,
   TouchableNativeFeedback,
@@ -20,33 +10,23 @@ import AsyncStorage from '@react-native-community/async-storage';
 import Icon from 'react-native-vector-icons/dist/MaterialIcons';
 
 import {GlobalContext} from '../../providers/GlobalContext';
-import {URI} from '../../api/constants';
 
 import NavbarBackButton from '../../components/Header/NavbarBackButton';
 import StatusBarWhite from '../../components/StatusBar';
 import MainBackground from '../../components/Backgrounds/MainBackground';
 import BookSlotSlider from '../../components/BookSlotSlider/BookSlot';
 import RatingBadge from '../../components/RatingBadge/RatingBadge';
-import ImageHeader from './ImageHeader';
-import {COLORS, textStyles} from '../../styles/styles';
+import ImageHeader from './Elements/ImageHeader';
+import SafetyElement from './Elements/SafetyElement';
+
+import {styles, headerHeight} from './Styles';
+import {textStyles} from '../../styles/styles';
 import {Post} from '../../api/http';
 
-const WINDOW_HEIGHT = Dimensions.get('window').height;
-const WINDOW_WIDTH = Dimensions.get('window').width;
-const DEVICE_HEIGHT = Dimensions.get('screen').height;
-const NAVIGATION_HEIGHT =
-  DEVICE_HEIGHT - WINDOW_HEIGHT - (StatusBar.currentHeight || 0);
-
-const dayList = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-
-const headerHeight = Math.floor(WINDOW_HEIGHT / 2.8);
-
-const SafetyElement = ({item}) => (
-  <View style={styles.safetyElement}>
-    <Icon name="check" size={12} color="#4DEB96" />
-    <Text style={styles.safetyElementText}>{item.title}</Text>
-  </View>
-);
+import {
+  saveStoreHistory,
+  constructActiveHoursText,
+} from './Actions/StoreActions';
 
 const Store = (props) => {
   const {store, searched, data, editSlot, previousBooking} = props.route.params;
@@ -68,38 +48,21 @@ const Store = (props) => {
   }, [store, data]);
 
   const getStoreData = () => {
-    if (data) setStoreData(data);
+    setStoreData(data);
     fetchMissingData();
   };
 
   const fetchMissingData = () => {
     const body = JSON.stringify({storeData: {_id: store}});
-    Post('store/fetch/details', body).then((data) =>
-      setStoreData((prev) => ({...prev, ...data.store})),
-    );
+    Post('store/fetch/details', body).then((missingData) => {
+      setStoreData((prev) => ({...prev, ...missingData.store}));
+    });
   };
 
   const getWorkingDaysText = () => {
     const working_days = storeData.working_days;
-    if (working_days && working_days.length > 0) {
-      if (working_days.length === 7)
-        return `Open all days ${storeData.active_hours[0].start} to ${storeData.active_hours[0].end}`;
-      if (working_days.length === 6) {
-        let offDay = '';
-        for (let i = 0; i < 7; ++i)
-          if (working_days.indexOf(i) === -1) {
-            offDay = dayList[i];
-            break;
-          }
-        return `Daily ${storeData.active_hours[0].start} to ${storeData.active_hours[0].end}, ${offDay} closed`;
-      } else {
-        let string = '';
-        for (let i = 0; i < 7; ++i)
-          if (working_days.indexOf(i) > -1) string = string + dayList[i] + ', ';
-        return `${string} ${storeData.active_hours[0].start} to ${storeData.active_hours[0].end}`;
-      }
-    } else
-      return `Open all days ${storeData.active_hours[0].start} to ${storeData.active_hours[0].end}`;
+    const active_hours = storeData.active_hours;
+    return constructActiveHoursText(working_days, active_hours);
   };
 
   const toggleFavourite = () => {
@@ -154,10 +117,9 @@ const Store = (props) => {
     <View style={styles.screenContainer}>
       <MainBackground />
       <StatusBarWhite />
+      <NavbarBackButton navigation={props.navigation} />
 
       <ScrollView style={styles.container}>
-        <NavbarBackButton navigation={props.navigation} />
-
         <View
           style={styles.contentContainer}
           contentContainerStyle={{
@@ -276,117 +238,4 @@ const Store = (props) => {
   );
 };
 
-const styles = StyleSheet.create({
-  screenContainer: {
-    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
-    height: Dimensions.get('screen').height,
-    backgroundColor: COLORS.WHITE,
-    justifyContent: 'center',
-  },
-  container: {},
-  contentContainer: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#FEFEFE6F',
-    marginTop: 20,
-  },
-  ratingBadge: {
-    position: 'absolute',
-    right: Math.floor(WINDOW_WIDTH / 25),
-    top: -Math.floor(WINDOW_HEIGHT / 40),
-    zIndex: 2,
-    elevation: 2,
-  },
-  storeDetails: {
-    marginTop: 30,
-    width: '100%',
-    paddingHorizontal: 20,
-    marginBottom: 50,
-  },
-  heading: {
-    flexDirection: 'row',
-    width: '100%',
-    justifyContent: 'space-between',
-  },
-  headingText: {
-    justifyContent: 'center',
-  },
-  reviewCountHeading: {
-    color: COLORS.SECONDARY,
-    textDecorationLine: 'underline',
-    ...textStyles.paragraphSmallBold,
-  },
-  headingRight: {
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  favouriteIcon: {
-    marginBottom: 10,
-    elevation: 5,
-    backgroundColor: COLORS.WHITE,
-    padding: 10,
-    borderRadius: 40 / 2,
-  },
-  location: {
-    marginTop: 10,
-    color: COLORS.SECONDARY,
-    ...textStyles.paragraphSmallBold,
-  },
-  subheading: {
-    marginTop: 20,
-    ...textStyles.paragraphLargeBold,
-  },
-  safetyContainer: {
-    marginTop: 10,
-    flexDirection: 'row',
-    justifyContent: 'space-evenly',
-    alignItems: 'center',
-    marginBottom: 10,
-  },
-  safetyElement: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flex: 1,
-    marginTop: 10,
-  },
-  safetyElementText: {
-    marginLeft: 5,
-    color: COLORS.SECONDARY,
-    ...textStyles.paragraphSmallBold,
-  },
-  detailsContainer: {
-    marginTop: 30,
-  },
-  details: {
-    ...textStyles.paragraphMedium,
-  },
-  button: {
-    position: 'relative',
-    zIndex: 2,
-    top: 0,
-    width: WINDOW_WIDTH,
-    height: Math.floor(WINDOW_HEIGHT / 20),
-    backgroundColor: COLORS.PRIMARY,
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-    padding: NAVIGATION_HEIGHT > 0 ? 30 : 40,
-    borderTopRightRadius: 30,
-    borderTopLeftRadius: 30,
-    marginBottom: DEVICE_HEIGHT - WINDOW_HEIGHT - 30,
-  },
-  buttonText: {
-    ...textStyles.primaryButtonText,
-  },
-});
-
 export default Store;
-
-const saveStoreHistory = (store, phone) => {
-  const body = JSON.stringify({
-    storeData: store,
-    cred: {
-      phone: phone,
-    },
-  });
-  Post('user/store/history/add', body);
-};

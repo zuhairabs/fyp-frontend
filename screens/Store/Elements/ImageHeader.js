@@ -1,7 +1,7 @@
 import React, {useState, createRef, useEffect} from 'react';
 import {View, StyleSheet, Image, Dimensions} from 'react-native';
 import {TouchableOpacity, ScrollView} from 'react-native-gesture-handler';
-import {Post} from '../../api/http';
+import {Post} from '../../../api/http';
 
 const WINDOW_HEIGHT = Dimensions.get('window').height;
 const WINDOW_WIDTH = Dimensions.get('window').width;
