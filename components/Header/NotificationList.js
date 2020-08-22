@@ -1,4 +1,4 @@
-import React, {Suspense, lazy} from 'react';
+import React, {Suspense, lazy, useState, useEffect, useContext} from 'react';
 import {StyleSheet, View, Text} from 'react-native';
 import {ScrollView} from 'react-native-gesture-handler';
 import {NotificationLoadingEffect} from '../Cards/NotificationCard/NotificationCard';
@@ -7,7 +7,7 @@ const NotificationCard = lazy(() =>
 );
 import {COLORS, textStyles} from '../../styles/styles';
 
-const NotificationList = ({navigation, notifications}) => {
+const NotificationList = ({notifications}) => {
   if (!notifications || notifications.length === 0)
     return (
       <View
@@ -35,7 +35,6 @@ const NotificationList = ({navigation, notifications}) => {
               <NotificationCard
                 key={notification._id}
                 notification={notification}
-                navigation={navigation}
               />
             );
           })}

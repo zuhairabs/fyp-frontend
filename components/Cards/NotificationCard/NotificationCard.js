@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import {COLORS, textStyles} from '../../../styles/styles';
 import {dropdownModal} from '../../Header/NotificationDropdown';
+import {navigationRef} from '../../../Navigation/Navigation';
 
 const MINUTE_LENGTH = 60 * 1000;
 const HOUR_LENGTH = 60 * MINUTE_LENGTH;
@@ -61,16 +62,16 @@ const calculateNotificationTime = (time) => {
   else return `${Math.floor(offset / MONTH_LENGTH)} months ago`;
 };
 
-const NotificationCard = ({notification, navigation}) => {
+const NotificationCard = ({notification}) => {
   const handleNotificationCardPress = () => {
     dropdownModal.current?.close();
     if (notification.booking)
-      navigation.navigate('SingleBooking', {
+      navigationRef.current?.navigate('SingleBooking', {
         booking: notification.booking,
         archived: notification.archived,
       });
     else if (notification.store)
-      navigation.navigate('Store', {
+      navigationRef.current?.navigate('Store', {
         store: notification.store,
         searched: false,
       });

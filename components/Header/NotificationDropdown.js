@@ -1,4 +1,4 @@
-import React, {createRef, useContext} from 'react';
+import React, {createRef, useContext, useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -13,6 +13,7 @@ import NotificationList from './NotificationList';
 import NotificationBell from './svg/notifications.svg';
 import {COLORS, textStyles} from '../../styles/styles';
 import {GlobalContext} from '../../providers/GlobalContext';
+import {fetchNotifications} from '../../controllers/Notifications/NotificationHandler';
 
 const WINDOW_HEIGHT = Dimensions.get('window').height;
 const WINDOW_WIDTH = Dimensions.get('window').width;
@@ -20,6 +21,14 @@ export const dropdownModal = createRef();
 
 const Dropdown = ({navigation}) => {
   const {state} = useContext(GlobalContext);
+  const [notifications, setNotifications] = useState(state.user.notifications);
+
+  useEffect(() => {
+    fetchNotifications().then((fetchedNotifications) => {
+      if (fetchedNotifications !== notifications)
+        setNotifications(fetchedNotifications);
+    });
+  }, []);
 
   return (
     <Modal
@@ -38,12 +47,7 @@ const Dropdown = ({navigation}) => {
         <View style={styles.header}>
           <Text style={styles.heading}>Notifications</Text>
         </View>
-        {state.user.notifications && (
-          <NotificationList
-            navigation={navigation}
-            notifications={state.user.notifications}
-          />
-        )}
+        <NotificationList notifications={notifications} />
         <View>
           <TouchableOpacity
             style={styles.footer}

@@ -19,6 +19,6 @@ export default NotificationListener = (setNotifications) => {
 
   // Global message handler
   messaging().onMessage(async (_) => {
-    fetchNotifications().then(() => setNotifications());
+    fetchNotifications(setNotifications);
   });
 };

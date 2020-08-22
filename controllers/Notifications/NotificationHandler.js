@@ -8,7 +8,7 @@ const getUserFromAsyncStorage = async () => {
   return {user, token};
 };
 
-export const fetchNotifications = () => {
+export const fetchNotifications = (setNotifications = null) => {
   /**
    * This function retrieves the user's notifications from the server
    * It is called twice - once in the foreground handler when the app is in open state
@@ -26,7 +26,8 @@ export const fetchNotifications = () => {
         .then(async (data) => {
           user.notifications = data.notifications;
           await AsyncStorage.setItem('user', JSON.stringify(user));
-          resolve();
+          if (setNotifications) setNotifications(data.notifications);
+          resolve(data.notifications);
         })
         .catch((e) => {
           reject(e);
