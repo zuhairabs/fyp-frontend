@@ -1,7 +1,9 @@
-import React, {createContext, useReducer} from 'react';
+import React, {createContext, useReducer, useMemo} from 'react';
 import AsyncStorage from '@react-native-community/async-storage';
 import messaging from '@react-native-firebase/messaging';
 import {URI} from '../api/constants';
+import {ToastAndroid, Alert} from 'react-native';
+import {Post} from '../api/http';
 export const GlobalContext = createContext();
 
 export const GlobalContextProvider = (props) => {
@@ -13,6 +15,7 @@ export const GlobalContextProvider = (props) => {
             ...prevState,
             token: action.token,
             user: action.user,
+            favourites: action.favourites || [],
             welcomeShown: action.welcomeShown,
             isLoading: false,
           };
@@ -22,6 +25,7 @@ export const GlobalContextProvider = (props) => {
             signedIn: true,
             token: action.token,
             user: action.user,
+            favourites: action.favourites || [],
           };
         case 'SIGN_OUT':
           try {
@@ -51,6 +55,11 @@ export const GlobalContextProvider = (props) => {
             ...prevState,
             user: action.user,
           };
+        case 'SET_FAVOURITES':
+          return {
+            ...prevState,
+            favourites: action.favourites,
+          };
       }
     },
     {
@@ -60,6 +69,7 @@ export const GlobalContextProvider = (props) => {
       token: null,
       user: null,
       location: {},
+      favourites: [],
     },
   );
 
@@ -88,10 +98,15 @@ export const GlobalContextProvider = (props) => {
                     response.json().then((data) => {
                       AsyncStorage.setItem('jwt', data.token.toString());
                       AsyncStorage.setItem('user', JSON.stringify(data.user));
+                      AsyncStorage.setItem(
+                        'favourites',
+                        JSON.stringify({stores: data.user.favouriteStores}),
+                      );
                       dispatch({
                         type: 'SIGN_IN',
                         token: data.token.toString(),
                         user: data.user,
+                        favourites: data.user.favouriteStores,
                       });
                       resolve(true);
                     });
@@ -160,6 +175,7 @@ export const GlobalContextProvider = (props) => {
                     type: 'SIGN_IN',
                     token: data.token.toString(),
                     user: data.user,
+                    favourites: [],
                   });
                   resolve(true);
                 });
@@ -182,14 +198,15 @@ export const GlobalContextProvider = (props) => {
       retrieveToken: async () => {
         try {
           let token = await AsyncStorage.getItem('jwt');
-          let user = await AsyncStorage.getItem('user');
+          let user = JSON.parse(await AsyncStorage.getItem('user'));
+          let favourites = JSON.parse(await AsyncStorage.getItem('favourites'));
+          if (favourites) favourites = favourites.stores;
           let welcomeShown = (await AsyncStorage.getItem('welcomeShown'))
             ? true
             : false;
 
-          if (user) user = JSON.parse(user);
-
-          if (token && user.phone) {
+          console.log('User favourites', favourites);
+          if (token && user) {
             try {
               const requestOptions = {
                 method: 'POST',
@@ -213,6 +230,7 @@ export const GlobalContextProvider = (props) => {
                         token: data.token,
                         user: user,
                         welcomeShown: true,
+                        favourites: favourites,
                       });
                     });
                   } else
@@ -223,6 +241,7 @@ export const GlobalContextProvider = (props) => {
                         token: null,
                         user: null,
                         welcomeShown: welcomeShown,
+                        favourites: [],
                       });
                     });
                 },
@@ -237,6 +256,7 @@ export const GlobalContextProvider = (props) => {
               token: null,
               user: null,
               welcomeShown: welcomeShown,
+              favourites: [],
             });
           }
         } catch (e) {
@@ -260,19 +280,42 @@ export const GlobalContextProvider = (props) => {
         let user = JSON.parse(await AsyncStorage.getItem('user'));
         dispatch({type: 'UPDATE_USER', user});
       },
+    }),
+    [],
+  );
 
-      addFavouriteStore: (_id) => {
-        // let tempUser = state
-        // tempUser.favouriteStores.push(_id)
-        console.log(state);
-        // dispatch({ type: 'ADD_FAVOURITE', user: tempUser })
+  const userActions = useMemo(
+    () => ({
+      addFav: (_id) => {
+        let favourites = state.favourites;
+        favourites.push(_id);
+        AsyncStorage.setItem(
+          'favourites',
+          JSON.stringify({stores: favourites}),
+        );
+        dispatch({
+          type: 'SET_FAVOURITES',
+          favourites,
+        });
+      },
+
+      removeFav: (_id) => {
+        let favourites = state.favourites.filter((val) => val !== _id);
+        AsyncStorage.setItem(
+          'favourites',
+          JSON.stringify({stores: favourites}),
+        );
+        dispatch({
+          type: 'SET_FAVOURITES',
+          favourites,
+        });
       },
     }),
     [],
   );
 
   return (
-    <GlobalContext.Provider value={{authActions, state, dispatch}}>
+    <GlobalContext.Provider value={{authActions, userActions, state, dispatch}}>
       {props.children}
     </GlobalContext.Provider>
   );

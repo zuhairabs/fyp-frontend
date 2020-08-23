@@ -1,60 +1,23 @@
 import React, {useContext} from 'react';
-import {Text, View, StyleSheet, Image, ToastAndroid, Alert} from 'react-native';
+import {Text, View, StyleSheet, Image} from 'react-native';
 import {
   TouchableWithoutFeedback,
   TouchableOpacity,
 } from 'react-native-gesture-handler';
-import AsyncStorage from '@react-native-community/async-storage';
 import Icon from 'react-native-vector-icons/dist/MaterialIcons';
-import {Post} from '../../../api/http';
 import {GlobalContext} from '../../../providers/GlobalContext';
 
 import RatingBadge from '../../RatingBadge/RatingBadge';
 import BookButton from '../../Buttons/BookButton';
+import {removeFav} from '../../../screens/Store/Actions/UserActions';
 import {COLORS, textStyles} from '../../../styles/styles';
 
 const StoreCard = (props) => {
-  const {state} = useContext(GlobalContext);
-  const removeFavourite = () => {
-    const updateAsyncStorage = async (favs) => {
-      let user = JSON.parse(await AsyncStorage.getItem('user'));
-      user.favouriteStores = favs;
-      user = JSON.stringify(user);
-      await AsyncStorage.setItem('user', user);
-    };
-
-    Alert.alert('Do you want to remove the store from your favourites?', '', [
-      {
-        text: 'NO',
-        onPress: () => {},
-        style: 'cancel',
-      },
-      {
-        text: 'YES',
-        onPress: () => {
-          const body = JSON.stringify({
-            storeData: {
-              _id: props.store._id,
-            },
-            cred: {
-              phone: state.user.phone,
-            },
-          });
-          Post('user/removefavouritestore', body, state.token).then(
-            (data) => {
-              ToastAndroid.show('Removed from favourites', ToastAndroid.SHORT);
-              updateAsyncStorage(data.favouriteStores);
-              props.removeFavourite(props.store._id);
-            },
-            (e) => {
-              ToastAndroid.show(e, ToastAndroid.SHORT);
-            },
-          );
-        },
-        style: 'default',
-      },
-    ]);
-  };
+  const {state, userActions} = useContext(GlobalContext);
+  const removeFavourite = () =>
+    removeFav(userActions, state, props.store._id).then(() =>
+      props.removeFavourite(props.store._id),
+    );
 
   return (
     <View style={styles.container}>

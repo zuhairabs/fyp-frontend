@@ -1,12 +1,11 @@
 import React, {useState, useEffect, useContext} from 'react';
-import {View, Text, Alert, ActivityIndicator, ToastAndroid} from 'react-native';
+import {View, Text, ActivityIndicator} from 'react-native';
 import {
   ScrollView,
   TouchableNativeFeedback,
   TouchableWithoutFeedback,
   FlatList,
 } from 'react-native-gesture-handler';
-import AsyncStorage from '@react-native-community/async-storage';
 import Icon from 'react-native-vector-icons/dist/MaterialIcons';
 
 import {GlobalContext} from '../../providers/GlobalContext';
@@ -27,10 +26,11 @@ import {
   saveStoreHistory,
   constructActiveHoursText,
 } from './Actions/StoreActions';
+import {addFav, removeFav} from './Actions/UserActions';
 
 const Store = (props) => {
   const {store, searched, data, editSlot, previousBooking} = props.route.params;
-  const {state} = useContext(GlobalContext);
+  const {state, userActions} = useContext(GlobalContext);
   const [storeData, setStoreData] = useState({});
   const [bookSlot, setBookSlot] = useState(
     props.route.params.bookSlot || false,
@@ -38,14 +38,11 @@ const Store = (props) => {
   const [favourite, setFavourite] = useState(false);
 
   useEffect(() => {
-    getStoreData();
-    if (searched) saveStoreHistory(store, state.user.phone);
-    if (
-      state.user.favouriteStores &&
-      state.user.favouriteStores.indexOf(store) > -1
-    )
+    if (state.favourites && state.favourites.indexOf(store) > -1)
       setFavourite(true);
-  }, [store, data]);
+    if (searched) saveStoreHistory(store, state.user.phone);
+    getStoreData();
+  }, []);
 
   const getStoreData = () => {
     setStoreData(data);
@@ -66,51 +63,9 @@ const Store = (props) => {
   };
 
   const toggleFavourite = () => {
-    const addToStorage = async (favs) => {
-      let user = JSON.parse(await AsyncStorage.getItem('user'));
-      user.favouriteStores = favs;
-      user = JSON.stringify(user);
-      await AsyncStorage.setItem('user', user);
-    };
-    const body = JSON.stringify({
-      storeData: {
-        _id: store,
-      },
-      cred: {
-        phone: state.user.phone,
-      },
-    });
-    if (!favourite) {
-      Post('user/addfavouritestore', body, state.token).then((data) => {
-        ToastAndroid.show('Added to favourites', ToastAndroid.SHORT);
-        addToStorage(data.favouriteStores);
-        setFavourite(true);
-      });
-    } else {
-      Alert.alert('Do you want to remove the store from your favourites?', '', [
-        {
-          text: 'NO',
-          onPress: () => {},
-          style: 'cancel',
-        },
-        {
-          text: 'YES',
-          onPress: () => {
-            Post('user/removefavouritestore', body, state.token).then(
-              (data) => {
-                ToastAndroid.show(
-                  'Removed from favourites',
-                  ToastAndroid.SHORT,
-                );
-                addToStorage(data.favouriteStores);
-                setFavourite(false);
-              },
-            );
-          },
-          style: 'default',
-        },
-      ]);
-    }
+    if (!favourite)
+      addFav(userActions, state, store).then(() => setFavourite(true));
+    else removeFav(userActions, state, store).then(() => setFavourite(false));
   };
 
   return (
