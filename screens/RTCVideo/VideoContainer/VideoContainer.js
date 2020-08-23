@@ -1,25 +1,33 @@
 import React, {useState, useEffect} from 'react';
-import {Platform, ScrollView, Text, TouchableOpacity, View} from 'react-native';
+import {ScrollView, Text, TouchableOpacity, View} from 'react-native';
 import RtcEngine, {
   RtcRemoteView,
   RtcLocalView,
   VideoRenderMode,
 } from 'react-native-agora';
-
-import requestCameraAndAudioPermission from './Permissions';
 import styles from './ContainerStyles';
 
-export default () => {
-  const [appId] = useState('iajdfkdjiofeadksdkjahfudkjfd');
-  const [channelName] = useState('diefoidsa');
+export default ({channelName, appId}) => {
+  const _engine = RtcEngine.create(appId);
   const [joinSucceed, setJoinSucceed] = useState(false);
   const [peerIds, setPeerIds] = useState([]);
-  const [_engine, setEngine] = useState();
+
+  const startCall = async () => {
+    console.log(_engine);
+    (await _engine).joinChannel(null, channelName, null, 0);
+  };
+
+  const endCall = async () => {
+    (await _engine).leaveChannel();
+    setPeerIds([]);
+    setJoinSucceed(false);
+    console.log('LeaveChannelSuccess', channelName);
+  };
 
   const init = async () => {
     console.log('Inside init');
-    await _engine.enableVideo();
-    _engine.addListener('UserJoined', (uid, elapsed) => {
+    (await _engine).enableVideo();
+    (await _engine).addListener('UserJoined', (uid, elapsed) => {
       console.log('UserJoined', uid, elapsed);
       // check for new user
       if (peerIds.indexOf(uid) === -1) {
@@ -28,41 +36,28 @@ export default () => {
         });
       }
     });
-    _engine.addListener('UserOffline', (uid, reason) => {
+    (await _engine).addListener('UserOffline', (uid, reason) => {
       console.log('UserOffline', uid, reason);
       setPeerIds((prev) => {
         return prev.filter((id) => id !== uid);
       });
     });
 
-    _engine.addListener('JoinChannelSuccess', (channel, uid, elapsed) => {
-      console.log('JoinChannelSuccess', channel, uid, elapsed);
-      setJoinSucceed(true);
-    });
-  };
-
-  const startCall = async () => {
-    await _engine?.joinChannel(null, channelName, null, 0);
-  };
-
-  const endCall = async () => {
-    await _engine?.leaveChannel();
-    setPeerIds([]);
-    setJoinSucceed(false);
+    (await _engine).addListener(
+      'JoinChannelSuccess',
+      (channel, uid, elapsed) => {
+        console.log('JoinChannelSuccess', channel, uid, elapsed);
+        setJoinSucceed(true);
+      },
+    );
   };
 
   useEffect(() => {
-    if (Platform.OS === 'android')
-      requestCameraAndAudioPermission().then(async (granted) => {
-        const engine = await RtcEngine.create(appId);
-        setEngine(engine);
-        if (granted) init();
-        else console.log('Permissions not granted');
-      });
+    if (_engine) init();
   }, []);
 
-  const RenderVideos = () => {
-    return joinSucceed ? (
+  const RenderVideos = () =>
+    joinSucceed ? (
       <View style={styles.fullView}>
         <RtcLocalView.SurfaceView
           style={styles.max}
@@ -72,28 +67,25 @@ export default () => {
         <RenderRemoteVideos />
       </View>
     ) : null;
-  };
 
-  const RenderRemoteVideos = () => {
-    return (
-      <ScrollView
-        style={styles.remoteContainer}
-        contentContainerStyle={{paddingHorizontal: 2.5}}
-        horizontal={true}>
-        {peerIds.map((value, index, array) => {
-          return (
-            <RtcRemoteView.SurfaceView
-              style={styles.remote}
-              uid={value}
-              channelId={channelName}
-              renderMode={VideoRenderMode.Hidden}
-              zOrderMediaOverlay={true}
-            />
-          );
-        })}
-      </ScrollView>
-    );
-  };
+  const RenderRemoteVideos = () => (
+    <ScrollView
+      style={styles.remoteContainer}
+      contentContainerStyle={{paddingHorizontal: 2.5}}
+      horizontal={true}>
+      {peerIds.map((value, index, array) => {
+        return (
+          <RtcRemoteView.SurfaceView
+            style={styles.remote}
+            uid={value}
+            channelId={channelName}
+            renderMode={VideoRenderMode.Hidden}
+            zOrderMediaOverlay={true}
+          />
+        );
+      })}
+    </ScrollView>
+  );
 
   return (
     <View style={styles.max}>
