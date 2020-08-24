@@ -1,13 +1,12 @@
-import React, {useEffect, useState} from 'react';
-import {} from 'react-native';
-
+import React, {useState, useEffect} from 'react';
+import {StyleSheet, Dimensions} from 'react-native';
 import VideoContainer from './VideoContainer/VideoContainer';
 import requestCameraAndAudioPermission from './VideoContainer/Permissions';
 const appId = 'de22f355862e48539cb856e69aa4d557';
-const channelName = 'demo';
-
 export default () => {
   const [permission, setPermissionStatus] = useState(false);
+  const [channelName] = useState('demo');
+
   useEffect(() => {
     requestCameraAndAudioPermission().then((granted) => {
       if (granted) setPermissionStatus(true);
@@ -15,7 +14,7 @@ export default () => {
     });
   }, []);
 
-  if (permission)
-    return <VideoContainer channelName={channelName} appId={appId} />;
-  else return null;
+  return permission && channelName ? (
+    <VideoContainer channelName={channelName} appId={appId} />
+  ) : null;
 };

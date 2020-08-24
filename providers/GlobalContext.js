@@ -199,13 +199,10 @@ export const GlobalContextProvider = (props) => {
         try {
           let token = await AsyncStorage.getItem('jwt');
           let user = JSON.parse(await AsyncStorage.getItem('user'));
-          let favourites = JSON.parse(await AsyncStorage.getItem('favourites'));
-          if (favourites) favourites = favourites.stores;
           let welcomeShown = (await AsyncStorage.getItem('welcomeShown'))
             ? true
             : false;
 
-          console.log('User favourites', favourites);
           if (token && user) {
             try {
               const requestOptions = {
@@ -224,6 +221,10 @@ export const GlobalContextProvider = (props) => {
                 (response) => {
                   if (response.status === 200) {
                     response.json().then(async (data) => {
+                      let favourites = JSON.parse(
+                        await AsyncStorage.getItem('favourites'),
+                      );
+                      if (favourites) favourites = favourites.stores;
                       await AsyncStorage.setItem('jwt', data.token);
                       dispatch({
                         type: 'RESTORE_TOKEN',

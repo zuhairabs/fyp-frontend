@@ -169,8 +169,12 @@ const EditProfile = (props) => {
     <KeyboardAvoidingView
       behavior={Platform.OS == 'ios' ? 'padding' : 'height'}
       style={styles.screenContainer}>
-      <StatusBarWhite />
-      {/* <ProfileBackground /> */}
+      <StatusBar
+        barStyle="light-content"
+        backgroundColor="transparent"
+        animated={true}
+        translucent
+      />
 
       <Svg
         viewBox="0 0 600 600"

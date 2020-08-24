@@ -5,7 +5,9 @@ import RtcEngine, {
   RtcLocalView,
   VideoRenderMode,
 } from 'react-native-agora';
+import Icon from 'react-native-vector-icons/dist/MaterialIcons';
 import styles from './ContainerStyles';
+import {navigationRef} from '../../../Navigation/Navigation';
 
 export default ({channelName, appId}) => {
   const _engine = RtcEngine.create(appId);
@@ -13,7 +15,6 @@ export default ({channelName, appId}) => {
   const [peerIds, setPeerIds] = useState([]);
 
   const startCall = async () => {
-    console.log(_engine);
     (await _engine).joinChannel(null, channelName, null, 0);
   };
 
@@ -27,6 +28,7 @@ export default ({channelName, appId}) => {
   const init = async () => {
     console.log('Inside init');
     (await _engine).enableVideo();
+    startCall();
     (await _engine).addListener('UserJoined', (uid, elapsed) => {
       console.log('UserJoined', uid, elapsed);
       // check for new user
@@ -60,9 +62,10 @@ export default ({channelName, appId}) => {
     joinSucceed ? (
       <View style={styles.fullView}>
         <RtcLocalView.SurfaceView
-          style={styles.max}
+          style={styles.remote}
           channelId={channelName}
           renderMode={VideoRenderMode.Hidden}
+          zOrderMediaOverlay={true}
         />
         <RenderRemoteVideos />
       </View>
@@ -76,11 +79,10 @@ export default ({channelName, appId}) => {
       {peerIds.map((value, index, array) => {
         return (
           <RtcRemoteView.SurfaceView
-            style={styles.remote}
+            style={styles.fullView}
             uid={value}
             channelId={channelName}
             renderMode={VideoRenderMode.Hidden}
-            zOrderMediaOverlay={true}
           />
         );
       })}
@@ -90,23 +92,31 @@ export default ({channelName, appId}) => {
   return (
     <View style={styles.max}>
       <View style={styles.max}>
+        <RenderVideos />
         <View style={styles.buttonHolder}>
-          <TouchableOpacity
-            onPress={() => {
-              startCall();
-            }}
-            style={styles.button}>
-            <Text style={styles.buttonText}> Start Call </Text>
+          <TouchableOpacity onPress={() => {}} style={styles.button}>
+            <Text style={styles.buttonText}>
+              <Icon name="textsms" size={24} />
+            </Text>
           </TouchableOpacity>
+
           <TouchableOpacity
             onPress={() => {
               endCall();
+              navigationRef.current?.goBack();
             }}
-            style={styles.button}>
-            <Text style={styles.buttonText}> End Call </Text>
+            style={styles.endCallButton}>
+            <Text style={styles.endButtonText}>
+              <Icon name="call-end" size={24} />
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity onPress={() => {}} style={styles.button}>
+            <Text style={styles.buttonText}>
+              <Icon name="camera-front" size={24} />
+            </Text>
           </TouchableOpacity>
         </View>
-        <RenderVideos />
       </View>
     </View>
   );

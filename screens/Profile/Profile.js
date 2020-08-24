@@ -33,7 +33,12 @@ const Profile = ({navigation}) => {
 
   return (
     <View style={styles.screenContainer}>
-      <StatusBarWhite />
+      <StatusBar
+        barStyle="light-content"
+        backgroundColor="transparent"
+        animated={true}
+        translucent
+      />
       <MenuBackground />
       <ScrollView style={styles.container}>
         <View style={styles.contentContainer}>
