@@ -1,4 +1,4 @@
-import {Dimensions, StyleSheet, PixelRatio} from 'react-native';
+import {Dimensions, StyleSheet} from 'react-native';
 import {textStyles} from '../../../styles/styles';
 
 const dimensions = {

@@ -1,23 +1,20 @@
 import React, {useState, useEffect} from 'react';
-import {ScrollView, Text, TouchableOpacity, View} from 'react-native';
-import RtcEngine, {
-  RtcRemoteView,
-  RtcLocalView,
-  VideoRenderMode,
-} from 'react-native-agora';
-import Icon from 'react-native-vector-icons/dist/MaterialIcons';
-import styles from './ContainerStyles';
-import RemoteOverlay from './RemoteOverlay';
+import {View} from 'react-native';
+import RtcEngine from 'react-native-agora';
 import {navigationRef} from '../../../Navigation/Navigation';
+
+import styles from './ContainerStyles';
+import {BottomButton, EndCallButton} from './Controls';
+import {RenderVideos} from './RenderVideos';
 
 export default ({channelName, appId}) => {
   const _engine = RtcEngine.create(appId);
   const [joinSucceed, setJoinSucceed] = useState(false);
   const [peerIds, setPeerIds] = useState([]);
 
-  const startCall = async () => {
+  // RTC functions
+  const startCall = async () =>
     (await _engine).joinChannel(null, channelName, null, 0);
-  };
 
   const endCall = async () => {
     (await _engine).leaveChannel();
@@ -26,6 +23,7 @@ export default ({channelName, appId}) => {
     console.log('LeaveChannelSuccess', channelName);
   };
 
+  // RTC listeners
   const init = async () => {
     console.log('Inside init');
     (await _engine).enableVideo();
@@ -59,66 +57,22 @@ export default ({channelName, appId}) => {
     if (_engine) init();
   }, []);
 
-  const RenderVideos = () =>
-    joinSucceed ? (
-      <View style={styles.fullView}>
-        <RtcLocalView.SurfaceView
-          style={styles.localVideo}
-          channelId={channelName}
-          renderMode={VideoRenderMode.Hidden}
-          zOrderMediaOverlay={true}
-        />
-        <RenderRemoteVideos />
-      </View>
-    ) : null;
-
-  const RenderRemoteVideos = () => (
-    <ScrollView
-      horizontal={true}
-      scrollEnabled={false}
-      showsHorizontalScrollIndicator={false}>
-      {peerIds.map((value, index, array) => {
-        return (
-          <>
-            <RtcRemoteView.SurfaceView
-              style={styles.remoteVideo}
-              uid={value}
-              channelId={channelName}
-              renderMode={VideoRenderMode.Hidden}
-            />
-            <RemoteOverlay />
-          </>
-        );
-      })}
-    </ScrollView>
-  );
-
   return (
     <View style={styles.max}>
-      <RenderVideos />
+      <RenderVideos
+        joinSucceed={joinSucceed}
+        peerIds={peerIds}
+        channelName={channelName}
+      />
       <View style={styles.buttonHolder}>
-        <TouchableOpacity onPress={() => {}} style={styles.button}>
-          <Text style={styles.buttonText}>
-            <Icon name="textsms" size={24} />
-          </Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          onPress={() => {
+        <BottomButton iconName="textsms" onPressFunction={() => {}} />
+        <EndCallButton
+          onPressFunction={() => {
             endCall();
-            navigationRef.current?.goBack();
+            navigationRef.current.goBack();
           }}
-          style={styles.endCallButton}>
-          <Text style={styles.endButtonText}>
-            <Icon name="call-end" size={24} />
-          </Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity onPress={() => {}} style={styles.button}>
-          <Text style={styles.buttonText}>
-            <Icon name="camera-front" size={24} />
-          </Text>
-        </TouchableOpacity>
+        />
+        <BottomButton iconName="camera-front" onPressFunction={() => {}} />
       </View>
     </View>
   );
