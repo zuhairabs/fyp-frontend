@@ -1,5 +1,4 @@
 import React, {useState, useEffect} from 'react';
-import {StyleSheet, Dimensions} from 'react-native';
 import VideoContainer from './VideoContainer/VideoContainer';
 import requestCameraAndAudioPermission from './VideoContainer/Permissions';
 const appId = 'de22f355862e48539cb856e69aa4d557';

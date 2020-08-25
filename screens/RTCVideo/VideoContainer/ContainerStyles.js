@@ -1,4 +1,5 @@
-import {Dimensions, StyleSheet} from 'react-native';
+import {Dimensions, StyleSheet, PixelRatio} from 'react-native';
+import {textStyles} from '../../../styles/styles';
 
 const dimensions = {
   width: Dimensions.get('window').width,
@@ -8,6 +9,7 @@ const dimensions = {
 export default StyleSheet.create({
   max: {
     flex: 1,
+    backgroundColor: '#FFF',
   },
   buttonHolder: {
     height: 100,
@@ -45,21 +47,49 @@ export default StyleSheet.create({
   fullView: {
     width: dimensions.width,
     height: dimensions.height - 100,
+    backgroundColor: '#000',
+    alignItems: 'flex-end',
+    borderBottomRightRadius: 50,
+    borderBottomLeftRadius: 50,
   },
-  remoteContainer: {
+  localVideo: {
+    width: 150,
+    height: 200,
+    top: 50,
+    right: 30,
+    position: 'absolute',
+  },
+  remoteVideo: {
     width: dimensions.width,
     height: dimensions.height - 100,
   },
-  remote: {
-    width: 150,
-    height: 200,
-    marginHorizontal: 2.5,
-    marginVertical: 50,
+  remoteOverlay: {
     position: 'absolute',
+    bottom: 20,
+    marginHorizontal: 20,
   },
-  others: {
-    width: dimensions.width,
-    height: dimensions.height,
+  overlayButton: {
+    flex: 1,
+    paddingVertical: 5,
+    backgroundColor: 'rgba(255, 255, 255, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 20,
+    marginVertical: 15,
+  },
+  overlayButtonText: {
+    color: '#FFF',
+    textShadowColor: 'rgba(0, 0, 0, 0.5)',
+    textShadowOffset: {width: -1, height: 1},
+    textShadowRadius: 5,
+    ...textStyles.paragraphMediumBold,
+  },
+  overlayText: {
+    color: '#FFF',
+    textShadowColor: 'rgba(0, 0, 0, 0.5)',
+    textShadowOffset: {width: -1, height: 1},
+    textShadowRadius: 5,
+    ...textStyles.paragraphMediumBold,
   },
   noUserText: {
     paddingHorizontal: 10,
