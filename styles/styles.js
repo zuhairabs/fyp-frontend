@@ -23,6 +23,7 @@ export const COLORS = {
   BLACK: '#000',
   GREEN: '#4DEB96',
   RED: '#E50000',
+  PINK: '#E64069',
   TRANSPARENT: '#00000000',
 };
 

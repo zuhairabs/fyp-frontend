@@ -18,7 +18,7 @@ const emptyFunction = () => console.log('Button pressed');
 
 const Capsule = ({title}) => (
   <TouchableOpacity style={styles.capsule}>
-    <Text style={styles.overlayButtonText}>{title}</Text>
+    <Text style={styles.overlayText}>{title}</Text>
   </TouchableOpacity>
 );
 
@@ -36,12 +36,17 @@ const OverlayButton = ({title, iconName, buttonFunction = emptyFunction}) => (
   </TouchableOpacity>
 );
 
-const OverlayText = ({text}) => <Text style={styles.overlayText}>{text}</Text>;
+const OverlayText = ({text, size = 'medium'}) => (
+  <Text
+    style={size === 'medium' ? styles.overlayText : styles.overlayTextLarge}>
+    {text}
+  </Text>
+);
 
 export default ({time, title, name, overlayFunctions, localSettings}) => (
   <View style={styles.remoteOverlay}>
     <View>
-      <OverlayText text={name} />
+      <OverlayText text={name} size="large" />
       <OverlayText text={title} />
       <Capsule title={time.toString().formatTimeString()} />
     </View>
@@ -85,12 +90,19 @@ const styles = StyleSheet.create({
     textShadowRadius: 5,
     ...textStyles.paragraphMediumBold,
   },
+  overlayTextLarge: {
+    color: '#FFF',
+    textShadowColor: 'rgba(0, 0, 0, 0.5)',
+    textShadowOffset: {width: -1, height: 1},
+    textShadowRadius: 5,
+    ...textStyles.paragraphLarge,
+  },
   overlayText: {
     color: '#FFF',
     textShadowColor: 'rgba(0, 0, 0, 0.5)',
     textShadowOffset: {width: -1, height: 1},
     textShadowRadius: 5,
-    ...textStyles.paragraphMediumBold,
+    ...textStyles.paragraphMedium,
   },
   capsule: {
     padding: 5,
@@ -99,5 +111,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: 20,
     marginVertical: 15,
+    width: 80,
   },
 });

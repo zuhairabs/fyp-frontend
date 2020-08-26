@@ -1,4 +1,5 @@
 import {Dimensions, StyleSheet} from 'react-native';
+import {COLORS} from '../../../styles/styles';
 
 const dimensions = {
   width: Dimensions.get('window').width,
@@ -17,13 +18,23 @@ export default StyleSheet.create({
     flexDirection: 'row',
     paddingHorizontal: 20,
     justifyContent: 'space-between',
-    backgroundColor: '#FFF',
+    backgroundColor: COLORS.WHITE,
   },
   endCallButton: {
-    backgroundColor: '#f00',
-    height: 50,
-    width: 50,
-    borderRadius: 50 / 2,
+    backgroundColor: COLORS.WHITE,
+    height: 60,
+    width: 60,
+    borderRadius: 60 / 2,
+    borderWidth: 1,
+    borderColor: COLORS.PINK,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  endCallButtonInner: {
+    backgroundColor: COLORS.PINK,
+    height: 48,
+    width: 48,
+    borderRadius: 48 / 2,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -36,9 +47,6 @@ export default StyleSheet.create({
     elevation: 3,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  endButtonText: {
-    color: '#FFF',
   },
   buttonText: {
     color: '#666',
