@@ -1,6 +1,8 @@
 import React from 'react';
-import {Text, View} from 'react-native';
-import styles from './ContainerStyles';
+import {Text, View, StyleSheet} from 'react-native';
+import {textStyles} from '../../../styles/styles';
+import Icon from 'react-native-vector-icons/dist/MaterialIcons';
+import {TouchableOpacity} from 'react-native-gesture-handler';
 
 String.prototype.formatTimeString = function () {
   var sec_num = parseInt(this, 10);
@@ -14,18 +16,78 @@ String.prototype.formatTimeString = function () {
   return hours + ':' + minutes + ':' + seconds;
 };
 
-const OverlayButton = ({title}) => (
-  <View style={styles.overlayButton}>
-    <Text style={styles.overlayButtonText}>{title}</Text>
-  </View>
+const emptyFunction = () => console.log('Button pressed');
+
+const OverlayButton = ({title, iconName, buttonFunction = emptyFunction}) => (
+  <TouchableOpacity
+    style={styles.overlayButton}
+    onPress={() => {
+      buttonFunction();
+      console.log(buttonFunction);
+    }}>
+    <>
+      {iconName && <Icon name={iconName} size={24} color="#FFF" />}
+      {title && <Text style={styles.overlayButtonText}>{title}</Text>}
+    </>
+  </TouchableOpacity>
 );
 
 const OverlayText = ({text}) => <Text style={styles.overlayText}>{text}</Text>;
 
-export default ({time, title, name}) => (
+export default ({time, title, name, overlayFunctions, localSettings}) => (
   <View style={styles.remoteOverlay}>
-    <OverlayText text={name} />
-    <OverlayText text={title} />
-    <OverlayButton title={time.toString().formatTimeString()} />
+    <View style={styles.overlayLeft}>
+      <OverlayText text={name} />
+      <OverlayText text={title} />
+      <OverlayButton title={time.toString().formatTimeString()} />
+    </View>
+    <View style={styles.overlayRight}>
+      <OverlayButton
+        iconName={localSettings.localVideo ? 'videocam' : 'videocam-off'}
+        buttonFunction={overlayFunctions.toggleLocalVideo}
+      />
+      <OverlayButton
+        iconName={localSettings.localAudio ? 'mic' : 'mic-off'}
+        buttonFunction={overlayFunctions.toggleLocalAudio}
+      />
+    </View>
   </View>
 );
+
+const styles = StyleSheet.create({
+  remoteOverlay: {
+    position: 'absolute',
+    bottom: 20,
+    paddingHorizontal: 20,
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  overlayLeft: {},
+  overlayRight: {},
+  overlayButton: {
+    paddingHorizontal: 12,
+    paddingVertical: 5,
+    backgroundColor: 'rgba(255, 255, 255, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 12,
+    marginVertical: 15,
+    height: 48,
+  },
+  overlayButtonText: {
+    color: '#FFF',
+    textShadowColor: 'rgba(0, 0, 0, 0.5)',
+    textShadowOffset: {width: -1, height: 1},
+    textShadowRadius: 5,
+    ...textStyles.paragraphMediumBold,
+  },
+  overlayText: {
+    color: '#FFF',
+    textShadowColor: 'rgba(0, 0, 0, 0.5)',
+    textShadowOffset: {width: -1, height: 1},
+    textShadowRadius: 5,
+    ...textStyles.paragraphMediumBold,
+  },
+});

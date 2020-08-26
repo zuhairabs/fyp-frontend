@@ -1,5 +1,4 @@
 import {Dimensions, StyleSheet} from 'react-native';
-import {textStyles} from '../../../styles/styles';
 
 const dimensions = {
   width: Dimensions.get('window').width,
@@ -48,7 +47,6 @@ export default StyleSheet.create({
     width: dimensions.width,
     height: dimensions.height - 100,
     backgroundColor: '#000',
-    alignItems: 'flex-end',
     borderBottomRightRadius: 50,
     borderBottomLeftRadius: 50,
   },
@@ -62,34 +60,6 @@ export default StyleSheet.create({
   remoteVideo: {
     width: dimensions.width,
     height: dimensions.height - 100,
-  },
-  remoteOverlay: {
-    position: 'absolute',
-    bottom: 20,
-    marginHorizontal: 20,
-  },
-  overlayButton: {
-    flex: 1,
-    paddingVertical: 5,
-    backgroundColor: 'rgba(255, 255, 255, 0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 20,
-    marginVertical: 15,
-  },
-  overlayButtonText: {
-    color: '#FFF',
-    textShadowColor: 'rgba(0, 0, 0, 0.5)',
-    textShadowOffset: {width: -1, height: 1},
-    textShadowRadius: 5,
-    ...textStyles.paragraphMediumBold,
-  },
-  overlayText: {
-    color: '#FFF',
-    textShadowColor: 'rgba(0, 0, 0, 0.5)',
-    textShadowOffset: {width: -1, height: 1},
-    textShadowRadius: 5,
-    ...textStyles.paragraphMediumBold,
   },
   noUserText: {
     paddingHorizontal: 10,

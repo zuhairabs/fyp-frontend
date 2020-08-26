@@ -4,7 +4,7 @@ import requestCameraAndAudioPermission from './VideoContainer/Permissions';
 const appId = 'de22f355862e48539cb856e69aa4d557';
 export default () => {
   const [permission, setPermissionStatus] = useState(false);
-  const [channelName] = useState('demo');
+  const [channelName] = useState('test');
 
   useEffect(() => {
     requestCameraAndAudioPermission().then((granted) => {

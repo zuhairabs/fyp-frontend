@@ -6,9 +6,14 @@ import RemoteOverlay from './RemoteOverlay';
 
 const remoteName = 'John Doe';
 const remoteTitle = 'Store Manager';
-const timeElapsed = '18:23';
 
-export const RenderVideos = ({joinSucceed = false, channelName, peerIds}) => {
+export const RenderVideos = ({
+  joinSucceed = false,
+  channelName,
+  peerIds,
+  overlayFunctions,
+  localSettings,
+}) => {
   return joinSucceed ? (
     <View style={styles.fullView}>
       <RtcLocalView.SurfaceView
@@ -17,12 +22,22 @@ export const RenderVideos = ({joinSucceed = false, channelName, peerIds}) => {
         renderMode={VideoRenderMode.Hidden}
         zOrderMediaOverlay={true}
       />
-      <RenderRemoteVideos peerIds={peerIds} channelName={channelName} />
+      <RenderRemoteVideos
+        peerIds={peerIds}
+        channelName={channelName}
+        overlayFunctions={overlayFunctions}
+        localSettings={localSettings}
+      />
     </View>
   ) : null;
 };
 
-const RenderRemoteVideos = ({peerIds, channelName}) => {
+const RenderRemoteVideos = ({
+  peerIds,
+  channelName,
+  overlayFunctions,
+  localSettings,
+}) => {
   const [timeSeconds, setTimeElapsed] = useState(0);
 
   const tickTimer = () =>
@@ -34,27 +49,29 @@ const RenderRemoteVideos = ({peerIds, channelName}) => {
   }, []);
 
   return (
-    <ScrollView
-      horizontal={true}
-      scrollEnabled={false}
-      showsHorizontalScrollIndicator={false}>
-      {peerIds.map((value, index, array) => {
-        return (
-          <>
+    <>
+      <ScrollView
+        horizontal={true}
+        scrollEnabled={false}
+        showsHorizontalScrollIndicator={false}>
+        {peerIds.map((value, index, array) => {
+          return (
             <RtcRemoteView.SurfaceView
               style={styles.remoteVideo}
               uid={value}
               channelId={channelName}
               renderMode={VideoRenderMode.Hidden}
             />
-            <RemoteOverlay
-              time={timeSeconds}
-              title={remoteTitle}
-              name={remoteName}
-            />
-          </>
-        );
-      })}
-    </ScrollView>
+          );
+        })}
+      </ScrollView>
+      <RemoteOverlay
+        time={timeSeconds}
+        title={remoteTitle}
+        name={remoteName}
+        overlayFunctions={overlayFunctions}
+        localSettings={localSettings}
+      />
+    </>
   );
 };
