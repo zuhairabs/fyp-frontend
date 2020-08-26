@@ -6,17 +6,21 @@ import {TouchableOpacity} from 'react-native-gesture-handler';
 
 String.prototype.formatTimeString = function () {
   var sec_num = parseInt(this, 10);
-  var hours = Math.floor(sec_num / 3600);
-  var minutes = Math.floor((sec_num - hours * 3600) / 60);
-  var seconds = sec_num - hours * 3600 - minutes * 60;
+  var minutes = Math.floor(sec_num / 60);
+  var seconds = sec_num - minutes * 60;
 
-  if (hours < 10) hours = '0' + hours;
   if (minutes < 10) minutes = '0' + minutes;
   if (seconds < 10) seconds = '0' + seconds;
-  return hours + ':' + minutes + ':' + seconds;
+  return `${minutes}:${seconds}`;
 };
 
 const emptyFunction = () => console.log('Button pressed');
+
+const Capsule = ({title}) => (
+  <TouchableOpacity style={styles.capsule}>
+    <Text style={styles.overlayButtonText}>{title}</Text>
+  </TouchableOpacity>
+);
 
 const OverlayButton = ({title, iconName, buttonFunction = emptyFunction}) => (
   <TouchableOpacity
@@ -36,12 +40,12 @@ const OverlayText = ({text}) => <Text style={styles.overlayText}>{text}</Text>;
 
 export default ({time, title, name, overlayFunctions, localSettings}) => (
   <View style={styles.remoteOverlay}>
-    <View style={styles.overlayLeft}>
+    <View>
       <OverlayText text={name} />
       <OverlayText text={title} />
-      <OverlayButton title={time.toString().formatTimeString()} />
+      <Capsule title={time.toString().formatTimeString()} />
     </View>
-    <View style={styles.overlayRight}>
+    <View>
       <OverlayButton
         iconName={localSettings.localVideo ? 'videocam' : 'videocam-off'}
         buttonFunction={overlayFunctions.toggleLocalVideo}
@@ -64,8 +68,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
   },
-  overlayLeft: {},
-  overlayRight: {},
   overlayButton: {
     paddingHorizontal: 12,
     paddingVertical: 5,
@@ -89,5 +91,13 @@ const styles = StyleSheet.create({
     textShadowOffset: {width: -1, height: 1},
     textShadowRadius: 5,
     ...textStyles.paragraphMediumBold,
+  },
+  capsule: {
+    padding: 5,
+    backgroundColor: 'rgba(255, 255, 255, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 20,
+    marginVertical: 15,
   },
 });

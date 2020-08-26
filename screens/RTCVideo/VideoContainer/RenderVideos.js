@@ -4,7 +4,7 @@ import {RtcRemoteView, RtcLocalView, VideoRenderMode} from 'react-native-agora';
 import styles from './ContainerStyles';
 import RemoteOverlay from './RemoteOverlay';
 
-const remoteName = 'John Doe';
+const remoteName = 'Nike Palladium';
 const remoteTitle = 'Store Manager';
 
 export const RenderVideos = ({

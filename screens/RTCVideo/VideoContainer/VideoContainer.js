@@ -1,9 +1,7 @@
-import React, {useState, useEffect, useContext} from 'react';
+import React, {useState, useEffect} from 'react';
 import {View} from 'react-native';
 import RtcEngine from 'react-native-agora';
 import {navigationRef} from '../../../Navigation/Navigation';
-import {GlobalContext} from '../../../providers/GlobalContext';
-
 import styles from './ContainerStyles';
 import {BottomButton, EndCallButton} from './Controls';
 import {RenderVideos} from './RenderVideos';
@@ -15,23 +13,22 @@ export default ({channelName, appId}) => {
   const [joinSucceed, setJoinSucceed] = useState(false);
   const [peerIds, setPeerIds] = useState([]);
   const [uid] = useState(generateRandomUid());
-  // const [localSettings, setLocalSettings] = useState({
-  //   audMute: false,
-  //   vidMute: false,
-  //   camera: 'front',
-  // });
   const [localAudio, setLocalAudio] = useState(true);
   const [localVideo, setLocalVideo] = useState(true);
+  const [overlayOpacity, setOverlayOpacity] = useState(0);
+
+  // Video controls
+  const toggleCameraView = async () => (await _engine).switchCamera();
 
   const toggleLocalVideo = async () => {
-    const mute = localAudio;
-    (await _engine).muteLocalVideoStream(mute);
+    const isMuted = !localVideo;
+    (await _engine).muteLocalVideoStream(!isMuted);
     setLocalVideo((prev) => !prev);
   };
 
   const toggleLocalAudio = async () => {
-    const mute = localAudio;
-    (await _engine).muteLocalAudioStream(mute);
+    const isMuted = !localAudio;
+    (await _engine).muteLocalAudioStream(!isMuted);
     setLocalAudio((prev) => !prev);
   };
 
@@ -101,7 +98,10 @@ export default ({channelName, appId}) => {
             navigationRef.current.goBack();
           }}
         />
-        <BottomButton iconName="camera-front" onPressFunction={() => {}} />
+        <BottomButton
+          iconName="camera-front"
+          onPressFunction={() => toggleCameraView()}
+        />
       </View>
     </View>
   );
