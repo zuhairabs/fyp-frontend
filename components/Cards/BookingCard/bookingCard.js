@@ -110,7 +110,11 @@ const BookingCard = (props) => {
             </Text>
 
             <View style={styles.time}>
-              <Icon name="access-time" size={16} color={COLORS.SECONDARY} />
+              {props.booking.type === 'virtual' ? (
+                <Icon name="videocam" size={16} color={COLORS.SECONDARY} />
+              ) : (
+                <Icon name="access-time" size={16} color={COLORS.SECONDARY} />
+              )}
               <Text style={styles.timeText}>
                 {new Date(props.booking.start)
                   .toLocaleTimeString('en-US', {

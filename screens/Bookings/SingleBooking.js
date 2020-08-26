@@ -7,10 +7,10 @@ import {
   Dimensions,
   Platform,
   ActivityIndicator,
-  Alert,
 } from 'react-native';
 import QRCode from 'react-native-qrcode-svg';
 import {ScrollView, TouchableOpacity} from 'react-native-gesture-handler';
+import Icon from 'react-native-vector-icons/dist/MaterialIcons';
 
 import StatusBarWhite from '../../components/StatusBar';
 import StoreCard from '../../components/Cards/StoreCard/StoreCard';
@@ -78,27 +78,48 @@ const SingleBooking = (props) => {
                     }}>
                     Appointment Time
                   </Text>
-                  <Text
+                  <View
                     style={{
-                      color: COLORS.SECONDARY,
-                      ...textStyles.paragraphMedium,
+                      flexDirection: 'row',
+                      justifyContent: 'flex-start',
+                      alignItems: 'center',
                     }}>
-                    {new Date(booking.start)
-                      .toLocaleTimeString('en-US', {
-                        hour: '2-digit',
-                        minute: '2-digit',
-                        hour12: false,
-                      })
-                      .replace(/(:\d{2}| [AP]M)$/, '')}{' '}
-                    -{' '}
-                    {new Date(booking.end)
-                      .toLocaleTimeString('en-US', {
-                        hour: '2-digit',
-                        minute: '2-digit',
-                        hour12: false,
-                      })
-                      .replace(/(:\d{2}| [AP]M)$/, '')}
-                  </Text>
+                    {booking.type === 'virtual' ? (
+                      <Icon
+                        name="videocam"
+                        size={16}
+                        color={COLORS.SECONDARY}
+                      />
+                    ) : (
+                      <Icon
+                        name="directions-walk"
+                        size={16}
+                        color={COLORS.SECONDARY}
+                      />
+                    )}
+                    <Text
+                      style={{
+                        color: COLORS.SECONDARY,
+                        paddingLeft: 5,
+                        ...textStyles.paragraphMedium,
+                      }}>
+                      {new Date(booking.start)
+                        .toLocaleTimeString('en-US', {
+                          hour: '2-digit',
+                          minute: '2-digit',
+                          hour12: false,
+                        })
+                        .replace(/(:\d{2}| [AP]M)$/, '')}{' '}
+                      -{' '}
+                      {new Date(booking.end)
+                        .toLocaleTimeString('en-US', {
+                          hour: '2-digit',
+                          minute: '2-digit',
+                          hour12: false,
+                        })
+                        .replace(/(:\d{2}| [AP]M)$/, '')}
+                    </Text>
+                  </View>
                 </View>
                 <View style={styles.card}>
                   <Text
@@ -108,17 +129,30 @@ const SingleBooking = (props) => {
                     }}>
                     Appointment Date
                   </Text>
-                  <Text
+                  <View
                     style={{
-                      color: COLORS.SECONDARY,
-                      ...textStyles.paragraphMedium,
+                      flexDirection: 'row',
+                      justifyContent: 'flex-start',
+                      alignItems: 'center',
                     }}>
-                    {new Date(booking.start).toDateString()}
-                  </Text>
+                    <Icon
+                      name="date-range"
+                      size={16}
+                      color={COLORS.SECONDARY}
+                    />
+                    <Text
+                      style={{
+                        color: COLORS.SECONDARY,
+                        paddingLeft: 5,
+                        ...textStyles.paragraphMedium,
+                      }}>
+                      {new Date(booking.start).toDateString()}
+                    </Text>
+                  </View>
                 </View>
               </View>
               <View style={styles.qrContainer}>
-                {booking.status === 'upcoming' ? (
+                {booking.status === 'upcoming' && booking.type !== 'virtual' ? (
                   <>
                     <QRCode
                       value={JSON.stringify({
@@ -141,28 +175,53 @@ const SingleBooking = (props) => {
                   <View style={{height: 200}}></View>
                 )}
               </View>
-              <View style={styles.buttonArea}>
-                {booking.review ? null : (
+              {booking.type !== 'virtual' ? (
+                <View style={styles.buttonArea}>
+                  {booking.review ? null : (
+                    <TouchableOpacity
+                      style={
+                        booking.status === 'completed' ||
+                        booking.status === 'missed'
+                          ? buttons.primaryButton
+                          : buttons.primaryButtonDisabled
+                      }
+                      disabled={
+                        booking.status === 'cancelled' ||
+                        booking.status === 'upcoming'
+                      }
+                      onPress={() => {
+                        props.navigation.navigate('Rating', {booking: booking});
+                      }}>
+                      <Text style={{...textStyles.primaryButtonText}}>
+                        Rate Store
+                      </Text>
+                    </TouchableOpacity>
+                  )}
+                </View>
+              ) : (
+                <View style={styles.buttonArea}>
                   <TouchableOpacity
                     style={
-                      booking.status === 'completed' ||
-                      booking.status === 'missed'
+                      booking.status === 'upcoming'
                         ? buttons.primaryButton
                         : buttons.primaryButtonDisabled
                     }
                     disabled={
                       booking.status === 'cancelled' ||
-                      booking.status === 'upcoming'
+                      booking.status === 'missed' ||
+                      booking.status === 'completed'
                     }
                     onPress={() => {
-                      props.navigation.navigate('Rating', {booking: booking});
+                      props.navigation.navigate('RTCVideo', {
+                        channelName: booking.bookingId,
+                      });
                     }}>
                     <Text style={{...textStyles.primaryButtonText}}>
-                      Rate Store
+                      Join Call
                     </Text>
                   </TouchableOpacity>
-                )}
-              </View>
+                </View>
+              )}
             </View>
           </View>
         )}

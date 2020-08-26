@@ -18,7 +18,7 @@ export const styles = StyleSheet.create({
     backgroundColor: '#FEFEFE6F',
     zIndex: 5,
     marginTop: 20,
-    marginBottom: 80,
+    marginBottom: 120,
   },
   ratingBadge: {
     position: 'absolute',
@@ -102,7 +102,7 @@ export const styles = StyleSheet.create({
     alignItems: 'flex-start',
     justifyContent: 'space-around',
     padding: 10,
-    paddingBottom: 30,
+    paddingBottom: NAVIGATION_HEIGHT > 0 ? NAVIGATION_HEIGHT - 30 : 30,
   },
   primaryButton: {
     flex: 1,

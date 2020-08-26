@@ -30,30 +30,37 @@ const WINDOW_HEIGHT = Dimensions.get('window').height;
 const WINDOW_WIDTH = Dimensions.get('window').width;
 const DEVICE_HEIGHT = Dimensions.get('screen').height;
 
-const BookSlotSlider = (props) => {
-  Date.prototype.addDays = function (days) {
-    var date = new Date(this.valueOf());
-    date.setDate(date.getDate() + days);
-    return date;
-  };
+Date.prototype.addDays = function (days) {
+  var date = new Date(this.valueOf());
+  date.setDate(date.getDate() + days);
+  return date;
+};
 
+const BookSlotSlider = (props) => {
+  const {
+    storeData,
+    previousBooking,
+    editSlot,
+    navigation,
+    setBookSlot,
+    videoSlot,
+  } = props;
   const {state} = useContext(GlobalContext);
   const [screen, setScreen] = useState(0);
   const [selectedDate, setSelectedDate] = useState();
 
   // time picker
-  const [start, setStart] = useState(props.storeData.active_hours[0].start);
+  const [start, setStart] = useState(storeData.active_hours[0].start);
   const [end, setEnd] = useState(
-    timeToString(
-      stringToTime(props.storeData.active_hours[0].start) + 30 * MINUTE,
-    ),
+    timeToString(stringToTime(storeData.active_hours[0].start) + 30 * MINUTE),
   );
   const [visitors, setVisitors] = useState(
-    props.previousBooking ? props.previousBooking.visitors : 1,
+    previousBooking ? previousBooking.visitors : 1,
   );
   const [assistance, setAssistance] = useState(
-    props.previousBooking ? props.previousBooking.assistance : false,
+    previousBooking ? previousBooking.assistance : false,
   );
+  const [product, setProduct] = useState('tshirt');
 
   // error modal
   const [modalText, setModalText] = useState('');
@@ -62,12 +69,14 @@ const BookSlotSlider = (props) => {
 
   const getBookingData = async () => {
     const bookingData = {
-      store: props.storeData._id,
+      store: storeData._id,
       user: state.user._id,
       start: selectedDate + 'T' + start + ':00.00+05:30',
       end: selectedDate + 'T' + end + ':00.00+05:30',
       visitors: visitors,
       assistance: assistance,
+      type: videoSlot ? 'virtual' : 'walk-in',
+      product: product,
     };
     return {bookingData};
   };
@@ -79,14 +88,14 @@ const BookSlotSlider = (props) => {
 
   const cancelPreviousBooking = (newBooking) => {
     const body = JSON.stringify({
-      bookingData: props.previousBooking,
+      bookingData: previousBooking,
       cred: {
         phone: state.user.phone,
       },
     });
     Post('user/booking/edit', body, state.token)
       .then(() => {
-        props.navigation.reset({
+        navigation.reset({
           index: 1,
           routes: [
             {name: 'Home'},
@@ -132,6 +141,7 @@ const BookSlotSlider = (props) => {
   };
 
   const getBookingApproval = () => {
+    const uri = videoSlot ? '/booking/video/approval' : '/booking/approval/v2';
     getBookingData().then(({bookingData}) => {
       const body = JSON.stringify({
         bookingData: bookingData,
@@ -139,10 +149,10 @@ const BookSlotSlider = (props) => {
           phone: state.user.phone,
         },
       });
-      Post('user/booking/approval/v2', body, state.token)
+      Post(`user${uri}`, body, state.token)
         .then(() => {
           setModalText('Booking your slot');
-          if (props.editSlot) editBooking();
+          if (editSlot) editBooking();
           else bookSlot();
         })
         .catch(() => {
@@ -153,6 +163,7 @@ const BookSlotSlider = (props) => {
   };
 
   const bookSlot = () => {
+    const uri = videoSlot ? '/book/video' : '/book';
     getBookingData().then(({bookingData}) => {
       const body = JSON.stringify({
         bookingData: bookingData,
@@ -160,9 +171,9 @@ const BookSlotSlider = (props) => {
           phone: state.user.phone,
         },
       });
-      Post('user/book', body, state.token)
+      Post(`user${uri}`, body, state.token)
         .then((data) => {
-          props.navigation.reset({
+          navigation.reset({
             index: 1,
             routes: [
               {
@@ -236,10 +247,12 @@ const BookSlotSlider = (props) => {
 
       <View style={styles.header}>
         <Text style={styles.dummyText}>0</Text>
-        <Text style={styles.headerText}>BOOK SLOT</Text>
+        <Text style={styles.headerText}>
+          {videoSlot ? 'BOOK VIDEO SLOT' : 'BOOK SLOT'}
+        </Text>
         <TouchableWithoutFeedback
           onPress={() => {
-            props.setBookSlot(false);
+            setBookSlot(false);
           }}>
           <Icon name="close" size={24} color={COLORS.WHITE} />
         </TouchableWithoutFeedback>
@@ -257,9 +270,9 @@ const BookSlotSlider = (props) => {
               </TouchableOpacity>
             </View>
             <Calendar
-              working_days={props.storeData.working_days}
+              working_days={storeData.working_days}
               setSelectedDate={setSelectedDate}
-              previousBooking={props.previousBooking}
+              previousBooking={previousBooking}
             />
           </>
         ) : (
@@ -301,17 +314,19 @@ const BookSlotSlider = (props) => {
                   </TouchableOpacity>
                 </View>
               </View>
-              <View style={styles.iconItem}>
-                <Text style={styles.timeText}>Need Assistance?</Text>
-                <View style={styles.iconBox}>
-                  <TouchableOpacity
-                    onPress={() => {
-                      setAssistance(!assistance);
-                    }}>
-                    {assistance ? <CheckBoxFilled /> : <CheckBox />}
-                  </TouchableOpacity>
+              {!videoSlot && (
+                <View style={styles.iconItem}>
+                  <Text style={styles.timeText}>Need Assistance?</Text>
+                  <View style={styles.iconBox}>
+                    <TouchableOpacity
+                      onPress={() => {
+                        setAssistance(!assistance);
+                      }}>
+                      {assistance ? <CheckBoxFilled /> : <CheckBox />}
+                    </TouchableOpacity>
+                  </View>
                 </View>
-              </View>
+              )}
             </View>
 
             <TimePicker
@@ -319,7 +334,7 @@ const BookSlotSlider = (props) => {
               end={end}
               setStart={setStart}
               setEnd={setEnd}
-              storeEnd={props.storeData.active_hours[0].end}
+              storeEnd={storeData.active_hours[0].end}
             />
 
             <View style={styles.linkContainerTop}>
@@ -344,7 +359,6 @@ const styles = StyleSheet.create({
   },
   container: {
     height: Math.floor(WINDOW_HEIGHT / 1.08),
-    backgroundColor: '#FFF',
     borderTopLeftRadius: 50,
     borderTopRightRadius: 50,
     paddingBottom: DEVICE_HEIGHT - WINDOW_HEIGHT,
