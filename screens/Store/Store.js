@@ -1,8 +1,7 @@
 import React, {useState, useEffect, useContext} from 'react';
-import {View, Text, ActivityIndicator} from 'react-native';
+import {View, Text, ActivityIndicator, TouchableOpacity} from 'react-native';
 import {
   ScrollView,
-  TouchableNativeFeedback,
   TouchableWithoutFeedback,
   FlatList,
 } from 'react-native-gesture-handler';
@@ -36,6 +35,7 @@ const Store = (props) => {
     props.route.params.bookSlot || false,
   );
   const [favourite, setFavourite] = useState(false);
+  const [videoSlot, setVideoSlot] = useState(false);
 
   useEffect(() => {
     if (state.favourites && state.favourites.indexOf(store) > -1)
@@ -179,15 +179,27 @@ const Store = (props) => {
           navigation={props.navigation}
           previousBooking={previousBooking}
           editSlot={editSlot}
+          videoSlot={videoSlot}
         />
       ) : (
-        <TouchableNativeFeedback
-          onPress={() => {
-            setBookSlot(true);
-          }}
-          style={styles.button}>
-          <Text style={styles.buttonText}>BOOK SLOT</Text>
-        </TouchableNativeFeedback>
+        <View style={styles.buttonArea}>
+          <TouchableOpacity
+            style={styles.primaryButton}
+            onPress={() => {
+              setVideoSlot(false);
+              setBookSlot(true);
+            }}>
+            <Text style={styles.primaryButtonText}>Go to store</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.secondaryButton}
+            onPress={() => {
+              setVideoSlot(true);
+              setBookSlot(true);
+            }}>
+            <Text style={styles.secondaryButtonText}>Video Call</Text>
+          </TouchableOpacity>
+        </View>
       )}
     </View>
   );

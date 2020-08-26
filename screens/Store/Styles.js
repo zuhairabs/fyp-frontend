@@ -1,5 +1,5 @@
 import {StyleSheet, Dimensions, Platform, StatusBar} from 'react-native';
-import {COLORS, textStyles} from '../../styles/styles';
+import {COLORS, textStyles, BORDER_RADIUS, SPACING} from '../../styles/styles';
 
 const WINDOW_HEIGHT = Dimensions.get('window').height;
 const WINDOW_WIDTH = Dimensions.get('window').width;
@@ -18,6 +18,7 @@ export const styles = StyleSheet.create({
     backgroundColor: '#FEFEFE6F',
     zIndex: 5,
     marginTop: 20,
+    marginBottom: 80,
   },
   ratingBadge: {
     position: 'absolute',
@@ -89,21 +90,48 @@ export const styles = StyleSheet.create({
   details: {
     ...textStyles.paragraphMedium,
   },
-  button: {
-    position: 'relative',
+  buttonArea: {
+    flex: 1,
+    position: 'absolute',
     zIndex: 2,
-    top: 0,
-    width: WINDOW_WIDTH,
-    height: Math.floor(WINDOW_HEIGHT / 20),
-    backgroundColor: COLORS.PRIMARY,
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-    padding: NAVIGATION_HEIGHT > 0 ? 30 : 40,
-    borderTopRightRadius: 30,
-    borderTopLeftRadius: 30,
-    marginBottom: DEVICE_HEIGHT - WINDOW_HEIGHT - 30,
+    elevation: 10,
+    bottom: NAVIGATION_HEIGHT,
+    width: '100%',
+    backgroundColor: COLORS.WHITE,
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    justifyContent: 'space-around',
+    padding: 10,
+    paddingBottom: 30,
   },
-  buttonText: {
-    ...textStyles.primaryButtonText,
+  primaryButton: {
+    flex: 1,
+    marginHorizontal: 5,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: BORDER_RADIUS.s,
+    padding: SPACING.m,
+    backgroundColor: COLORS.PRIMARY,
+  },
+  secondaryButton: {
+    flex: 1,
+    marginHorizontal: 5,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: BORDER_RADIUS.s,
+    borderWidth: SPACING.xxs,
+    padding: SPACING.m - SPACING.xxs,
+    backgroundColor: COLORS.WHITE,
+    borderColor: COLORS.PRIMARY,
+  },
+  primaryButtonText: {
+    fontFamily: 'Roboto-Black',
+    color: COLORS.WHITE,
+    textTransform: 'uppercase',
+  },
+  secondaryButtonText: {
+    fontFamily: 'Roboto-Black',
+    color: COLORS.PRIMARY,
+    textTransform: 'uppercase',
   },
 });
