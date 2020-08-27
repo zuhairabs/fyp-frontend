@@ -141,7 +141,6 @@ const BookSlotSlider = (props) => {
   };
 
   const getBookingApproval = () => {
-    const uri = videoSlot ? '/booking/video/approval' : '/booking/approval/v2';
     getBookingData().then(({bookingData}) => {
       const body = JSON.stringify({
         bookingData: bookingData,
@@ -149,7 +148,7 @@ const BookSlotSlider = (props) => {
           phone: state.user.phone,
         },
       });
-      Post(`user${uri}`, body, state.token)
+      Post('user/booking/approval/v2', body, state.token)
         .then(() => {
           setModalText('Booking your slot');
           if (editSlot) editBooking();
@@ -163,7 +162,6 @@ const BookSlotSlider = (props) => {
   };
 
   const bookSlot = () => {
-    const uri = videoSlot ? '/book/video' : '/book';
     getBookingData().then(({bookingData}) => {
       const body = JSON.stringify({
         bookingData: bookingData,
@@ -171,7 +169,7 @@ const BookSlotSlider = (props) => {
           phone: state.user.phone,
         },
       });
-      Post(`user${uri}`, body, state.token)
+      Post('user/book', body, state.token)
         .then((data) => {
           navigation.reset({
             index: 1,
@@ -382,7 +380,7 @@ const styles = StyleSheet.create({
   body: {
     flex: 7,
     backgroundColor: '#FFF',
-    marginTop: 20,
+    paddingTop: 20,
     flexDirection: 'column-reverse',
   },
   buttonArea: {
