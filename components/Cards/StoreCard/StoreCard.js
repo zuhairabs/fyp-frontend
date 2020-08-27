@@ -11,6 +11,7 @@ import RatingBadge from '../../RatingBadge/RatingBadge';
 import BookButton from '../../Buttons/BookButton';
 import {removeFav} from '../../../screens/Store/Actions/UserActions';
 import {COLORS, textStyles} from '../../../styles/styles';
+import {navigationRef} from '../../../Navigation/Navigation';
 
 const StoreCard = (props) => {
   const {state, userActions} = useContext(GlobalContext);
@@ -24,7 +25,7 @@ const StoreCard = (props) => {
       <View style={styles.details}>
         <TouchableOpacity
           onPress={() => {
-            props.navigation.navigate('Store', {
+            navigationRef.current?.navigate('Store', {
               store: props.store._id,
               data: props.store,
               searched: props.searched ? true : false,
@@ -44,7 +45,7 @@ const StoreCard = (props) => {
         <TouchableOpacity
           style={styles.cardContent}
           onPress={() => {
-            props.navigation.navigate('Store', {
+            navigationRef.current?.navigate('Store', {
               store: props.store._id,
               data: props.store,
               searched: props.searched ? true : false,
@@ -66,7 +67,7 @@ const StoreCard = (props) => {
           {props.noBookButton ? null : (
             <TouchableOpacity
               onPress={() => {
-                props.navigation.navigate('Store', {
+                navigationRef.current?.navigate('Store', {
                   store: props.store._id,
                   data: props.store,
                   bookSlot: true,

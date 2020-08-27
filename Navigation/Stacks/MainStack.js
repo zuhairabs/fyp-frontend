@@ -12,8 +12,7 @@ import EditProfile from '../../screens/Profile/EditProfile';
 import Profile from '../../screens/Profile/Profile';
 import Favourites from '../../screens/Favourites/Favourites';
 import Categories from '../../screens/Favourites/Categories';
-import Rating from '../../screens/Bookings/Rating';
-import SingleBooking from '../../screens/Bookings/SingleBooking';
+import SingleBooking from '../../screens/Bookings/SingleBooking/SingleBooking';
 import Congratulations from '../../screens/Misc/Congratulations';
 import NotificationsFull from '../../screens/Notifications/NotificationsFull';
 import ResetPassword from '../../screens/Authentication/ResetPassword/ResetPassword';
@@ -88,14 +87,6 @@ export default () => (
       component={SingleBooking}
       options={{
         title: 'Booking',
-        ...SCREEN_HEADER_OPTIONS,
-      }}
-    />
-    <Stack.Screen
-      name="Rating"
-      component={Rating}
-      options={{
-        title: 'Rate the store',
         ...SCREEN_HEADER_OPTIONS,
       }}
     />
