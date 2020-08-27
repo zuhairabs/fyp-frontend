@@ -15,7 +15,6 @@ export default ({channelName, appId}) => {
   const [uid] = useState(generateRandomUid());
   const [localAudio, setLocalAudio] = useState(true);
   const [localVideo, setLocalVideo] = useState(true);
-  const [overlayOpacity, setOverlayOpacity] = useState(0);
 
   // Video controls
   const toggleCameraView = async () => (await _engine).switchCamera();

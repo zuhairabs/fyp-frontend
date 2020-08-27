@@ -1,5 +1,10 @@
 import React, {useEffect, useState} from 'react';
-import {ScrollView, View} from 'react-native';
+import {
+  ScrollView,
+  View,
+  Animated,
+  TouchableWithoutFeedback,
+} from 'react-native';
 import {RtcRemoteView, RtcLocalView, VideoRenderMode} from 'react-native-agora';
 import styles from './ContainerStyles';
 import RemoteOverlay from './RemoteOverlay';
@@ -39,14 +44,27 @@ const RenderRemoteVideos = ({
   localSettings,
 }) => {
   const [timeSeconds, setTimeElapsed] = useState(0);
+  const overlayOpacity = useState(new Animated.Value(0))[0];
+  const [overlayVisible, setOverlayVisibility] = useState(false);
 
-  const tickTimer = () =>
-    setInterval(() => {
-      setTimeElapsed((prev) => ++prev);
-    }, 1000);
+  const tickCallTimer = () =>
+    setInterval(() => setTimeElapsed((prev) => ++prev), 1000);
+
   useEffect(() => {
-    tickTimer();
+    tickCallTimer();
   }, []);
+
+  const changeOverlayOpacity = (opacity) => {
+    Animated.timing(overlayOpacity, {
+      toValue: opacity,
+      duration: 100,
+      useNativeDriver: true,
+    }).start(() => setOverlayVisibility(opacity === 1 ? true : false));
+  };
+
+  const toggleOverlay = () => {
+    changeOverlayOpacity(overlayVisible ? 0 : 1);
+  };
 
   return (
     <>
@@ -56,12 +74,14 @@ const RenderRemoteVideos = ({
         showsHorizontalScrollIndicator={false}>
         {peerIds.map((value, index, array) => {
           return (
-            <RtcRemoteView.SurfaceView
-              style={styles.remoteVideo}
-              uid={value}
-              channelId={channelName}
-              renderMode={VideoRenderMode.Hidden}
-            />
+            <TouchableWithoutFeedback onPress={() => toggleOverlay()}>
+              <RtcRemoteView.SurfaceView
+                style={styles.remoteVideo}
+                uid={value}
+                channelId={channelName}
+                renderMode={VideoRenderMode.Hidden}
+              />
+            </TouchableWithoutFeedback>
           );
         })}
       </ScrollView>
@@ -71,6 +91,8 @@ const RenderRemoteVideos = ({
         name={remoteName}
         overlayFunctions={overlayFunctions}
         localSettings={localSettings}
+        overlayOpacity={overlayOpacity}
+        toggleOverlay={toggleOverlay}
       />
     </>
   );

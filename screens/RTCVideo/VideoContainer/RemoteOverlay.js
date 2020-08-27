@@ -1,8 +1,14 @@
 import React from 'react';
-import {Text, View, StyleSheet} from 'react-native';
+import {
+  Text,
+  View,
+  StyleSheet,
+  Animated,
+  TouchableWithoutFeedback,
+  TouchableOpacity,
+} from 'react-native';
 import {textStyles} from '../../../styles/styles';
 import Icon from 'react-native-vector-icons/dist/MaterialIcons';
-import {TouchableOpacity} from 'react-native-gesture-handler';
 
 String.prototype.formatTimeString = function () {
   var sec_num = parseInt(this, 10);
@@ -43,24 +49,34 @@ const OverlayText = ({text, size = 'medium'}) => (
   </Text>
 );
 
-export default ({time, title, name, overlayFunctions, localSettings}) => (
-  <View style={styles.remoteOverlay}>
-    <View>
-      <OverlayText text={name} size="large" />
-      <OverlayText text={title} />
-      <Capsule title={time.toString().formatTimeString()} />
-    </View>
-    <View>
-      <OverlayButton
-        iconName={localSettings.localVideo ? 'videocam' : 'videocam-off'}
-        buttonFunction={overlayFunctions.toggleLocalVideo}
-      />
-      <OverlayButton
-        iconName={localSettings.localAudio ? 'mic' : 'mic-off'}
-        buttonFunction={overlayFunctions.toggleLocalAudio}
-      />
-    </View>
-  </View>
+export default ({
+  time,
+  title,
+  name,
+  overlayFunctions,
+  localSettings,
+  overlayOpacity,
+  toggleOverlay,
+}) => (
+  <TouchableWithoutFeedback onPress={() => toggleOverlay()}>
+    <Animated.View style={{...styles.remoteOverlay, opacity: overlayOpacity}}>
+      <View>
+        <OverlayText text={name} size="large" />
+        <OverlayText text={title} />
+        <Capsule title={time.toString().formatTimeString()} />
+      </View>
+      <View>
+        <OverlayButton
+          iconName={localSettings.localVideo ? 'videocam' : 'videocam-off'}
+          buttonFunction={overlayFunctions.toggleLocalVideo}
+        />
+        <OverlayButton
+          iconName={localSettings.localAudio ? 'mic' : 'mic-off'}
+          buttonFunction={overlayFunctions.toggleLocalAudio}
+        />
+      </View>
+    </Animated.View>
+  </TouchableWithoutFeedback>
 );
 
 const styles = StyleSheet.create({
