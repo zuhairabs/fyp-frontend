@@ -4,7 +4,7 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
 } from 'react-native-gesture-handler';
-
+import {navigationRef} from '../../../Navigation/Navigation';
 import Icon from 'react-native-vector-icons/dist/MaterialIcons';
 import {textStyles, COLORS} from '../../../styles/styles';
 
@@ -67,7 +67,11 @@ const BookingCardSmall = (props) => {
             </Text>
 
             <View style={styles.time}>
-              <Icon name="access-time" size={16} color="#666" />
+              {props.booking.type === 'virtual' ? (
+                <Icon name="videocam" size={16} color={COLORS.SECONDARY} />
+              ) : (
+                <Icon name="access-time" size={16} color={COLORS.SECONDARY} />
+              )}
               <Text style={styles.timeText}>
                 {new Date(props.booking.start)
                   .toLocaleTimeString('en-US', {
@@ -102,7 +106,7 @@ const BookingCardSmall = (props) => {
           <View style={styles.extension}>
             <TouchableOpacity
               onPress={() => {
-                props.navigation.navigate('SingleBooking', {
+                navigationRef.current?.navigate('SingleBooking', {
                   archived: true,
                   booking: props.booking._id,
                 });
