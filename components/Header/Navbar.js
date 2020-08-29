@@ -11,7 +11,7 @@ const Navbar = (props) => {
     return (
       <View style={Styles.navbar}>
         <View style={Styles.navbarLogo}>
-          <ShopOutLogo width={120} height={60} />
+          <ShopOutLogo width={80} height={60} />
         </View>
         <View style={Styles.navbarLinks}>
           <NotificationDropdown navigation={props.navigation} />
@@ -28,7 +28,7 @@ const Navbar = (props) => {
     return (
       <View style={Styles.navbarOnlyLogo}>
         <View style={Styles.navbarLogo}>
-          <ShopOutLogo width={120} height={60} />
+          <ShopOutLogo width={80} height={60} />
         </View>
       </View>
     );
@@ -62,7 +62,8 @@ const Styles = StyleSheet.create({
     paddingRight: 20,
   },
   navbarLogo: {
-    flex: 4,
+    flex: 3,
+    marginLeft: 20,
     flexDirection: 'row',
     justifyContent: 'flex-start',
   },
