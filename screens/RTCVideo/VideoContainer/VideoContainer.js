@@ -6,13 +6,10 @@ import styles from './ContainerStyles';
 import {BottomButton, EndCallButton} from './Controls';
 import {RenderVideos} from './RenderVideos';
 
-const generateRandomUid = () => Math.floor(Math.random() * 100);
-
-export default ({channelName, appId}) => {
+export default ({channelName, appId, uid}) => {
   const _engine = RtcEngine.create(appId);
   const [joinSucceed, setJoinSucceed] = useState(false);
   const [peerIds, setPeerIds] = useState([]);
-  const [uid] = useState(generateRandomUid());
   const [localAudio, setLocalAudio] = useState(true);
   const [localVideo, setLocalVideo] = useState(true);
 

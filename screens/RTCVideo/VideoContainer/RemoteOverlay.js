@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Text,
   View,
@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import {textStyles} from '../../../styles/styles';
 import Icon from 'react-native-vector-icons/dist/MaterialIcons';
+import {getSingleParticipantInfo} from '../Controllers/Participants';
 
 String.prototype.formatTimeString = function () {
   var sec_num = parseInt(this, 10);
@@ -51,33 +52,47 @@ const OverlayText = ({text, size = 'medium'}) => (
 
 export default ({
   time,
-  title,
-  name,
   overlayFunctions,
   localSettings,
   overlayOpacity,
   toggleOverlay,
-}) => (
-  <TouchableWithoutFeedback onPress={() => toggleOverlay()}>
-    <Animated.View style={{...styles.remoteOverlay, opacity: overlayOpacity}}>
-      <View>
-        <OverlayText text={name} size="large" />
-        <OverlayText text={title} />
-        <Capsule title={time.toString().formatTimeString()} />
-      </View>
-      <View>
-        <OverlayButton
-          iconName={localSettings.localVideo ? 'videocam' : 'videocam-off'}
-          buttonFunction={overlayFunctions.toggleLocalVideo}
-        />
-        <OverlayButton
-          iconName={localSettings.localAudio ? 'mic' : 'mic-off'}
-          buttonFunction={overlayFunctions.toggleLocalAudio}
-        />
-      </View>
-    </Animated.View>
-  </TouchableWithoutFeedback>
-);
+  uid,
+}) => {
+  const [participantInfo, setParticipantInfo] = useState({
+    title: 'Guest user',
+    subtitle: null,
+  });
+  const getParticipantInformation = async () => {
+    const participantInfo = await getSingleParticipantInfo(channelName, uid);
+    setParticipantInfo(participantInfo);
+  };
+
+  useEffect(() => {
+    getParticipantInformation();
+  }, []);
+
+  return (
+    <TouchableWithoutFeedback onPress={() => toggleOverlay()}>
+      <Animated.View style={{...styles.remoteOverlay, opacity: overlayOpacity}}>
+        <View>
+          <OverlayText text={participantInfo.title} size="large" />
+          <OverlayText text={participantInfo.subtitle} />
+          <Capsule title={time.toString().formatTimeString()} />
+        </View>
+        <View>
+          <OverlayButton
+            iconName={localSettings.localVideo ? 'videocam' : 'videocam-off'}
+            buttonFunction={overlayFunctions.toggleLocalVideo}
+          />
+          <OverlayButton
+            iconName={localSettings.localAudio ? 'mic' : 'mic-off'}
+            buttonFunction={overlayFunctions.toggleLocalAudio}
+          />
+        </View>
+      </Animated.View>
+    </TouchableWithoutFeedback>
+  );
+};
 
 const styles = StyleSheet.create({
   remoteOverlay: {
