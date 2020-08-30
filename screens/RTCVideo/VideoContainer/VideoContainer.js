@@ -51,9 +51,13 @@ export default ({channelName, appId, uid}) => {
       console.log('UserJoined', {uid, elapsed});
       // check for new user
       if (peerIds.indexOf(uid) === -1) {
-        setPeerIds((prev) => {
-          return [...prev, uid];
-        });
+        // setPeerIds((prev) => {
+        //   return [...prev, uid];
+        // });
+        /* using single id for one to one video call
+        multiple not allowed */
+
+        setPeerIds([uid]);
       }
     });
     (await _engine).addListener('UserOffline', (uid, reason) => {

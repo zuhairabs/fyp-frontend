@@ -57,6 +57,7 @@ export default ({
   overlayOpacity,
   toggleOverlay,
   uid,
+  channelName,
 }) => {
   const [participantInfo, setParticipantInfo] = useState({
     title: 'Guest user',

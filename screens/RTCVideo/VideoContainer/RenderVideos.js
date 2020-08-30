@@ -87,6 +87,7 @@ const RenderRemoteVideos = ({
                 overlayOpacity={overlayOpacity}
                 toggleOverlay={toggleOverlay}
                 uid={value}
+                channelName={channelName}
               />
             </>
           );
