@@ -6,7 +6,7 @@ import {
   CardStyleInterpolators,
 } from '@react-navigation/stack';
 // SCREEN IMPORTS
-import Home from '../../screens/Home/Home';
+import Home from '../../screens/Home/VideoHome';
 import Store from '../../screens/Store/Store';
 import EditProfile from '../../screens/Profile/EditProfile';
 import Profile from '../../screens/Profile/Profile';

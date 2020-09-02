@@ -12,16 +12,17 @@ import {textStyles} from '../../styles/styles';
 import {URI} from '../../api/constants';
 import {Post} from '../../api/http';
 
-const getFeaturedVideos = () =>
+const getFeaturedVideos = (videoUrl) =>
   new Promise((resolve, reject) => {
-    fetch(`${URI}/user/video/featured`, {
+    fetch(`${URI}/user/${videoUrl}`, {
       method: 'GET',
       headers: {
         'content-type': 'application/JSON',
       },
     }).then(
       (res) => {
-        if (res.status === 200) res.json().then((data) => resolve(data.video));
+        if (res.status === 200)
+          res.json().then((data) => resolve(data.videos || data.video));
         else reject('Not found');
       },
       (e) => {
@@ -36,7 +37,7 @@ const CardScrollSmall = (props) => {
 
   useEffect(() => {
     if (props.videos) {
-      getFeaturedVideos()
+      getFeaturedVideos(props.item.uri)
         .then((data) => {
           setStores(data);
           setLoading(false);
@@ -67,13 +68,14 @@ const CardScrollSmall = (props) => {
           <ActivityIndicator size="large" color="#0062FF" />
         ) : (
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-            {stores.map((store) => {
-              return props.videos ? (
-                <VideoCard key={store._id} video={store} />
-              ) : (
-                <CardSmall key={store._id} store={store} />
-              );
-            })}
+            {stores &&
+              stores.map((store) => {
+                return props.videos ? (
+                  <VideoCard key={store._id} video={store} />
+                ) : (
+                  <CardSmall key={store._id} store={store} />
+                );
+              })}
           </ScrollView>
         )}
       </View>

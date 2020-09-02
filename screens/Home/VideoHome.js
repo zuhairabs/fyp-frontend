@@ -35,7 +35,7 @@ import {Post} from '../../api/http';
 
 const DEVICE_HEIGHT = Dimensions.get('window').height;
 
-const Home = ({navigation}) => {
+export default ({navigation}) => {
   const {authActions} = useContext(GlobalContext);
 
   const [location, setLocation] = useState({});
@@ -96,7 +96,7 @@ const Home = ({navigation}) => {
       response.forEach((element) => {
         res.push({
           title: element.name,
-          uri: `/category?name=${element.name}`,
+          uri: `video/category?name=${element.name.toLowerCase()}`,
         });
       });
       setCategories(res);
@@ -131,22 +131,17 @@ const Home = ({navigation}) => {
             <Suspense fallback={<ActivityIndicator />}>
               <CategoryScroll categories={categoryList} />
             </Suspense>
-            <CardScroll />
+            {/* <CardScroll /> */}
             <Suspense fallback={<ActivityIndicator />}>
               <CardScrollSmall
-                item={{title: 'featured videos', uri: '/video/featured'}}
+                item={{title: 'featured videos', uri: 'video/featured'}}
                 videos={true}
               />
             </Suspense>
             <Suspense fallback={<ActivityIndicator />}>
               <CardScrollSmall
-                item={{title: 'near me', uri: '/home/nearest'}}
-                location={location}
-              />
-            </Suspense>
-            <Suspense fallback={<ActivityIndicator />}>
-              <CardScrollSmall
-                item={{title: 'new onboard', uri: '/home/new'}}
+                item={{title: 'new onboard', uri: 'video/new'}}
+                videos={true}
               />
             </Suspense>
             <FlatList
@@ -155,11 +150,7 @@ const Home = ({navigation}) => {
               data={dataList}
               renderItem={({item}) => (
                 <Suspense fallback={<ActivityIndicator />}>
-                  <CardScrollSmall
-                    item={item}
-                    multiParam={true}
-                    location={location}
-                  />
+                  <CardScrollSmall item={item} videos={true} />
                 </Suspense>
               )}
             />
@@ -209,5 +200,3 @@ const styles = StyleSheet.create({
     ...textStyles.paragraphMediumBold,
   },
 });
-
-export default Home;
