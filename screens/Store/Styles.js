@@ -11,7 +11,7 @@ export const headerHeight = Math.floor(WINDOW_HEIGHT / 2.8);
 export const styles = StyleSheet.create({
   screenContainer: {
     paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
-    height: Dimensions.get('screen').height,
+    height: DEVICE_HEIGHT,
     backgroundColor: COLORS.WHITE,
   },
   contentContainer: {
