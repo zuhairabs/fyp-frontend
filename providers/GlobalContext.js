@@ -2,8 +2,6 @@ import React, {createContext, useReducer, useMemo} from 'react';
 import AsyncStorage from '@react-native-community/async-storage';
 import messaging from '@react-native-firebase/messaging';
 import {URI} from '../api/constants';
-import {ToastAndroid, Alert} from 'react-native';
-import {Post} from '../api/http';
 export const GlobalContext = createContext();
 
 export const GlobalContextProvider = (props) => {
@@ -93,7 +91,7 @@ export const GlobalContextProvider = (props) => {
               };
 
               try {
-                fetch(`${URI}/user/login`, requestOptions).then((response) => {
+                fetch(`${URI}/auth/login`, requestOptions).then((response) => {
                   if (response.status === 200) {
                     response.json().then((data) => {
                       AsyncStorage.setItem('jwt', data.token.toString());
@@ -166,7 +164,7 @@ export const GlobalContextProvider = (props) => {
           };
 
           try {
-            fetch(`${URI}/user/signup`, requestOptions).then((response) => {
+            fetch(`${URI}/auth/signup`, requestOptions).then((response) => {
               if (response.status === 200) {
                 response.json().then((data) => {
                   AsyncStorage.setItem('jwt', data.token.toString());
@@ -217,7 +215,7 @@ export const GlobalContextProvider = (props) => {
                   },
                 }),
               };
-              fetch(`${URI}/user/verify/refresh`, requestOptions).then(
+              fetch(`${URI}/auth/verify/refresh`, requestOptions).then(
                 (response) => {
                   if (response.status === 200) {
                     response.json().then(async (data) => {

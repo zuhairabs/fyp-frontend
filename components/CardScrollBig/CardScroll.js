@@ -37,7 +37,7 @@ const CardScroll = (props) => {
 
   const getFeaturedStores = () => {
     const body = JSON.stringify({city: 'Mumbai'});
-    Post('user/home/featured', body).then(
+    Post('app/home/store/featured', body).then(
       (data) => {
         setStores(data.response);
         setLoading(false);

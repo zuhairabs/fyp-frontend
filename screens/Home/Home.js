@@ -29,7 +29,6 @@ const CategoryScroll = lazy(() =>
 );
 
 import {GlobalContext} from '../../providers/GlobalContext';
-import {URI} from '../../api/constants';
 import {textStyles, COLORS} from '../../styles/styles';
 import {Post} from '../../api/http';
 
@@ -77,7 +76,7 @@ const Home = ({navigation}) => {
 
   const getCategories = () => {
     return new Promise((resolve, reject) => {
-      Post('user/home/categories').then(
+      Post('app/home/store/category/list').then(
         (data) => {
           resolve(data.response);
         },
@@ -96,7 +95,7 @@ const Home = ({navigation}) => {
       response.forEach((element) => {
         res.push({
           title: element.name,
-          uri: `/category?name=${element.name}`,
+          uri: `app/home/store/category/single?name=${element.name}`,
         });
       });
       setCategories(res);
@@ -127,26 +126,29 @@ const Home = ({navigation}) => {
 
         {locationPermissionStatus ? (
           <>
-            <Location location={location} />
+            {/* <Location location={location} /> */}
             <Suspense fallback={<ActivityIndicator />}>
               <CategoryScroll categories={categoryList} />
             </Suspense>
             <CardScroll />
             <Suspense fallback={<ActivityIndicator />}>
               <CardScrollSmall
-                item={{title: 'featured videos', uri: '/video/featured'}}
+                item={{
+                  title: 'featured videos',
+                  uri: 'app/home/video/featured',
+                }}
                 videos={true}
               />
             </Suspense>
             <Suspense fallback={<ActivityIndicator />}>
               <CardScrollSmall
-                item={{title: 'near me', uri: '/home/nearest'}}
+                item={{title: 'near me', uri: 'app/home/store/nearest'}}
                 location={location}
               />
             </Suspense>
             <Suspense fallback={<ActivityIndicator />}>
               <CardScrollSmall
-                item={{title: 'new onboard', uri: '/home/new'}}
+                item={{title: 'new onboard', uri: 'app/home/store/new'}}
               />
             </Suspense>
             <FlatList

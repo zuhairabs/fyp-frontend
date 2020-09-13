@@ -36,28 +36,19 @@ const CardScrollSmall = (props) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (props.videos) {
-      getFeaturedVideos(props.item.uri)
-        .then((data) => {
-          setStores(data);
-          setLoading(false);
-        })
-        .catch((e) => console.log(e));
-    } else {
-      let uri = `user${props.item.uri}`;
-      if (props.location) {
-        const lat = props.location.lat;
-        const long = props.location.long;
-        if (props.multiParam)
-          uri = `user${props.item.uri}&lat=${lat}&lng=${long}`;
-        else uri = `user${props.item.uri}?lat=${lat}&lng=${long}`;
-      }
-      const body = JSON.stringify({city: 'Mumbai'});
-      Post(uri, body).then((data) => {
-        setStores(data.response);
-        setLoading(false);
-      });
+    let uri = `${props.item.uri}`;
+    if (props.location) {
+      const {lat, long} = props.location;
+      const locationParams = `lat=${lat}&lng=${long}`;
+      if (props.multiParam) uri = `${uri}&${locationParams}`;
+      else uri = `${uri}?${locationParams}`;
     }
+    const body = JSON.stringify({city: 'Mumbai'});
+    Post(uri, body).then((data) => {
+      setStores(data.response);
+      if (props.videos) console.log(data.videos);
+      setLoading(false);
+    });
   }, [props.location]);
 
   return (

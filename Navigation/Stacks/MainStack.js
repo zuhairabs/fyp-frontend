@@ -6,7 +6,7 @@ import {
   CardStyleInterpolators,
 } from '@react-navigation/stack';
 // SCREEN IMPORTS
-import Home from '../../screens/Home/VideoHome';
+import Home from '../../screens/Home/Home';
 import Store from '../../screens/Store/Store';
 import EditProfile from '../../screens/Profile/EditProfile';
 import Profile from '../../screens/Profile/Profile';
@@ -16,7 +16,7 @@ import SingleBooking from '../../screens/Bookings/SingleBooking/SingleBooking';
 import Congratulations from '../../screens/Misc/Congratulations';
 import NotificationsFull from '../../screens/Notifications/NotificationsFull';
 import ResetPassword from '../../screens/Authentication/ResetPassword/ResetPassword';
-import SearchFull from '../../screens/Misc/SearchFull';
+import SearchFull from '../../screens/Search';
 import Support from '../../screens/Misc/Support';
 import Success from '../../screens/Authentication/ResetPassword/Success';
 import Bookings from '../../screens/Bookings/Bookings';

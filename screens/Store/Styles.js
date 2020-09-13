@@ -67,11 +67,10 @@ export const styles = StyleSheet.create({
     ...textStyles.paragraphLargeBold,
   },
   safetyContainer: {
-    marginTop: 10,
+    marginVertical: 10,
     flexDirection: 'row',
     justifyContent: 'space-evenly',
     alignItems: 'center',
-    marginBottom: 10,
   },
   safetyElement: {
     flexDirection: 'row',
