@@ -51,7 +51,7 @@ const Store = (props) => {
 
   const fetchMissingData = () => {
     const body = JSON.stringify({storeData: {_id: store}});
-    Post('store/fetch/details', body).then((missingData) => {
+    Post('app/store/fetch/details', body).then((missingData) => {
       setStoreData((prev) => ({...prev, ...missingData.store}));
     });
   };

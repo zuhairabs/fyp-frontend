@@ -9,7 +9,7 @@ const WINDOW_WIDTH = Dimensions.get('window').width;
 const fetchImages = (_id) => {
   return new Promise((resolve, reject) => {
     const body = JSON.stringify({storeData: {_id}});
-    Post('store/fetch/images', body)
+    Post('app/store/fetch/images', body)
       .then((data) => resolve(data))
       .catch((e) => reject(e));
   });
