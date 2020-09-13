@@ -95,7 +95,8 @@ const Home = ({navigation}) => {
       response.forEach((element) => {
         res.push({
           title: element.name,
-          uri: `app/home/store/category/single?name=${element.name}`,
+          uri: 'app/home/store/category/single',
+          category: element.name,
         });
       });
       setCategories(res);
@@ -126,7 +127,7 @@ const Home = ({navigation}) => {
 
         {locationPermissionStatus ? (
           <>
-            {/* <Location location={location} /> */}
+            <Location location={location} />
             <Suspense fallback={<ActivityIndicator />}>
               <CategoryScroll categories={categoryList} />
             </Suspense>
@@ -159,7 +160,7 @@ const Home = ({navigation}) => {
                 <Suspense fallback={<ActivityIndicator />}>
                   <CardScrollSmall
                     item={item}
-                    multiParam={true}
+                    category={item.category}
                     location={location}
                   />
                 </Suspense>

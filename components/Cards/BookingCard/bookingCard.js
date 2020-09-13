@@ -1,13 +1,5 @@
 import React, {useState, useContext} from 'react';
-import {
-  Text,
-  View,
-  StyleSheet,
-  Image,
-  Dimensions,
-  Alert,
-  ToastAndroid,
-} from 'react-native';
+import {Text, View, Image, Alert, ToastAndroid} from 'react-native';
 import {
   TouchableOpacity,
   TouchableWithoutFeedback,
@@ -16,7 +8,8 @@ import Icon from 'react-native-vector-icons/dist/MaterialIcons';
 import Share from 'react-native-share';
 import {GlobalContext} from '../../../providers/GlobalContext';
 import {Post} from '../../../api/http';
-import {textStyles, COLORS} from '../../../styles/styles';
+import {COLORS} from '../../../styles/styles';
+import styles from './Styles';
 
 const mlist = [
   'January',
@@ -70,7 +63,7 @@ const BookingCard = (props) => {
         start: props.booking.start,
       },
     });
-    Post('user/booking/cancel', body, state.token).then(() => {
+    Post('booking/actions/cancel', body, state.token).then(() => {
       ToastAndroid.show('Booking deleted successfully', ToastAndroid.LONG);
       props.removeBooking(props.booking._id);
     });
@@ -85,7 +78,7 @@ const BookingCard = (props) => {
             extended ? setExtended(false) : setExtended(true);
           }}>
           <View style={styles.dateContainer}>
-            <Text style={styles.date}>
+            <Text style={styles.date} numberOfLines={1}>
               {new Date(props.booking.start).getUTCDate()}
             </Text>
             <Text style={styles.date} numberOfLines={1}>
@@ -153,6 +146,7 @@ const BookingCard = (props) => {
                   store: props.booking.store,
                   bookSlot: true,
                   editSlot: true,
+                  videoSlot: props.booking.type === 'virtual',
                   previousBooking: props.booking,
                 });
               }}>
@@ -195,99 +189,5 @@ const BookingCard = (props) => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  card: {
-    width: Dimensions.get('window').width - 40,
-    marginBottom: 30,
-  },
-  container: {
-    flex: 1,
-    borderRadius: 15,
-    backgroundColor: COLORS.WHITE,
-    elevation: 3,
-    zIndex: 0,
-  },
-  mainCard: {
-    flex: 2,
-    width: '100%',
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 8,
-  },
-  dateContainer: {
-    flex: 2,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRightWidth: 1,
-    borderColor: COLORS.BORDER_LIGHT,
-  },
-  date: {
-    color: COLORS.SECONDARY,
-    ...textStyles.paragraphSmallBold,
-  },
-  imageContainer: {
-    flex: 2,
-    marginLeft: 20,
-    height: 70,
-    width: 70,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  image: {
-    width: 70,
-    height: 70,
-    borderRadius: 70 / 2,
-  },
-  details: {
-    flex: 5,
-    padding: 20,
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-  },
-  header: {
-    ...textStyles.paragraphLarge,
-    color: COLORS.SECONDARY,
-  },
-  time: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  timeText: {
-    ...textStyles.paragraphSmall,
-    color: COLORS.SECONDARY,
-    marginLeft: 10,
-  },
-  extension: {
-    flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    borderBottomLeftRadius: 15,
-    borderBottomRightRadius: 15,
-    borderTopWidth: 1,
-    borderColor: COLORS.BORDER_LIGHT,
-    width: '100%',
-    paddingVertical: 10,
-  },
-  extensionTab: {
-    flex: 1,
-    paddingVertical: 10,
-    paddingHorizontal: 30,
-    borderRightWidth: 1,
-    borderColor: COLORS.BORDER_LIGHT,
-  },
-  extensionTabLast: {
-    flex: 1,
-    paddingVertical: 10,
-    paddingHorizontal: 30,
-  },
-  tabText: {
-    color: COLORS.SECONDARY,
-    ...textStyles.paragraphSmall,
-  },
-});
 
 export default BookingCard;

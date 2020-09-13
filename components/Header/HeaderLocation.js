@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import Icon from 'react-native-vector-icons/dist/MaterialIcons';
-import {URI} from '../../api/constants';
+import {BASE_URI} from '../../api/constants';
 
 import {COLORS, textStyles} from '../../styles/styles';
 
@@ -11,7 +11,7 @@ const Location = (params) => {
     return new Promise((resolve, reject) => {
       const long = params.location.long,
         lat = params.location.lat;
-      fetch(`${URI}/user/geocoding/reverse?lat=${lat}&long=${long}`, {
+      fetch(`${BASE_URI}/external/geocoding/reverse?lat=${lat}&long=${long}`, {
         method: 'GET',
         port: null,
         async: true,

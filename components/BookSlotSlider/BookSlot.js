@@ -93,7 +93,7 @@ const BookSlotSlider = (props) => {
         phone: state.user.phone,
       },
     });
-    Post('user/booking/edit', body, state.token)
+    Post('booking/actions/edit', body, state.token)
       .then(() => {
         navigation.reset({
           index: 1,
@@ -128,7 +128,7 @@ const BookSlotSlider = (props) => {
           phone: state.user.phone,
         },
       });
-      Post('user/book', body, state.token)
+      Post('booking/actions/create', body, state.token)
         .then((data) => {
           setModalText('Booking created');
           cancelPreviousBooking(data.booking);
@@ -148,7 +148,7 @@ const BookSlotSlider = (props) => {
           phone: state.user.phone,
         },
       });
-      Post('user/booking/approval/v2', body, state.token)
+      Post('booking/actions/approve', body, state.token)
         .then(() => {
           setModalText('Booking your slot');
           if (editSlot) editBooking();
@@ -169,7 +169,7 @@ const BookSlotSlider = (props) => {
           phone: state.user.phone,
         },
       });
-      Post('user/book', body, state.token)
+      Post('booking/actions/create', body, state.token)
         .then((data) => {
           navigation.reset({
             index: 1,

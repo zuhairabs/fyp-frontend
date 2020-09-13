@@ -1,5 +1,6 @@
-export const URI = 'https://api.shopout.co.in/user';
-export const RTC_URI = 'https://api.shopout.co.in/rtc-video';
+export const BASE_URI = 'https://api.shopout.co.in';
+export const URI = `${BASE_URI}/user`;
+export const RTC_URI = `${BASE_URI}/rtc-video`;
 
 export const ERROR_MESSAGE = {
   401: 'Unauthorized access',

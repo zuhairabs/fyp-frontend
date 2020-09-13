@@ -9,40 +9,16 @@ import {
 import CardSmall from './CardSmall';
 import VideoCard from './VideoCard';
 import {textStyles} from '../../styles/styles';
-import {URI} from '../../api/constants';
 import {Post} from '../../api/http';
-
-const getFeaturedVideos = (videoUrl) =>
-  new Promise((resolve, reject) => {
-    fetch(`${URI}/user/${videoUrl}`, {
-      method: 'GET',
-      headers: {
-        'content-type': 'application/JSON',
-      },
-    }).then(
-      (res) => {
-        if (res.status === 200)
-          res.json().then((data) => resolve(data.videos || data.video));
-        else reject('Not found');
-      },
-      (e) => {
-        reject(e);
-      },
-    );
-  });
 
 const CardScrollSmall = (props) => {
   const [stores, setStores] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    let uri = `${props.item.uri}`;
-    if (props.location) {
-      const {lat, long} = props.location;
-      const locationParams = `lat=${lat}&lng=${long}`;
-      if (props.multiParam) uri = `${uri}&${locationParams}`;
-      else uri = `${uri}?${locationParams}`;
-    }
+    const {lat, long} = props.location || {lat: null, long: null};
+    const params = `?name=${props.category}&lat=${lat}&lng=${long}`;
+    let uri = `${props.item.uri}${params}`;
     const body = JSON.stringify({city: 'Mumbai'});
     Post(uri, body).then((data) => {
       setStores(data.response);
