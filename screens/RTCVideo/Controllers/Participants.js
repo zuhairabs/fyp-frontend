@@ -1,11 +1,11 @@
-import {Post} from '../../../api/http';
-const allParticipantsUri = 'user/video-rtc/users';
-const singleParticipantUri = 'user/video-rtc/participant/fetch';
+import {PostBaseRoute} from '../../../api/http';
+const allParticipantsUri = 'rtc-video/fetch/all';
+const singleParticipantUri = 'rtc-video/fetch/single';
 
 export const getChannelParticipantsInfo = (channelName) =>
   new Promise((resolve, reject) => {
     const body = JSON.stringify({channelName});
-    Post(allParticipantsUri, body)
+    PostBaseRoute(allParticipantsUri, body)
       .then((data) => resolve(data))
       .catch((e) => reject(e));
   });
@@ -16,7 +16,7 @@ export const getSingleParticipantInfo = async (channelName, uid) =>
       channelName,
       uid,
     });
-    Post(singleParticipantUri, body)
+    PostBaseRoute(singleParticipantUri, body)
       .then((data) => resolve(data))
       .catch((e) => reject(e));
   });
