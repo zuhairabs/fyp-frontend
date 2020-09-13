@@ -1,10 +1,9 @@
-import AsyncStorage from '@react-native-community/async-storage';
 import {ToastAndroid, Alert} from 'react-native';
 import {Post} from '../../../api/http';
 
 export const addFav = (userActions, state, store) =>
   new Promise((resolve, reject) => {
-    makeRequest('addfavouritestore', state, store)
+    makeRequest('add', state, store)
       .then(() => {
         userActions.addFav(store);
         ToastAndroid.show('Added to favourites', ToastAndroid.SHORT);
@@ -20,7 +19,7 @@ export const removeFav = (userActions, state, store) =>
   new Promise((resolve, reject) => {
     showRemoveFavAlert()
       .then(() => {
-        makeRequest('removefavouritestore', state, store)
+        makeRequest('remove', state, store)
           .then(() => {
             userActions.removeFav(store);
             ToastAndroid.show('Removed from favourites', ToastAndroid.SHORT);
@@ -31,7 +30,7 @@ export const removeFav = (userActions, state, store) =>
       .catch(() => reject());
   });
 
-const makeRequest = (uri, state, store) =>
+const makeRequest = (action, state, store) =>
   new Promise((resolve, reject) => {
     const body = JSON.stringify({
       storeData: {
@@ -41,7 +40,7 @@ const makeRequest = (uri, state, store) =>
         phone: state.user.phone,
       },
     });
-    Post(`user/${uri}`, body, state.token)
+    Post(`app/favourite/${action}/store`, body, state.token)
       .then((data) => resolve())
       .catch(() => reject());
   });

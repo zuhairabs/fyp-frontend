@@ -153,7 +153,7 @@ const EditProfile = (props) => {
         avatar: avatar,
       },
     });
-    Post('user/updateprofile', body, state.token).then(() => {
+    Post('profile/update', body, state.token).then(() => {
       user.firstName = firstName;
       user.lastName = lastName;
       user.email = email;

@@ -22,7 +22,7 @@ export const fetchNotifications = (setNotifications = null) => {
           phone: user.phone,
         },
       });
-      Post('user/notifications', body, token)
+      Post('profile/fetch/notifications', body, token)
         .then(async (data) => {
           user.notifications = data.notifications;
           await AsyncStorage.setItem('user', JSON.stringify(user));

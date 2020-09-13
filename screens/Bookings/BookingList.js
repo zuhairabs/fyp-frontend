@@ -1,18 +1,9 @@
-import React, {useState, useEffect, useContext} from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Dimensions,
-  ActivityIndicator,
-  Image,
-} from 'react-native';
+import React from 'react';
+import {View, Text, StyleSheet, Dimensions, Image} from 'react-native';
 import {ScrollView} from 'react-native-gesture-handler';
 import BookingCardSmall from '../../components/Cards/BookingCard/bookingCardSmall';
 import BookingCard from '../../components/Cards/BookingCard/bookingCard';
-import {GlobalContext} from '../../providers/GlobalContext';
 import {COLORS, textStyles} from '../../styles/styles';
-import {Post} from '../../api/http';
 
 const mlist = [
   'January',

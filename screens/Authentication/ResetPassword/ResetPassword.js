@@ -218,7 +218,7 @@ const ResetPassword = (props) => {
     loadingModal.current?.open();
     setModalText('Sending OTP');
     if (phone) {
-      fetch(`${URI}/user/verification/phoneregistered`, {
+      fetch(`${URI}/auth/verify/phone`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

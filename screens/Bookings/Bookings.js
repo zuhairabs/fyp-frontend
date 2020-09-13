@@ -24,12 +24,12 @@ const Bookings = ({navigation}) => {
     {
       title: 'Upcoming',
       smallCards: false,
-      uri: 'user/bookings',
+      uri: 'booking/fetch/all',
     },
     {
       title: 'Previous',
       smallCards: true,
-      uri: 'user/bookings/archived',
+      uri: 'booking/fetch/all/archived',
     },
   ]);
   const [selectedTab, setSelectedTab] = useState(0);

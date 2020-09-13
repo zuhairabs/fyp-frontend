@@ -40,7 +40,7 @@ const Rating = ({booking}) => {
         params: parameters,
       },
     });
-    Post('user/review/submit', body).then(() => {
+    Post('app/review/submit', body).then(() => {
       ToastAndroid.show('Thank You!', ToastAndroid.SHORT);
       navigationRef.current?.navigate('Home');
     });

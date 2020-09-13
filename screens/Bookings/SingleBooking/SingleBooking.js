@@ -10,8 +10,8 @@ import LoadingContainer from './Container/LoadingContainer';
 import styles from './Styles';
 import Booking from './Booking';
 
-const archivedUri = 'user/booking/archived/fetchone';
-const upcomingUri = 'user/booking/fetchone';
+const archivedUri = 'booking/fetch/single/archived';
+const upcomingUri = 'booking/fetch/single';
 
 const SingleBooking = (props) => {
   const {state} = useContext(GlobalContext);

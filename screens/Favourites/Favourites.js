@@ -8,14 +8,12 @@ import {
   StatusBar,
   Dimensions,
   ActivityIndicator,
-  Alert,
   Image,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/dist/MaterialIcons';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 
 import {GlobalContext} from '../../providers/GlobalContext';
-import {URI} from '../../api/constants';
 
 import StatusBarWhite from '../../components/StatusBar';
 import StoreCard from '../../components/Cards/StoreCard/StoreCard';
@@ -41,13 +39,15 @@ const Favourites = (props) => {
         phone: state.user.phone,
       },
     });
-    Post('user/allfavourites', body, state.token).then((data) => {
-      setResults(data.response.favouriteStores);
-      setAll(data.response.favouriteStores);
+    Post('app/favourite/all/stores', body, state.token).then((data) => {
+      const favs = data.response.favouriteStores;
+      console.log(data);
+      setResults(favs);
+      setAll(favs);
       setLoading(false);
       setCurrent('all');
       let temp = [];
-      data.response.favouriteStores.forEach((fav) => {
+      favs.forEach((fav) => {
         if (temp.indexOf(fav.business.category) === -1)
           temp.push(fav.business.category);
       });
