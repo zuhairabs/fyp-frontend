@@ -117,19 +117,6 @@ const Profile = ({navigation}) => {
             <TouchableOpacity
               style={styles.button}
               onPress={() => {
-                navigation.navigate('RTCVideo');
-              }}>
-              <View style={styles.buttonIcon}>
-                <Image
-                  source={require('./menu-icons/help_outline-24px.png')}
-                  style={styles.buttonIconImage}
-                />
-              </View>
-              <Text style={styles.buttonText}>Video Call</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.button}
-              onPress={() => {
                 Alert.alert('Do you want to logout?', '', [
                   {
                     text: 'NO',

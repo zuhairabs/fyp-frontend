@@ -49,7 +49,7 @@ const Congratulations = (props) => {
         _id: booking._id,
       },
     });
-    Post('user/booking/fetchone', body, state.token)
+    Post('booking/fetch/single', body, state.token)
       .then((data) => {
         setBooking(data.booking);
         console.log(data);

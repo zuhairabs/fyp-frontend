@@ -112,7 +112,7 @@ const BookingCardSmall = (props) => {
                   booking: props.booking._id,
                 });
               }}
-              style={styles.extensionTab}>
+              style={styles.extensionTabLast}>
               <Text style={styles.tabText}>View</Text>
             </TouchableOpacity>
           </View>

@@ -1,7 +1,6 @@
 import messaging from '@react-native-firebase/messaging';
 import {navigationRef} from '../../Navigation/Navigation';
 import {fetchNotifications} from './NotificationHandler';
-import {ToastAndroid} from 'react-native';
 
 const redirectPushNotification = (remoteMessage) => {
   if (remoteMessage.data?.booking)

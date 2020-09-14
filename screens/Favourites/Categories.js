@@ -33,9 +33,9 @@ const Categories = (props) => {
 
   const fetchResults = (name) => {
     setLoading(true);
-    let route = `user/category?name=${name}`;
-    if (state.location)
-      route += `&lat=${state.location.lat}&long=${state.location.long}`;
+    const {lat, long} = state.location || {lat: null, long: null};
+    const base = 'app/home/store/category/single';
+    let route = base + `?name=${name}&lat=${lat}&long=${long}`;
     const body = JSON.stringify({
       cred: {
         phone: state.user.phone,
