@@ -144,6 +144,7 @@ const BookingCard = (props) => {
               onPress={() => {
                 props.navigation.navigate('Store', {
                   store: props.booking.store,
+                  data: props.booking.store,
                   bookSlot: true,
                   editSlot: true,
                   videoSlot: props.booking.type === 'virtual',
