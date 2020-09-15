@@ -31,7 +31,6 @@ export const styles = StyleSheet.create({
     marginTop: 30,
     width: '100%',
     paddingHorizontal: 20,
-    marginBottom: 50,
   },
   heading: {
     flexDirection: 'row',
@@ -84,7 +83,7 @@ export const styles = StyleSheet.create({
     ...textStyles.paragraphSmallBold,
   },
   detailsContainer: {
-    marginTop: 30,
+    marginVertical: 15,
   },
   details: {
     ...textStyles.paragraphMedium,

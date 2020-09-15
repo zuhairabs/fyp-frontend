@@ -15,6 +15,7 @@ import MainBackground from '../../components/Backgrounds/MainBackground';
 import BookSlotSlider from '../../components/BookSlotSlider/BookSlot';
 import RatingBadge from '../../components/RatingBadge/RatingBadge';
 import ImageHeader from './Elements/ImageHeader';
+import VideoMasonry from '../../components/VideoMasonry';
 import SafetyElement from './Elements/SafetyElement';
 
 import {styles, headerHeight} from './Styles';
@@ -97,7 +98,6 @@ const Store = (props) => {
             style={styles.storeDetails}
             contentContainerStyle={{
               justifyContent: 'center',
-              alignItems: 'flex-start',
             }}>
             <View style={styles.heading}>
               <View style={styles.headingText}>
@@ -163,12 +163,13 @@ const Store = (props) => {
             </View>
 
             <View style={styles.detailsContainer}>
-              <Text style={styles.details}>
-                {storeData.description
-                  ? storeData.description
-                  : 'No description available'}
-              </Text>
+              <Text style={styles.details}>{storeData.description}</Text>
             </View>
+
+            <Text style={styles.subheading}>Featured Videos</Text>
+            <VideoMasonry
+              query={storeData.business && storeData.business.name}
+            />
           </ScrollView>
         </View>
       </ScrollView>
