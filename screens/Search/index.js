@@ -1,103 +1,76 @@
-import React, {useEffect, useState, useRef, useContext} from 'react';
-import {View, ScrollView, ActivityIndicator, ToastAndroid} from 'react-native';
-import {GlobalContext} from '../../providers/GlobalContext';
-
-import {Post} from '../../api/http';
-import {fullSearchAPI, partialSearchDelayed} from './controllers';
+import React, {useEffect, useState} from 'react';
+import {View, ScrollView, Text} from 'react-native';
 
 import StatusBarWhite from '../../components/StatusBar';
 import SearchBox from './SearchBox';
-import Results from './Results';
+import StoreList from './StoreList';
+import VideoMasonry from '../../components/VideoMasonry';
 import styles from './Styles';
 import Header from './Header';
+import {TouchableWithoutFeedback} from 'react-native-gesture-handler';
 
 export default (props) => {
   const {initial, autoFocus} = props.route.params;
-  const inputBox = useRef();
-  const {state} = useContext(GlobalContext);
-
-  const [dropdownOpen, setDropdown] = useState(false);
-  const [results, setResults] = useState([]);
   const [query, setQuery] = useState();
-  const [loading, setLoading] = useState(false);
-
-  const [text, setText] = useState('');
-  const [suggestions, setSuggestions] = useState([]);
+  const [selectedTab, setSelectedTab] = useState(0);
 
   useEffect(() => {
-    setLoading(true);
-    if (!initial) getUserHistory();
-    else fullSearchStore(initial.query);
+    if (initial) fullSearch(initial.query);
   }, []);
 
-  const getUserHistory = () => {
-    const phone = state.user.phone;
-    const body = JSON.stringify({
-      cred: {phone},
-    });
-    Post('user/store/history/fetch', body, state.token)
-      .then((data) => setResults(data.response))
-      .catch(() => setResults([]));
-    setLoading(false);
+  const fullSearch = (searchTerm) => {
+    setQuery(searchTerm);
   };
 
-  const clearPartialSearchResults = () => {
-    inputBox.current?.blur();
-    setSuggestions([]);
-    setDropdown(false);
-    setText('');
+  const changeTab = (index) => {
+    if (selectedTab !== index) setSelectedTab(index);
   };
 
-  const fullSearchStore = (query) => {
-    setLoading(true);
-    clearPartialSearchResults();
-    fullSearchAPI(query, 'store')
-      .then((response) => {
-        clearPartialSearchResults();
-        setResults(response);
-        setLoading(false);
-        setQuery(query);
-      })
-      .catch((e) => {
-        setLoading(false);
-      });
-  };
+  const [tabs] = useState([{title: 'Stores'}, {title: 'Videos'}]);
 
-  const handleTextChange = async (query) => {
-    setText(query);
-    partialSearchDelayed(query)
-      .then((response) => {
-        setDropdown(true);
-        setSuggestions(response);
-      })
-      .catch((e) => ToastAndroid.show(e), ToastAndroid.SHORT);
-  };
+  const TabNavigation = () => (
+    <View style={styles.tabNavigation}>
+      {tabs.map((tab, index) => {
+        return (
+          <View key={index} style={styles.tab}>
+            <TouchableWithoutFeedback
+              style={
+                index === selectedTab
+                  ? styles.tabNavigationObjectSelected
+                  : styles.tabNavigationObject
+              }
+              onPress={() => {
+                changeTab(index);
+              }}>
+              <Text
+                style={
+                  index === selectedTab
+                    ? styles.tabNavigationTextSelected
+                    : styles.tabNavigationText
+                }
+                numberOfLines={1}>
+                {tab.title}
+              </Text>
+            </TouchableWithoutFeedback>
+          </View>
+        );
+      })}
+    </View>
+  );
 
   return (
     <View style={styles.screenContainer}>
       <StatusBarWhite />
 
-      <SearchBox
-        handleTextChange={handleTextChange}
-        clearPartialSearchResults={clearPartialSearchResults}
-        inputBox={inputBox}
-        autoFocus={autoFocus}
-        text={text}
-        fullSearchStore={fullSearchStore}
-        dropdownOpen={dropdownOpen}
-        suggestions={suggestions}
-      />
+      <SearchBox autoFocus={autoFocus} fullSearch={fullSearch} />
 
-      <ScrollView style={styles.container}>
-        {loading ? (
-          <View style={styles.activityIndicator}>
-            <ActivityIndicator size="large" color="#0062FF" />
-          </View>
+      <ScrollView contentContainerStyle={styles.container}>
+        <TabNavigation />
+        <Header query={query} />
+        {selectedTab === 0 ? (
+          <StoreList query={query} />
         ) : (
-          <>
-            <Header query={query} />
-            <Results results={results} />
-          </>
+          <VideoMasonry query={query} />
         )}
       </ScrollView>
     </View>

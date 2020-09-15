@@ -1,4 +1,5 @@
 import {StyleSheet, Platform, StatusBar, Dimensions} from 'react-native';
+import {COLORS, textStyles} from '../../styles/styles';
 const {width, height} = Dimensions.get('window');
 
 const styles = StyleSheet.create({
@@ -7,7 +8,13 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     height: '100%',
   },
+  container: {
+    alignItems: 'center',
+    marginBottom: 100,
+  },
   searchHeader: {
+    flex: 1,
+    alignSelf: 'flex-start',
     paddingHorizontal: 20,
   },
   search: {
@@ -15,6 +22,46 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 5,
   },
+
+  tabNavigation: {
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    marginTop: 20,
+    marginBottom: 10,
+  },
+  tab: {
+    flex: 2,
+  },
+  tabNavigationObject: {
+    alignItems: 'center',
+    borderBottomWidth: 1,
+    borderBottomColor: COLORS.SECONDARY_TRANSPARENT,
+  },
+  tabNavigationObjectSelected: {
+    borderBottomWidth: 3,
+    borderColor: COLORS.PRIMARY,
+    alignItems: 'center',
+  },
+  tabNavigationText: {
+    ...textStyles.paragraphLarge,
+    color: COLORS.SECONDARY_TRANSPARENT,
+    borderBottomWidth: 1,
+    borderColor: COLORS.TRANSPARENT,
+    paddingBottom: 10,
+    paddingHorizontal: 15,
+  },
+  tabNavigationTextSelected: {
+    ...textStyles.paragraphLarge,
+    borderColor: COLORS.TRANSPARENT,
+    borderBottomWidth: 1,
+    paddingBottom: 10,
+    paddingHorizontal: 15,
+    color: COLORS.PRIMARY,
+  },
+
   searchInputFull: {
     flexDirection: 'row',
     justifyContent: 'space-around',
@@ -63,10 +110,9 @@ const styles = StyleSheet.create({
     color: '#000',
   },
   searchResult: {
-    paddingHorizontal: 20,
+    flex: 1,
     marginTop: 20,
-    marginBottom: 50,
-    alignItems: 'center',
+    paddingHorizontal: 20,
   },
   emptyContainer: {
     width,

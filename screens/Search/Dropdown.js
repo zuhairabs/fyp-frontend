@@ -1,25 +1,22 @@
 import React from 'react';
-import {Text, ScrollView, Dimensions} from 'react-native';
-import {TouchableOpacity} from 'react-native-gesture-handler';
+import {Text, Dimensions} from 'react-native';
+import {FlatList, TouchableOpacity} from 'react-native-gesture-handler';
 import styles from './Styles';
 
 const DEVICE_HEIGHT = Dimensions.get('window').height;
 const getDropDownStyles = (dropdownOpen) => ({
-  borderWidth: 1,
+  borderWidth: dropdownOpen ? 1 : 0,
   maxHeight: dropdownOpen ? 0.6 * DEVICE_HEIGHT : 0,
 });
 
-export default ({dropdownOpen, fullSearchStore, suggestions}) => (
-  <ScrollView
-    style={{...styles.suggestionDropdown, ...getDropDownStyles(dropdownOpen)}}>
-    {suggestions.map((result, index) => (
-      <TouchableOpacity
-        onPress={() => {
-          fullSearchStore(result.name);
-        }}
-        key={index}>
-        <Text style={styles.suggestionText}>{result.name}</Text>
+export default ({dropdownOpen, fullSearch, suggestions}) => (
+  <FlatList
+    data={suggestions}
+    renderItem={({item}) => (
+      <TouchableOpacity onPress={() => fullSearch(item.name)}>
+        <Text style={styles.suggestionText}>{item.name}</Text>
       </TouchableOpacity>
-    ))}
-  </ScrollView>
+    )}
+    style={{...styles.suggestionDropdown, ...getDropDownStyles(dropdownOpen)}}
+  />
 );
