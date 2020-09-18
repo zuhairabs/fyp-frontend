@@ -1,32 +1,14 @@
-import React, {useState, useEffect} from 'react';
-import {
-  View,
-  StyleSheet,
-  Platform,
-  StatusBar,
-  Dimensions,
-  Text,
-  Linking,
-} from 'react-native';
+import React, {useState} from 'react';
+import {View, Dimensions, Text, Linking} from 'react-native';
 import {TouchableOpacity, ScrollView} from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/dist/MaterialIcons';
 import Share from 'react-native-share';
 import YouTube from 'react-native-youtube';
-import {URI} from '../../api/constants';
 
-import {COLORS, textStyles, SPACING, BORDER_RADIUS} from '../../styles/styles';
-const WINDOW_HEIGHT = Dimensions.get('window').height;
+import {COLORS, textStyles} from '../../styles/styles';
+import {navigationRef} from '../../Navigation/Navigation';
+import {buttonStyles, styles} from './VideoStyles';
 const WINDOW_WIDTH = Dimensions.get('window').width;
-const DEVICE_HEIGHT = Dimensions.get('screen').height;
-const NAVIGATION_HEIGHT =
-  DEVICE_HEIGHT - WINDOW_HEIGHT - (StatusBar.currentHeight || 0);
-
-const YT_API = {
-  KEY: 'AIzaSyBFYI1ucm88RfrhyvT6a1DnTqiuSdtSwSM',
-  URI: {
-    SNIPPET: 'https://www.googleapis.com/youtube/v3/videos?part=snippet',
-  },
-};
 
 const shareVideo = () => {
   const options = {
@@ -44,55 +26,14 @@ const shareVideo = () => {
     });
 };
 
-const getRandomVideo = () =>
-  new Promise((resolve, reject) => {
-    fetch(`${URI}/user/video/random`, {
-      method: 'GET',
-      headers: {
-        'content-type': 'application/JSON',
-      },
-    }).then(
-      (res) => {
-        if (res.status === 200) res.json().then((data) => resolve(data.video));
-        else reject('Not found');
-      },
-      (e) => {
-        reject(e);
-      },
-    );
-  });
-
-export default (props) => {
-  const {loadedSnippet, loadedVideo} = props.route.params;
-  const calculatePlayerHeight = () => (WINDOW_WIDTH * 9) / 16;
-  const [snippet, setSnippet] = useState(loadedSnippet);
-  const [video, setVideo] = useState(loadedVideo);
-  const [likes, setLikes] = useState(loadedVideo ? loadedVideo.likes : null);
-  const [dislikes, setDislikes] = useState(
-    loadedVideo ? loadedVideo.dislikes : null,
-  );
+export default ({route}) => {
+  const {video} = route.params;
+  const [likes, setLikes] = useState(video.likes);
+  const [dislikes, setDislikes] = useState(video.dislikes);
   const [liked, setLiked] = useState('unliked');
   const [fullScreen, toggleFullScreen] = useState(false);
 
-  const getVideoDetails = (id) => {
-    fetch(`${YT_API.URI.SNIPPET}&id=${id}&key=${YT_API.KEY}`, {
-      method: 'GET',
-      port: null,
-      async: true,
-      crossDomain: true,
-      headers: {
-        'content-type': 'application/JSON',
-      },
-    })
-      .then((res) => {
-        if (res.status === 200)
-          res.json().then((data) => setSnippet(data.items[0].snippet));
-        else console.log(res.status);
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-  };
+  const calculatePlayerHeight = () => (WINDOW_WIDTH * 9) / 16;
 
   const toggleLike = (status) => {
     let temp = liked;
@@ -115,7 +56,7 @@ export default (props) => {
     let brand = video.brand;
     let tag = video.tag;
     if (brand && brand.name) {
-      props.navigation.navigate('SearchFull', {
+      navigationRef.current?.navigate('SearchFull', {
         initial: {
           query: brand.name,
           id: brand._id,
@@ -124,7 +65,7 @@ export default (props) => {
         autoFocus: false,
       });
     } else if (tag && tag.name) {
-      props.navigation.navigate('SearchFull', {
+      navigationRef.current?.navigate('SearchFull', {
         initial: {
           query: tag.name,
           id: tag._id,
@@ -134,21 +75,6 @@ export default (props) => {
       });
     }
   };
-
-  useEffect(() => {
-    if (video) {
-      if (!snippet) getVideoDetails(video.source);
-    } else {
-      getRandomVideo()
-        .then((data) => {
-          getVideoDetails(data.source);
-          setVideo(data);
-        })
-        .catch((e) => {
-          console.log(e);
-        });
-    }
-  }, []);
 
   return (
     <View style={styles.screenContainer}>
@@ -174,7 +100,8 @@ export default (props) => {
       <ScrollView
         style={styles.container}
         showsVerticalScrollIndicator={false}
-        stickyHeaderIndices={[0]}>
+        // stickyHeaderIndices={[0]}
+      >
         <View style={styles.header}>
           <TouchableOpacity
             style={styles.link}
@@ -184,9 +111,7 @@ export default (props) => {
               Watch in full screen
             </Text>
           </TouchableOpacity>
-          <Text style={styles.title}>
-            {snippet ? snippet.title : 'Loading'}
-          </Text>
+          <Text style={styles.title}>{video.title}</Text>
           <Text
             style={{
               ...textStyles.paragraphMedium,
@@ -254,9 +179,7 @@ export default (props) => {
         <View style={styles.contentContainer}>
           <View style={styles.descriptionBox}>
             <Text style={textStyles.paragraphLargeBold}>Description</Text>
-            <Text style={textStyles.paragraphMedium}>
-              {snippet ? snippet.description : ''}
-            </Text>
+            <Text style={textStyles.paragraphMedium}>{video.description}</Text>
           </View>
         </View>
       </ScrollView>
@@ -275,111 +198,3 @@ export default (props) => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  screenContainer: {
-    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
-    height: DEVICE_HEIGHT,
-    backgroundColor: COLORS.WHITE,
-  },
-  container: {
-    marginHorizontal: 20,
-    height: WINDOW_HEIGHT,
-  },
-  header: {
-    justifyContent: 'space-around',
-    marginTop: 8,
-    marginBottom: 20,
-    borderBottomWidth: 2,
-    borderBottomColor: COLORS.BORDER_LIGHT,
-    paddingBottom: 20,
-    backgroundColor: COLORS.WHITE,
-  },
-  title: {
-    ...textStyles.paragraphLargeBold,
-    marginTop: 10,
-    maxWidth: '100%',
-  },
-  link: {
-    paddingVertical: 8,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  linkText: {
-    color: COLORS.PRIMARY,
-    textDecorationLine: 'underline',
-  },
-  buttonArea: {
-    width: '100%',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  buttonsLeft: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  buttonContainer: {
-    justifyContent: 'space-around',
-    alignItems: 'center',
-  },
-  button: {
-    padding: 8,
-    backgroundColor: COLORS.SECONDARY_TRANSPARENT,
-    borderRadius: 8,
-  },
-  buttonCaption: {
-    marginTop: 5,
-  },
-  contentContainer: {
-    marginBottom: 120,
-  },
-});
-
-const buttonStyles = StyleSheet.create({
-  buttonArea: {
-    flex: 1,
-    position: 'absolute',
-    zIndex: 2,
-    elevation: 10,
-    bottom: NAVIGATION_HEIGHT,
-    width: '100%',
-    backgroundColor: COLORS.WHITE,
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    justifyContent: 'space-around',
-    padding: 10,
-    paddingBottom: NAVIGATION_HEIGHT - 30 > 0 ? NAVIGATION_HEIGHT - 30 : 30,
-  },
-  primaryButton: {
-    flex: 1,
-    width: WINDOW_WIDTH / 2 - 30,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: BORDER_RADIUS.s,
-    padding: SPACING.m,
-    backgroundColor: COLORS.PRIMARY,
-  },
-  secondaryButton: {
-    flex: 1,
-    width: WINDOW_WIDTH / 2 - 30,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: BORDER_RADIUS.s,
-    borderWidth: SPACING.xxs,
-    padding: SPACING.m - SPACING.xxs,
-    backgroundColor: COLORS.WHITE,
-    borderColor: COLORS.PRIMARY,
-  },
-  primaryButtonText: {
-    fontFamily: 'Roboto-Black',
-    color: COLORS.WHITE,
-    textTransform: 'uppercase',
-  },
-  secondaryButtonText: {
-    fontFamily: 'Roboto-Black',
-    color: COLORS.PRIMARY,
-    textTransform: 'uppercase',
-  },
-});
