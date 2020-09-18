@@ -9,13 +9,13 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   container: {
-    alignItems: 'center',
+    alignItems: 'flex-start',
     marginBottom: 100,
+    paddingHorizontal: 20,
   },
   searchHeader: {
     flex: 1,
     alignSelf: 'flex-start',
-    paddingHorizontal: 20,
   },
   search: {
     flexDirection: 'column',
@@ -109,16 +109,11 @@ const styles = StyleSheet.create({
     marginTop: 15,
     color: '#000',
   },
-  searchResult: {
-    flex: 1,
-    marginTop: 20,
-    paddingHorizontal: 20,
-  },
   emptyContainer: {
-    width,
-    height: height - 480,
-    justifyContent: 'center',
     flex: 1,
+    height: height - 480,
+    width: '100%',
+    justifyContent: 'center',
     marginTop: 120,
   },
   emptyImage: {

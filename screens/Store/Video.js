@@ -57,11 +57,7 @@ export default ({route}) => {
     let tag = video.tag;
     if (brand && brand.name) {
       navigationRef.current?.navigate('SearchFull', {
-        initial: {
-          query: brand.name,
-          id: brand._id,
-          model: 'brand',
-        },
+        initial: brand.name,
         autoFocus: false,
       });
     } else if (tag && tag.name) {

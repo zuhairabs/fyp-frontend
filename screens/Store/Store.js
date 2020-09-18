@@ -25,6 +25,7 @@ import {Post} from '../../api/http';
 import {
   saveStoreHistory,
   constructActiveHoursText,
+  getStoreVideos,
 } from './Actions/StoreActions';
 import {addFav, removeFav} from './Actions/UserActions';
 
@@ -166,10 +167,12 @@ const Store = (props) => {
               <Text style={styles.details}>{storeData.description}</Text>
             </View>
 
-            <Text style={styles.subheading}>Featured Videos</Text>
-            <VideoMasonry
-              query={storeData.business && storeData.business.name}
-            />
+            {storeData.business && (
+              <VideoMasonry
+                videos={getStoreVideos(storeData.business._id)}
+                title="Featured Videos"
+              />
+            )}
           </ScrollView>
         </View>
       </ScrollView>

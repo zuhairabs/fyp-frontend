@@ -1,32 +1,52 @@
-import React, {useEffect, useState} from 'react';
-import {View, ScrollView, Text} from 'react-native';
+import React, {useContext, useEffect, useState} from 'react';
+import {View, ScrollView, Text, ActivityIndicator} from 'react-native';
 
 import StatusBarWhite from '../../components/StatusBar';
 import SearchBox from './SearchBox';
-import StoreList from './StoreList';
-import VideoMasonry from '../../components/VideoMasonry';
 import styles from './Styles';
 import Header from './Header';
 import {TouchableWithoutFeedback} from 'react-native-gesture-handler';
+import {fullSearchAPI} from './controllers';
+import All from './Tabs/All';
+import Videos from './Tabs/Videos';
+import Stores from './Tabs/Stores';
+import EmptyResults from './EmptyResults';
+import {GlobalContext} from '../../providers/GlobalContext';
 
 export default (props) => {
+  const {state} = useContext(GlobalContext);
   const {initial, autoFocus} = props.route.params;
+  const [loading, setLoading] = useState(false);
   const [query, setQuery] = useState();
   const [selectedTab, setSelectedTab] = useState(0);
+  const [results, setResults] = useState({});
 
   useEffect(() => {
-    if (initial) fullSearch(initial.query);
+    if (initial) fullSearch(initial);
   }, []);
 
   const fullSearch = (searchTerm) => {
-    setQuery(searchTerm);
+    if (searchTerm && searchTerm.length > 0) {
+      setLoading(true);
+      setQuery(searchTerm);
+      fullSearchAPI(searchTerm, selectedTab.model, state.location || {}).then(
+        (response) => {
+          setResults(response);
+          setLoading(false);
+        },
+      );
+    }
   };
 
   const changeTab = (index) => {
     if (selectedTab !== index) setSelectedTab(index);
   };
 
-  const [tabs] = useState([{title: 'Stores'}, {title: 'Videos'}]);
+  const [tabs] = useState([
+    {title: 'All', model: null},
+    {title: 'Stores', model: 'store'},
+    {title: 'Videos', model: 'video'},
+  ]);
 
   const TabNavigation = () => (
     <View style={styles.tabNavigation}>
@@ -58,20 +78,20 @@ export default (props) => {
     </View>
   );
 
+  const TabComponent = [
+    <All results={results} />,
+    <Stores results={results} />,
+    <Videos results={results} />,
+  ];
+
   return (
     <View style={styles.screenContainer}>
       <StatusBarWhite />
-
       <SearchBox autoFocus={autoFocus} fullSearch={fullSearch} />
-
+      <TabNavigation />
       <ScrollView contentContainerStyle={styles.container}>
-        <TabNavigation />
         <Header query={query} />
-        {selectedTab === 0 ? (
-          <StoreList query={query} />
-        ) : (
-          <VideoMasonry query={query} />
-        )}
+        {loading ? <ActivityIndicator /> : <>{TabComponent[selectedTab]}</>}
       </ScrollView>
     </View>
   );

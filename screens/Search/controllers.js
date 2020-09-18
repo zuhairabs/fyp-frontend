@@ -13,14 +13,17 @@ export const partialSearchDelayed = AwesomeDebouncePromise(
   30,
 );
 
-export const fullSearchAPI = (query, model) =>
+export const fullSearchAPI = (query, model = '', location = {}) =>
   new Promise((resolve, reject) => {
     const body = JSON.stringify({
       query: query,
       city: 'Mumbai',
     });
-    Post(`app/search/full/${model}`, body).then(
+    Post(
+      `app/search/full/${model}?lat=${location.lat}&lng=${location.long}`,
+      body,
+    ).then(
       (data) => resolve(data.response),
-      (e) => resject(e),
+      (e) => reject(e),
     );
   });

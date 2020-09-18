@@ -10,6 +10,17 @@ export const saveStoreHistory = (store, phone) => {
   Post('user/store/history/add', body);
 };
 
+export const getStoreVideos = (businessId) => {
+  const body = JSON.stringify({_id: businessId});
+  Post('app/home/video/business', body)
+    .then((data) => {
+      return data.response;
+    })
+    .catch(() => {
+      return [];
+    });
+};
+
 const dayList = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 export const constructActiveHoursText = (working_days, active_hours) => {
   const start = active_hours[0].start;
