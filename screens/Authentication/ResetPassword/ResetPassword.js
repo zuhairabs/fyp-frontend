@@ -322,7 +322,7 @@ const ResetPassword = (props) => {
     setModalText('Please wait');
     loadingModal.current?.open();
     try {
-      fetch(`${URI}/user/password/reset`, {
+      fetch(`${URI}/auth/reset/password`, {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({
