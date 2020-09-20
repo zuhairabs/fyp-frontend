@@ -6,11 +6,10 @@ import {
   Text,
   ActivityIndicator,
   ToastAndroid,
-} from 'react-native';
-import {
   TouchableWithoutFeedback,
   TouchableOpacity,
-} from 'react-native-gesture-handler';
+} from 'react-native';
+import {} from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/dist/MaterialIcons';
 import Modal from 'react-native-modalbox';
 
@@ -42,7 +41,7 @@ const BookSlotSlider = (props) => {
     previousBooking,
     editSlot,
     navigation,
-    setBookSlot,
+    closeBottomSheet,
     videoSlot,
   } = props;
   const {state} = useContext(GlobalContext);
@@ -248,10 +247,7 @@ const BookSlotSlider = (props) => {
         <Text style={styles.headerText}>
           {videoSlot ? 'BOOK VIDEO SLOT' : 'BOOK SLOT'}
         </Text>
-        <TouchableWithoutFeedback
-          onPress={() => {
-            setBookSlot(false);
-          }}>
+        <TouchableWithoutFeedback onPress={closeBottomSheet}>
           <Icon name="close" size={24} color={COLORS.WHITE} />
         </TouchableWithoutFeedback>
       </View>
@@ -356,10 +352,9 @@ const styles = StyleSheet.create({
     height: 200,
   },
   container: {
-    height: Math.floor(WINDOW_HEIGHT / 1.08),
+    flex: 1,
     borderTopLeftRadius: 50,
     borderTopRightRadius: 50,
-    paddingBottom: DEVICE_HEIGHT - WINDOW_HEIGHT,
   },
   header: {
     borderTopLeftRadius: 30,
@@ -379,6 +374,7 @@ const styles = StyleSheet.create({
   },
   body: {
     flex: 7,
+    paddingBottom: DEVICE_HEIGHT - WINDOW_HEIGHT,
     backgroundColor: '#FFF',
     paddingTop: 20,
     flexDirection: 'column-reverse',

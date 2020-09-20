@@ -1,11 +1,12 @@
-import React, {useState, useEffect, useContext} from 'react';
-import {View, Text, ActivityIndicator, TouchableOpacity} from 'react-native';
+import React, {useState, useEffect, useContext, createRef} from 'react';
+import {View, Text, ActivityIndicator} from 'react-native';
 import {
   ScrollView,
   TouchableWithoutFeedback,
   FlatList,
 } from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/dist/MaterialIcons';
+import RBSheet from 'react-native-raw-bottom-sheet';
 
 import {GlobalContext} from '../../providers/GlobalContext';
 
@@ -28,14 +29,21 @@ import {
   getStoreVideos,
 } from './Actions/StoreActions';
 import {addFav, removeFav} from './Actions/UserActions';
+import BookSlotButtons from '../../components/BookSlotSlider/Buttons';
+
+const refRBSheet = createRef();
 
 const Store = (props) => {
-  const {store, searched, data, editSlot, previousBooking} = props.route.params;
+  const {
+    store,
+    searched,
+    data,
+    editSlot,
+    previousBooking,
+    bookSlot,
+  } = props.route.params;
   const {state, userActions} = useContext(GlobalContext);
   const [storeData, setStoreData] = useState({});
-  const [bookSlot, setBookSlot] = useState(
-    props.route.params.bookSlot || false,
-  );
   const [favourite, setFavourite] = useState(false);
   const [videoSlot, setVideoSlot] = useState(false);
 
@@ -55,6 +63,7 @@ const Store = (props) => {
     const body = JSON.stringify({storeData: {_id: store}});
     Post('app/store/fetch/details', body).then((missingData) => {
       setStoreData((prev) => ({...prev, ...missingData.store}));
+      if (bookSlot) refRBSheet.current?.open();
     });
   };
 
@@ -70,12 +79,13 @@ const Store = (props) => {
     else removeFav(userActions, state, store).then(() => setFavourite(false));
   };
 
+  const closeBottomSheet = () => refRBSheet.current?.close();
+
   return (
     <View style={styles.screenContainer}>
       <MainBackground />
       <StatusBarWhite />
       <NavbarBackButton navigation={props.navigation} />
-
       <ScrollView style={styles.container}>
         <View
           style={styles.contentContainer}
@@ -176,34 +186,39 @@ const Store = (props) => {
           </ScrollView>
         </View>
       </ScrollView>
-      {bookSlot && storeData.active_hours ? (
+      <RBSheet
+        closeOnDragDown={true}
+        closeOnPressMask={true}
+        closeOnPressBack={true}
+        animationType="slide"
+        customStyles={{
+          container: styles.bottomSheetContainer,
+          wrapper: styles.bottomSheetWrapper,
+          draggableIcon: styles.bottomSheetDraggableIcon,
+        }}
+        ref={refRBSheet}>
         <BookSlotSlider
-          setBookSlot={setBookSlot}
+          closeBottomSheet={closeBottomSheet}
           storeData={storeData}
           navigation={props.navigation}
           previousBooking={previousBooking}
           editSlot={editSlot}
           videoSlot={videoSlot}
         />
-      ) : (
-        <View style={styles.buttonArea}>
-          <TouchableOpacity
-            style={styles.primaryButton}
-            onPress={() => {
-              setVideoSlot(false);
-              setBookSlot(true);
-            }}>
-            <Text style={styles.primaryButtonText}>Go to store</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.secondaryButton}
-            onPress={() => {
-              setVideoSlot(true);
-              setBookSlot(true);
-            }}>
-            <Text style={styles.secondaryButtonText}>Video Call</Text>
-          </TouchableOpacity>
-        </View>
+      </RBSheet>
+      {storeData.active_hours && storeData.working_days && (
+        <BookSlotButtons
+          primaryTitle="Go to store"
+          primaryFunction={() => {
+            setVideoSlot(false);
+            refRBSheet.current?.open();
+          }}
+          secondaryTitle="Video call"
+          secondaryFunction={() => {
+            setVideoSlot(true);
+            refRBSheet.current?.open();
+          }}
+        />
       )}
     </View>
   );

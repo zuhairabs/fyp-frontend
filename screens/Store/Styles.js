@@ -1,11 +1,9 @@
 import {StyleSheet, Dimensions, Platform, StatusBar} from 'react-native';
-import {COLORS, textStyles, BORDER_RADIUS, SPACING} from '../../styles/styles';
+import {COLORS, textStyles} from '../../styles/styles';
 
 const WINDOW_HEIGHT = Dimensions.get('window').height;
 const WINDOW_WIDTH = Dimensions.get('window').width;
 const DEVICE_HEIGHT = Dimensions.get('screen').height;
-const NAVIGATION_HEIGHT =
-  DEVICE_HEIGHT - WINDOW_HEIGHT - (StatusBar.currentHeight || 0);
 export const headerHeight = Math.floor(WINDOW_HEIGHT / 2.8);
 
 export const styles = StyleSheet.create({
@@ -88,48 +86,14 @@ export const styles = StyleSheet.create({
   details: {
     ...textStyles.paragraphMedium,
   },
-  buttonArea: {
-    flex: 1,
-    position: 'absolute',
-    zIndex: 2,
-    elevation: 10,
-    bottom: NAVIGATION_HEIGHT,
-    width: '100%',
-    backgroundColor: COLORS.WHITE,
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    justifyContent: 'space-around',
-    padding: 10,
-    paddingBottom: NAVIGATION_HEIGHT > 0 ? NAVIGATION_HEIGHT - 30 : 30,
+  bottomSheetWrapper: {
+    backgroundColor: COLORS.TRANSPARENT,
   },
-  primaryButton: {
-    flex: 1,
-    marginHorizontal: 5,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: BORDER_RADIUS.s,
-    padding: SPACING.m,
-    backgroundColor: COLORS.PRIMARY,
+  bottomSheetContainer: {
+    height: WINDOW_HEIGHT / 1.1,
+    backgroundColor: COLORS.TRANSPARENT,
   },
-  secondaryButton: {
-    flex: 1,
-    marginHorizontal: 5,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: BORDER_RADIUS.s,
-    borderWidth: SPACING.xxs,
-    padding: SPACING.m - SPACING.xxs,
-    backgroundColor: COLORS.WHITE,
-    borderColor: COLORS.PRIMARY,
-  },
-  primaryButtonText: {
-    fontFamily: 'Roboto-Black',
-    color: COLORS.WHITE,
-    textTransform: 'uppercase',
-  },
-  secondaryButtonText: {
-    fontFamily: 'Roboto-Black',
-    color: COLORS.PRIMARY,
-    textTransform: 'uppercase',
+  bottomSheetDraggableIcon: {
+    display: 'none',
   },
 });

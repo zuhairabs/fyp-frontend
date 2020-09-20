@@ -10,15 +10,10 @@ export const saveStoreHistory = (store, phone) => {
   Post('user/store/history/add', body);
 };
 
-export const getStoreVideos = (businessId) => {
+export const getStoreVideos = async (businessId) => {
   const body = JSON.stringify({_id: businessId});
-  Post('app/home/video/business', body)
-    .then((data) => {
-      return data.response;
-    })
-    .catch(() => {
-      return [];
-    });
+  const data = await Post('app/home/video/business', body);
+  return data.response || [];
 };
 
 const dayList = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
