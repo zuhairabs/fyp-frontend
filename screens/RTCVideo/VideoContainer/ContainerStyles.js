@@ -74,4 +74,11 @@ export default StyleSheet.create({
     paddingVertical: 5,
     color: '#0093E9',
   },
+  bottomSheetWrapper: {
+    backgroundColor: COLORS.TRANSPARENT,
+  },
+  bottomSheetContainer: {
+    height: dimensions.height / 1.3,
+    backgroundColor: COLORS.TRANSPARENT,
+  },
 });

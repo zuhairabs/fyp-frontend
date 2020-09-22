@@ -9,9 +9,9 @@ import {
 } from './Controllers/Connection';
 import {GlobalContext} from '../../providers/GlobalContext';
 
-export default (props) => {
+export default ({route}) => {
   const {state} = useContext(GlobalContext);
-  const {channelName} = props.route.params || {channelName: 'test'};
+  const {channelName} = route.params;
   const [uid] = useState(generateRandomUid());
   const [permission, setPermissionStatus] = useState(false);
 
