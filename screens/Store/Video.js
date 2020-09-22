@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {View, Dimensions, Text, Linking} from 'react-native';
+import {View, Dimensions, Text} from 'react-native';
 import {TouchableOpacity, ScrollView} from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/dist/MaterialIcons';
 import Share from 'react-native-share';
