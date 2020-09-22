@@ -158,16 +158,25 @@ export default ({route}) => {
               </View>
             </View>
             <View style={styles.buttonsRight}>
-              <View style={{...styles.buttonContainer, marginLeft: 24}}>
-                <TouchableOpacity
-                  style={styles.button}
-                  onPress={() => {
-                    video.link && Linking.openURL(video.link);
-                  }}>
-                  <Icon name="shopping-cart" size={28} color={COLORS.PRIMARY} />
-                </TouchableOpacity>
-                <Text style={styles.buttonCaption}>Buy Now</Text>
-              </View>
+              {video.link && (
+                <View style={{...styles.buttonContainer, marginLeft: 24}}>
+                  <TouchableOpacity
+                    style={styles.button}
+                    onPress={() =>
+                      navigationRef.current?.navigate('FullScreenWebView', {
+                        title: video.business.display_name,
+                        uri: video.link,
+                      })
+                    }>
+                    <Icon
+                      name="shopping-cart"
+                      size={28}
+                      color={COLORS.PRIMARY}
+                    />
+                  </TouchableOpacity>
+                  <Text style={styles.buttonCaption}>Buy Now</Text>
+                </View>
+              )}
             </View>
           </View>
         </View>

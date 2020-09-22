@@ -35,8 +35,12 @@ export default ({channelName, appId, uid}) => {
   const startCall = async () =>
     (await _engine).joinChannel(null, channelName, null, uid);
 
+  const getVideoAggregateTime = async () =>
+    (await _engine).getUserInfoByUid(uid);
+
   const endCall = async () => {
     (await _engine).leaveChannel();
+    (await _engine).destroy();
     setPeerIds([]);
     setJoinSucceed(false);
     console.log('LeaveChannelSuccess', {channelName});

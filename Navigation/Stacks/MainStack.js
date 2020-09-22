@@ -24,6 +24,7 @@ import Video from '../../screens/Store/Video';
 import RTCVideo from '../../screens/RTCVideo/RTCVideo';
 // NAVIGATOR OPTIONS
 import {SCREEN_HEADER_OPTIONS, SCREEN_OPTIONS} from './ScreenOptions';
+import FullScreenWebView from '../../screens/FullScreenWebView';
 
 const Stack = createStackNavigator();
 // todo: export this function to notification handler
@@ -110,6 +111,14 @@ export default () => (
           padding: 20,
         },
       }}
+    />
+    <Stack.Screen
+      name="FullScreenWebView"
+      component={FullScreenWebView}
+      options={({route}) => ({
+        title: route.params.title,
+        ...SCREEN_HEADER_OPTIONS,
+      })}
     />
     <Stack.Screen name="Congratulations" component={Congratulations} />
   </Stack.Navigator>
