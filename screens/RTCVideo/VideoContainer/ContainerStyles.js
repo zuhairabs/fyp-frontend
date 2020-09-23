@@ -78,7 +78,8 @@ export default StyleSheet.create({
     backgroundColor: COLORS.TRANSPARENT,
   },
   bottomSheetContainer: {
-    height: dimensions.height / 1.3,
-    backgroundColor: COLORS.TRANSPARENT,
+    height: Math.floor(dimensions.height / 1.3),
+    borderRadius: 25,
+    backgroundColor: COLORS.PRIMARY,
   },
 });

@@ -14,6 +14,7 @@ export default ({route}) => {
         scrollEnabled={true}
         // startInLoadingState={true}
         pullToRefreshEnabled={true}
+        style={styles.webView}
       />
     </View>
   );
@@ -21,7 +22,10 @@ export default ({route}) => {
 
 const styles = StyleSheet.create({
   screenContainer: {
-    height: DEVICE_HEIGHT,
+    minHeight: DEVICE_HEIGHT,
     backgroundColor: COLORS.WHITE,
+  },
+  webView: {
+    flex: 1,
   },
 });

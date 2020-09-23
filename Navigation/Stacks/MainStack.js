@@ -79,7 +79,7 @@ export default () => (
       name="Bookings"
       component={Bookings}
       options={{
-        title: 'Appointment',
+        title: 'Appointments',
         ...SCREEN_HEADER_OPTIONS,
       }}
     />

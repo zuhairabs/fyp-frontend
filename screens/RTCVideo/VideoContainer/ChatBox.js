@@ -5,32 +5,55 @@ import {
   TouchableOpacity,
   StyleSheet,
   KeyboardAvoidingView,
-  Platform,
 } from 'react-native';
 import {COLORS, textStyles} from '../../../styles/styles';
 import Icon from 'react-native-vector-icons/dist/MaterialIcons';
 import {FlatList, TextInput} from 'react-native-gesture-handler';
+import HyperLink from 'react-native-hyperlink';
+import {navigationRef} from '../../../Navigation/Navigation';
+import {chatBoxRef} from './VideoContainer';
 
-let dummyData = [
+const dummyData = [
   {
     text: 'Hello! can you send me the link for the product?',
     time: new Date(),
     sent: true,
-    sender: 'Suryansh Sugandhi',
+    sender: 'username',
   },
   {
-    text: 'Hi',
+    text:
+      'https://www.nike.com/in/t/air-zoom-unvrs-flyease-basketball-shoe-PfW4Rr/CQ6422-600',
     time: new Date(),
     sent: false,
     sender: 'Nike Store',
   },
   {
-    text: 'https://suryansh.codes',
+    text: 'Thank You',
+    time: new Date(),
+    sent: true,
+    sender: 'username',
+  },
+  {
+    text: 'How else may I help you?',
     time: new Date(),
     sent: false,
     sender: 'Nike Store',
+  },
+  {
+    text: "That's all! I will check it out",
+    time: new Date(),
+    sent: true,
+    sender: 'username',
   },
 ];
+
+const navigateToExternalLink = (uri, title = 'External link') => {
+  navigationRef.current?.navigate('FullScreenWebView', {
+    title,
+    uri,
+  });
+  chatBoxRef.current?.close();
+};
 
 const Header = ({title, closeChatBox}) => (
   <View style={styles.header}>
@@ -42,7 +65,7 @@ const Header = ({title, closeChatBox}) => (
   </View>
 );
 
-const Input = ({text, setText, sendMessage}) => (
+const Input = ({text, setText, sendMessage, setKeyboardEnabled}) => (
   <View style={styles.inputContainer}>
     <TextInput
       style={styles.inputBox}
@@ -51,23 +74,33 @@ const Input = ({text, setText, sendMessage}) => (
       value={text}
       onChangeText={(val) => setText(val)}
       onSubmitEditing={() => sendMessage()}
+      onFocus={() => setKeyboardEnabled(true)}
+      onBlur={() => setKeyboardEnabled(false)}
     />
   </View>
 );
 
 const SentMessage = ({message}) => (
-  <View style={{...styles.messageContainer, ...styles.sentMessageContainer}}>
-    <Text style={{...styles.messageText, ...styles.sentMessageText}}>
-      {message.text}
-    </Text>
+  <View style={{...styles.messageBubble, ...styles.sentmessageBubble}}>
+    <HyperLink
+      linkStyle={styles.sentMessageLink}
+      onPress={(url) => navigateToExternalLink(url)}>
+      <Text style={{...styles.messageText, ...styles.sentMessageText}}>
+        {message.text}
+      </Text>
+    </HyperLink>
   </View>
 );
+
 const RecievedMessage = ({message}) => (
-  <View
-    style={{...styles.messageContainer, ...styles.recievedMessageContainer}}>
-    <Text style={{...styles.messageText, ...styles.recievedMessageText}}>
-      {message.text}
-    </Text>
+  <View style={{...styles.messageBubble, ...styles.recievedmessageBubble}}>
+    <HyperLink
+      linkStyle={styles.recievedMessageLink}
+      onPress={(url) => navigateToExternalLink(url)}>
+      <Text style={{...styles.messageText, ...styles.recievedMessageText}}>
+        {message.text}
+      </Text>
+    </HyperLink>
   </View>
 );
 
@@ -86,25 +119,33 @@ const MessageBox = ({messages}) => (
 
 export default ({closeChatBox}) => {
   const [text, setText] = useState('');
-  const constructNewMessage = (text) => {
+  const [keyboardEnabled, setKeyboardEnabled] = useState(false);
+  const constructNewMessage = async (text) => {
     return {
       text,
       time: new Date(),
       sent: true,
-      sender: 'Suryansh Sugandhi',
+      sender: 'username',
     };
   };
-  const sendMessage = () => {
-    dummyData.push(constructNewMessage(text));
+  const sendMessage = async () => {
+    dummyData.push(await constructNewMessage(text));
+    setText('');
   };
   return (
     <KeyboardAvoidingView
-      behavior={Platform.OS == 'ios' ? 'padding' : 'height'}
-      style={styles.container}>
+      behavior="height"
+      style={styles.container}
+      enabled={keyboardEnabled}>
       <Header title="Store Manager" closeChatBox={closeChatBox} />
       <View style={styles.body}>
         <MessageBox messages={dummyData} />
-        <Input text={text} setText={setText} sendMessage={sendMessage} />
+        <Input
+          text={text}
+          setText={setText}
+          sendMessage={sendMessage}
+          setKeyboardEnabled={setKeyboardEnabled}
+        />
       </View>
     </KeyboardAvoidingView>
   );
@@ -112,8 +153,6 @@ export default ({closeChatBox}) => {
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 8,
-    borderRadius: 25,
     backgroundColor: COLORS.WHITE,
     flex: 1,
     justifyContent: 'space-between',
@@ -123,8 +162,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: 20,
-    borderTopLeftRadius: 25,
-    borderTopRightRadius: 25,
     backgroundColor: COLORS.PRIMARY,
   },
   headerTitle: {
@@ -136,29 +173,33 @@ const styles = StyleSheet.create({
     padding: 6,
     borderRadius: 10,
   },
+  body: {
+    flex: 1,
+  },
   inputContainer: {
-    // backgroundColor: COLORS.PRIMARY_TRANSPARENT,
+    // marginTop: 8,
+    marginBottom: 20,
   },
   inputBox: {
     padding: 10,
-    marginBottom: 20,
     borderWidth: 1,
     borderColor: COLORS.BORDER_LIGHT,
     backgroundColor: COLORS.WHITE,
   },
   messageBox: {
     paddingHorizontal: 20,
-    paddingBottom: 8,
+    marginTop: 8,
+    height: '75%',
   },
-  messageContainer: {
+  messageBubble: {
     marginVertical: 5,
     justifyContent: 'space-between',
     flex: 1,
   },
-  sentMessageContainer: {
+  sentmessageBubble: {
     alignItems: 'flex-end',
   },
-  recievedMessageContainer: {
+  recievedmessageBubble: {
     alignItems: 'flex-start',
   },
   messageText: {
@@ -166,14 +207,20 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     paddingVertical: 5,
     borderRadius: 10,
-    maxWidth: '60%',
+    maxWidth: '65%',
   },
   sentMessageText: {
     color: COLORS.WHITE,
     backgroundColor: COLORS.PRIMARY,
   },
+  sentMessageLink: {
+    color: COLORS.GREEN,
+  },
   recievedMessageText: {
     color: COLORS.BLACK,
     backgroundColor: COLORS.BORDER_LIGHT,
+  },
+  recievedMessageLink: {
+    color: COLORS.PRIMARY,
   },
 });

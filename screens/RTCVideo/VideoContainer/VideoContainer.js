@@ -8,7 +8,7 @@ import {RenderVideos} from './RenderVideos';
 import ChatBox from './ChatBox';
 import RBSheet from 'react-native-raw-bottom-sheet';
 
-const chatBoxRef = createRef();
+export const chatBoxRef = createRef();
 
 export default ({channelName, appId, uid}) => {
   const _engine = RtcEngine.create(appId);
@@ -96,6 +96,7 @@ export default ({channelName, appId, uid}) => {
         closeOnDragDown={true}
         closeOnPressMask={true}
         closeOnPressBack={true}
+        dragFromTopOnly={true}
         animationType="slide"
         customStyles={{
           container: styles.bottomSheetContainer,
