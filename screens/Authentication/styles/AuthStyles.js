@@ -32,7 +32,7 @@ export default StyleSheet.create({
   },
   tabNavigationObjectSelected: {
     borderBottomWidth: 3,
-    borderColor: '#0062FF',
+    borderColor: COLORS.PRIMARY,
   },
   tabNavigationText: {
     borderBottomWidth: 1,

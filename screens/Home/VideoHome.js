@@ -20,7 +20,6 @@ import StatusBarWhite from '../../components/StatusBar';
 import Navbar from '../../components/Header/Navbar';
 import SearchBarIdle from '../../components/Header/SearchBarIdle';
 import Location from '../../components/Header/HeaderLocation';
-import CardScroll from '../../components/CardScrollBig/CardScroll';
 const CardScrollSmall = lazy(() =>
   import('../../components/CardScrollSmall/CardScrollSmall'),
 );
@@ -29,7 +28,6 @@ const CategoryScroll = lazy(() =>
 );
 
 import {GlobalContext} from '../../providers/GlobalContext';
-import {URI} from '../../api/constants';
 import {textStyles, COLORS} from '../../styles/styles';
 import {Post} from '../../api/http';
 
@@ -77,7 +75,7 @@ export default ({navigation}) => {
 
   const getCategories = () => {
     return new Promise((resolve, reject) => {
-      Post('user/home/categories').then(
+      Post('app/home/store/category/list').then(
         (data) => {
           resolve(data.response);
         },
@@ -96,7 +94,8 @@ export default ({navigation}) => {
       response.forEach((element) => {
         res.push({
           title: element.name,
-          uri: `video/category?name=${element.name.toLowerCase()}`,
+          uri: 'app/home/video/category/single',
+          category: element.name.toLowerCase(),
         });
       });
       setCategories(res);
@@ -134,13 +133,19 @@ export default ({navigation}) => {
             {/* <CardScroll /> */}
             <Suspense fallback={<ActivityIndicator />}>
               <CardScrollSmall
-                item={{title: 'featured videos', uri: 'video/featured'}}
+                item={{
+                  title: 'featured videos',
+                  uri: 'app/home/video/featured',
+                }}
                 videos={true}
               />
             </Suspense>
             <Suspense fallback={<ActivityIndicator />}>
               <CardScrollSmall
-                item={{title: 'new onboard', uri: 'video/new'}}
+                item={{
+                  title: 'new onboard',
+                  uri: 'app/home/video/featured',
+                }}
                 videos={true}
               />
             </Suspense>
@@ -150,7 +155,11 @@ export default ({navigation}) => {
               data={dataList}
               renderItem={({item}) => (
                 <Suspense fallback={<ActivityIndicator />}>
-                  <CardScrollSmall item={item} videos={true} />
+                  <CardScrollSmall
+                    item={item}
+                    category={item.category}
+                    videos={true}
+                  />
                 </Suspense>
               )}
             />
