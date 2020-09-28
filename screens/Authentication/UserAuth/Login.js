@@ -102,7 +102,9 @@ const Login = ({actions, loadingModal}) => {
         </TouchableOpacity>
       </View>
       <View style={styles.forgotPassword}>
-        <TouchableOpacity onPress={() => actions.forgotPassword()}>
+        <TouchableOpacity
+          style={textStyles.link}
+          onPress={() => actions.forgotPassword()}>
           <Text style={textStyles.link}>Forgot Password?</Text>
         </TouchableOpacity>
       </View>

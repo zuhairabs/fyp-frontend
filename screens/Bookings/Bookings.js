@@ -46,21 +46,11 @@ const Bookings = ({navigation}) => {
       Post(uri, body, state.token).then(
         (data) => {
           setBookings(data.bookings);
-          sortBookings().then(() => {
-            setLoading(false);
-          });
+          setLoading(false);
         },
         (e) => console.log(e),
       );
     }
-  };
-
-  const sortBookings = async () => {
-    setBookings((prev) => {
-      return prev.sort((a, b) => {
-        return new Date(a.start).getTime() - new Date(b.start).getTime();
-      });
-    });
   };
 
   const changeTab = (index) => {

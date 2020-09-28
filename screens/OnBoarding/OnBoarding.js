@@ -67,7 +67,7 @@ const Welcome = () => {
   };
 
   const prevPage = () => {
-    if (page > 0) setPage(page - 1);
+    if (page > 0) setPage((prev) => prev - 1);
   };
   const opacity = useState(new Animated.Value(0))[0];
 

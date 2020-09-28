@@ -189,5 +189,6 @@ export const textStyles = StyleSheet.create({
     color: COLORS.PRIMARY,
     fontSize: 14,
     fontFamily: 'Roboto-Medium',
+    padding: 8,
   },
 });
