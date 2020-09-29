@@ -104,14 +104,16 @@ const Verification = (props) => {
   const callSignUp = async () => {
     setLoading(true);
     setModalText('Logging in');
-    let result = await authActions.signUp({
+    const body = {
       phone,
       password,
       firstName,
       lastName,
       email,
       avatar,
-    });
+    };
+    console.log(body);
+    let result = await authActions.signUp(body);
     if (result[0] === false) {
       setLoading(false);
       setModalText(result[1]);

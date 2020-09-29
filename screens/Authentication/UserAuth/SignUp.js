@@ -117,7 +117,7 @@ const SignUp = ({actions, loadingModal}) => {
     loadingModal.current?.open();
     actions.setModalText('Registering');
     if (validateForm()) {
-      fetch(`${URI}/user/verification/phoneregistered`, {
+      fetch(`${URI}/auth/verify/phone`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

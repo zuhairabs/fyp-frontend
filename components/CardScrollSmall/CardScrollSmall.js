@@ -22,7 +22,6 @@ const CardScrollSmall = (props) => {
     const body = JSON.stringify({city: 'Mumbai'});
     Post(uri, body).then((data) => {
       setStores(data.response);
-      if (props.videos) console.log(data.videos);
       setLoading(false);
     });
   }, [props.location]);

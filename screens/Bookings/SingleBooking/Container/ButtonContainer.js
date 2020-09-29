@@ -20,7 +20,7 @@ export const DisabledButton = ({text}) => (
 );
 
 const RegularButton = ({booking, setScreen}) =>
-  booking.status === 'complete' || booking.status === 'missed' ? (
+  booking.status === 'completed' || booking.status === 'missed' ? (
     <Button text="Rate Store" buttonFunction={() => setScreen(1)} />
   ) : (
     <DisabledButton text="Rate Store" />
