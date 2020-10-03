@@ -1,23 +1,10 @@
 import React, {useState, useEffect, useRef} from 'react';
 import {StyleSheet, ScrollView, View} from 'react-native';
 import {Post} from '../../api/http';
-import BigCard, {BigCardLoading} from './BigCard';
+import DummyTile from '../Carousel/DummyTile';
+import StoreTile from '../Carousel/StoreTile';
 
-export const CardScrollLoading = () => {
-  return (
-    <View style={styles.container}>
-      <ScrollView
-        horizontal
-        pagingEnabled
-        showsHorizontalScrollIndicator={false}
-        scrollEnabled={false}>
-        <BigCardLoading />
-      </ScrollView>
-    </View>
-  );
-};
-
-const CardScroll = (props) => {
+const CardScroll = () => {
   const [stores, setStores] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -74,17 +61,11 @@ const CardScroll = (props) => {
           setSelected(e);
         }}>
         {loading ? (
-          <BigCardLoading />
+          <DummyTile />
         ) : (
           <>
             {stores.map((store, _) => {
-              return (
-                <BigCard
-                  key={store._id}
-                  store={store}
-                  navigation={props.navigation}
-                />
-              );
+              return <StoreTile key={store._id} store={store} />;
             })}
           </>
         )}

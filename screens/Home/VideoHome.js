@@ -207,10 +207,4 @@ const styles = StyleSheet.create({
     paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
     backgroundColor: COLORS.WHITE,
   },
-  mainSubHeading: {
-    marginHorizontal: 35,
-    textTransform: 'uppercase',
-    color: '#666',
-    ...textStyles.paragraphMediumBold,
-  },
 });
