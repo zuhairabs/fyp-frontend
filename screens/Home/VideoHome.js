@@ -130,7 +130,12 @@ export default ({navigation}) => {
             <Suspense fallback={<ActivityIndicator />}>
               <CategoryScroll categories={categoryList} />
             </Suspense>
-            {/* <CardScroll /> */}
+            <Suspense fallback={<ActivityIndicator />}>
+              <CardScrollSmall
+                item={{title: 'near me', uri: 'app/home/store/nearest'}}
+                location={location}
+              />
+            </Suspense>
             <Suspense fallback={<ActivityIndicator />}>
               <CardScrollSmall
                 item={{

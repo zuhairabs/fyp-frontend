@@ -2,7 +2,7 @@ import React from 'react';
 import {StyleSheet, Text} from 'react-native';
 import {FlatList} from 'react-native-gesture-handler';
 import {textStyles} from '../../styles/styles';
-import VideoCard from '../CardScrollSmall/VideoCard';
+import VideoCard from './VideoCard';
 
 const VideoCardScroll = ({videos, title}) => {
   return (

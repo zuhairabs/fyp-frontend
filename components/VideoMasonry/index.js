@@ -2,7 +2,7 @@ import React from 'react';
 import {Text} from 'react-native';
 import {FlatList} from 'react-native-gesture-handler';
 import {textStyles} from '../../styles/styles';
-import VideoCard from '../CardScrollSmall/VideoCard';
+import VideoCard from '../Carousel/VideoCard';
 
 export default ({videos, title}) => (
   <>
@@ -26,6 +26,7 @@ export default ({videos, title}) => (
       initialNumToRender={2}
       maxToRenderPerBatch={4}
       keyExtractor={(item) => item._id}
+      contentContainerStyle={{justifyContent: 'center', alignItems: 'center'}}
       style={{marginTop: 20}}
     />
   </>

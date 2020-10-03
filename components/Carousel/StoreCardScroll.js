@@ -2,7 +2,7 @@ import React from 'react';
 import {StyleSheet, Text} from 'react-native';
 import {FlatList} from 'react-native-gesture-handler';
 import {textStyles} from '../../styles/styles';
-import CardSmall from '../CardScrollSmall/CardSmall';
+import StoreCard from './StoreCard';
 
 const StoreCardScroll = ({stores, title}) => {
   return (
@@ -10,7 +10,7 @@ const StoreCardScroll = ({stores, title}) => {
       {stores && stores.length > 0 && <Text style={styles.title}>{title}</Text>}
       <FlatList
         data={stores}
-        renderItem={({item}) => <CardSmall store={item} />}
+        renderItem={({item}) => <StoreCard store={item} />}
         keyExtractor={(item) => item._id}
         horizontal={true}
         showsHorizontalScrollIndicator={true}

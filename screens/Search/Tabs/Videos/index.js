@@ -1,7 +1,6 @@
 import React from 'react';
+import VideoCardScroll from '../../../../components/Carousel/VideoCardScroll';
 import VideoMasonry from '../../../../components/VideoMasonry';
-import StoreList from '../../StoreList';
-import VideoCardScroll from '../../VideoCardScroll';
 
 export default ({results}) => (
   <>
