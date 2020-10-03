@@ -3,8 +3,8 @@ import {Text, View, Image} from 'react-native';
 import Icon from 'react-native-vector-icons/dist/MaterialIcons';
 import {TouchableWithoutFeedback} from 'react-native-gesture-handler';
 
-import {navigationRef} from '../../Navigation/Navigation';
-import {textStyles, COLORS} from '../../styles/styles';
+import {navigationRef} from '../../../Navigation/Navigation';
+import {textStyles, COLORS} from '../../../styles/styles';
 import styles from './CardStyles';
 
 const videoCamStyle = {

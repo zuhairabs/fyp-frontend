@@ -3,10 +3,10 @@ import {Text, View, Image, TouchableOpacity} from 'react-native';
 import Icon from 'react-native-vector-icons/dist/MaterialIcons';
 import {TouchableWithoutFeedback} from 'react-native-gesture-handler';
 
-import {navigationRef} from '../../Navigation/Navigation';
-import {textStyles} from '../../styles/styles';
-import RatingBadge from '../RatingBadge/RatingBadge';
-import BookButton from '../Buttons/BookButton';
+import {navigationRef} from '../../../Navigation/Navigation';
+import {textStyles} from '../../../styles/styles';
+import RatingBadge from '../../RatingBadge/RatingBadge';
+import BookButton from '../../Buttons/BookButton';
 import styles from './CardStyles';
 
 const CardSmall = ({store}) => {

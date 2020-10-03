@@ -1,10 +1,11 @@
 import React, {useState} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import {FlatList} from 'react-native-gesture-handler';
-import {textStyles} from '../../styles/styles';
+import {textStyles} from '../../../styles/styles';
 import StoreTile from './StoreTile';
+import VideoTile from './VideoTile';
 
-const StoreTileScroll = ({stores, title}) => {
+const TileScroll = ({data, title, videos}) => {
   const [current, setCurrent] = useState(0);
 
   const onScrollEnd = (e) => {
@@ -16,9 +17,9 @@ const StoreTileScroll = ({stores, title}) => {
 
   return (
     <>
-      {stores && stores.length > 0 && <Text style={styles.title}>{title}</Text>}
+      {data && data.length > 0 && <Text style={styles.title}>{title}</Text>}
       <View style={styles.indicatorContainer}>
-        {stores.map((_, index) => (
+        {data.map((_, index) => (
           <View
             key={index + 20}
             style={
@@ -28,8 +29,10 @@ const StoreTileScroll = ({stores, title}) => {
         ))}
       </View>
       <FlatList
-        data={stores}
-        renderItem={({item}) => <StoreTile store={item} />}
+        data={data}
+        renderItem={({item}) =>
+          videos ? <VideoTile video={item} /> : <StoreTile store={item} />
+        }
         keyExtractor={(item) => item._id}
         horizontal={true}
         showsHorizontalScrollIndicator={false}
@@ -86,4 +89,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default StoreTileScroll;
+export default TileScroll;

@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useContext, lazy, Suspense} from 'react';
+import React, {useEffect, useState, useContext} from 'react';
 import {
   StyleSheet,
   Text,
@@ -8,7 +8,6 @@ import {
   StatusBar,
   PermissionsAndroid,
   Alert,
-  ActivityIndicator,
   Dimensions,
   FlatList,
 } from 'react-native';
@@ -20,17 +19,12 @@ import StatusBarWhite from '../../components/StatusBar';
 import Navbar from '../../components/Header/Navbar';
 import SearchBarIdle from '../../components/Header/SearchBarIdle';
 import Location from '../../components/Header/HeaderLocation';
-const CardScrollSmall = lazy(() =>
-  import('../../components/CardScrollSmall/CardScrollSmall'),
-);
-const CategoryScroll = lazy(() =>
-  import('../../components/Header/CategoryScroll'),
-);
+import CardScrollSmall from '../../components/CardScrollSmall/CardScrollSmall';
+import CategoryScroll from '../../components/Header/CategoryScroll';
 
 import {GlobalContext} from '../../providers/GlobalContext';
 import {COLORS} from '../../styles/styles';
 import {Post} from '../../api/http';
-import CardScroll from '../../components/CardScrollBig/CardScroll';
 
 const DEVICE_HEIGHT = Dimensions.get('window').height;
 
@@ -128,42 +122,31 @@ export default ({navigation}) => {
         {locationPermissionStatus ? (
           <>
             <Location location={location} />
-            {/* <CardScroll
-              item={{title: 'featured', uri: 'app/home/store/featured'}}
-            /> */}
-            <Suspense fallback={<ActivityIndicator />}>
-              <CategoryScroll categories={categoryList} />
-            </Suspense>
-            <Suspense fallback={<ActivityIndicator />}>
-              <CardScrollSmall
-                item={{
-                  title: 'featured videos',
-                  uri: 'app/home/video/featured',
-                }}
-                videos={true}
-              />
-            </Suspense>
-            <Suspense fallback={<ActivityIndicator />}>
-              <CardScrollSmall
-                item={{
-                  title: 'new onboard',
-                  uri: 'app/home/video/featured',
-                }}
-                videos={true}
-              />
-            </Suspense>
+            <CategoryScroll categories={categoryList} />
+            <CardScrollSmall
+              item={{
+                title: 'featured videos',
+                uri: 'app/home/video/featured',
+              }}
+              videos={true}
+            />
+            <CardScrollSmall
+              item={{
+                title: 'new onboard',
+                uri: 'app/home/video/featured',
+              }}
+              videos={true}
+            />
             <FlatList
               onEndReached={onListEnd}
               onEndReachedThreshold={0.2}
               data={dataList}
               renderItem={({item}) => (
-                <Suspense fallback={<ActivityIndicator />}>
-                  <CardScrollSmall
-                    item={item}
-                    category={item.category}
-                    videos={true}
-                  />
-                </Suspense>
+                <CardScrollSmall
+                  item={item}
+                  category={item.category}
+                  videos={true}
+                />
               )}
             />
           </>

@@ -1,10 +1,10 @@
 import React, {useState, useEffect} from 'react';
 import {View} from 'react-native';
 import {Post} from '../../api/http';
-import DummyTile from '../Carousel/DummyTile';
-import StoreTileScroll from '../Carousel/StoreTileScroll';
+import DummyTile from '../Carousel/Tile/DummyTile';
+import TileScroll from '../Carousel/Tile/TileScroll';
 
-const CardScroll = ({item}) => {
+const Tiles = ({item, videos}) => {
   const [loading, setLoading] = useState(true);
   const [results, setResults] = useState([]);
 
@@ -29,10 +29,10 @@ const CardScroll = ({item}) => {
       {loading ? (
         <DummyTile />
       ) : (
-        <StoreTileScroll title={item.title} stores={results} />
+        <TileScroll title={item.title} data={results} videos={videos} />
       )}
     </View>
   );
 };
 
-export default CardScroll;
+export default Tiles;

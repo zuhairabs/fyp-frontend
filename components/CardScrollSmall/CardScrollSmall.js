@@ -1,11 +1,11 @@
 import React, {useEffect, useState} from 'react';
-import {StyleSheet, View, ActivityIndicator} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import {Post} from '../../api/http';
-import VideoCardScroll from '../Carousel/VideoCardScroll';
-import StoreCardScroll from '../Carousel/StoreCardScroll';
+import DummyCard from '../Carousel/Card/DummyCard';
+import CardScroll from '../Carousel/Card/CardScroll';
 
 const CardScrollSmall = (props) => {
-  const [stores, setStores] = useState([]);
+  const [response, setResponse] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -14,27 +14,24 @@ const CardScrollSmall = (props) => {
     let uri = `${props.item.uri}${params}`;
     const body = JSON.stringify({city: 'Mumbai'});
     Post(uri, body).then((data) => {
-      setStores(data.response);
+      setResponse(data.response);
       setLoading(false);
     });
   }, [props.location]);
 
-  if (loading)
-    return (
-      <View style={styles.container}>
-        <ActivityIndicator size="large" color="#0062FF" />
-      </View>
-    );
-  else
-    return (
-      <View style={styles.container}>
-        {props.videos ? (
-          <VideoCardScroll videos={stores} title={props.item.title} />
-        ) : (
-          <StoreCardScroll stores={stores} title={props.item.title} />
-        )}
-      </View>
-    );
+  return (
+    <View style={styles.container}>
+      {loading ? (
+        <DummyCard />
+      ) : (
+        <CardScroll
+          videos={props.videos}
+          data={response}
+          title={props.item.title}
+        />
+      )}
+    </View>
+  );
 };
 
 const styles = StyleSheet.create({

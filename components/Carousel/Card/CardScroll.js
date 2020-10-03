@@ -1,19 +1,22 @@
 import React from 'react';
 import {StyleSheet, Text} from 'react-native';
 import {FlatList} from 'react-native-gesture-handler';
-import {textStyles} from '../../styles/styles';
+import {textStyles} from '../../../styles/styles';
+import StoreCard from './StoreCard';
 import VideoCard from './VideoCard';
 
-const VideoCardScroll = ({videos, title}) => {
+const CardScroll = ({data, title, videos}) => {
   return (
     <>
-      {videos && videos.length > 0 && <Text style={styles.title}>{title}</Text>}
+      {data && data.length > 0 && <Text style={styles.title}>{title}</Text>}
       <FlatList
-        data={videos}
-        renderItem={({item}) => <VideoCard video={item} />}
+        data={data}
+        renderItem={({item}) =>
+          videos ? <VideoCard video={item} /> : <StoreCard store={item} />
+        }
         keyExtractor={(item) => item._id}
         horizontal={true}
-        showsHorizontalScrollIndicator={true}
+        showsHorizontalScrollIndicator={false}
         bounces={true}
         initialNumToRender={2}
         maxToRenderPerBatch={4}
@@ -38,4 +41,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default VideoCardScroll;
+export default CardScroll;

@@ -1,10 +1,14 @@
 import React from 'react';
-import VideoCardScroll from '../../../../components/Carousel/VideoCardScroll';
+import CardScroll from '../../../../components/Carousel/Card/CardScroll';
 import VideoMasonry from '../../../../components/VideoMasonry';
 
 export default ({results}) => (
   <>
     <VideoMasonry videos={results.videos} />
-    <VideoCardScroll videos={results.relatedVideos} title="Related Videos" />
+    <CardScroll
+      data={results.relatedVideos}
+      title="Related Videos"
+      videos={true}
+    />
   </>
 );

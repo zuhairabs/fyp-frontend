@@ -2,7 +2,7 @@ import React from 'react';
 import {Text} from 'react-native';
 import {FlatList} from 'react-native-gesture-handler';
 import {COLORS, textStyles} from '../../styles/styles';
-import VideoCard from '../Carousel/VideoCard';
+import VideoCard from '../Carousel/Card/VideoCard';
 
 export default ({videos, title}) => (
   <>

@@ -1,8 +1,8 @@
 import React from 'react';
 import {Text, View, Image, TouchableOpacity} from 'react-native';
 import {TouchableWithoutFeedback} from 'react-native-gesture-handler';
-import {navigationRef} from '../../Navigation/Navigation';
-import BookButton from '../Buttons/BookButton';
+import {navigationRef} from '../../../Navigation/Navigation';
+import BookButton from '../../Buttons/BookButton';
 import styles from './TileStyles';
 
 const StoreTile = ({store}) => {
