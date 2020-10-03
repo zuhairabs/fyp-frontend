@@ -8,6 +8,7 @@ const styles = StyleSheet.create({
     marginVertical: 8,
     marginRight: 10,
     marginLeft: 20,
+    // marginHorizontal: 15,
   },
   card: {
     height: 272,

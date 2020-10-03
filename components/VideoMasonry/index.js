@@ -1,7 +1,7 @@
 import React from 'react';
 import {Text} from 'react-native';
 import {FlatList} from 'react-native-gesture-handler';
-import {textStyles} from '../../styles/styles';
+import {COLORS, textStyles} from '../../styles/styles';
 import VideoCard from '../Carousel/VideoCard';
 
 export default ({videos, title}) => (
@@ -11,7 +11,7 @@ export default ({videos, title}) => (
         style={{
           marginTop: 10,
           textTransform: 'uppercase',
-          color: '#666',
+          color: COLORS.SECONDARY,
           paddingHorizontal: 20,
           ...textStyles.paragraphMediumBold,
         }}>
@@ -26,7 +26,6 @@ export default ({videos, title}) => (
       initialNumToRender={2}
       maxToRenderPerBatch={4}
       keyExtractor={(item) => item._id}
-      contentContainerStyle={{justifyContent: 'center', alignItems: 'center'}}
       style={{marginTop: 20}}
     />
   </>
