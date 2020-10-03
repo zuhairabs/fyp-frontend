@@ -3,7 +3,7 @@ import {View, ActivityIndicator} from 'react-native';
 import {TouchableWithoutFeedback} from 'react-native-gesture-handler';
 import styles from './TileStyles';
 
-export const DummyTile = () => {
+const DummyTile = () => {
   return (
     <View style={styles.container}>
       <TouchableWithoutFeedback style={styles.card}>
@@ -15,3 +15,5 @@ export const DummyTile = () => {
     </View>
   );
 };
+
+export default DummyTile;

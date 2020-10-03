@@ -90,7 +90,7 @@ const styles = StyleSheet.create({
     textTransform: 'capitalize',
   },
   categoryScrollCard: {
-    marginBottom: 5,
+    marginVertical: 5,
     borderRadius: 12 / 2,
     height: 50,
     width: 50,

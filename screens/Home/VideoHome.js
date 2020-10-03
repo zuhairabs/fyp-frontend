@@ -28,8 +28,9 @@ const CategoryScroll = lazy(() =>
 );
 
 import {GlobalContext} from '../../providers/GlobalContext';
-import {textStyles, COLORS} from '../../styles/styles';
+import {COLORS} from '../../styles/styles';
 import {Post} from '../../api/http';
+import CardScroll from '../../components/CardScrollBig/CardScroll';
 
 const DEVICE_HEIGHT = Dimensions.get('window').height;
 
@@ -127,6 +128,9 @@ export default ({navigation}) => {
         {locationPermissionStatus ? (
           <>
             <Location location={location} />
+            {/* <CardScroll
+              item={{title: 'featured', uri: 'app/home/store/featured'}}
+            /> */}
             <Suspense fallback={<ActivityIndicator />}>
               <CategoryScroll categories={categoryList} />
             </Suspense>
