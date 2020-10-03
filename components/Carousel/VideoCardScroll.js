@@ -1,8 +1,8 @@
 import React from 'react';
 import {StyleSheet, Text} from 'react-native';
 import {FlatList} from 'react-native-gesture-handler';
-import VideoCard from '../../components/CardScrollSmall/VideoCard';
 import {textStyles} from '../../styles/styles';
+import VideoCard from '../CardScrollSmall/VideoCard';
 
 const VideoCardScroll = ({videos, title}) => {
   return (

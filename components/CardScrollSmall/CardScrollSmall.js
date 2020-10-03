@@ -1,15 +1,8 @@
 import React, {useEffect, useState} from 'react';
-import {
-  StyleSheet,
-  ScrollView,
-  View,
-  ActivityIndicator,
-  Text,
-} from 'react-native';
-import CardSmall from './CardSmall';
-import VideoCard from './VideoCard';
-import {textStyles} from '../../styles/styles';
+import {StyleSheet, View, ActivityIndicator} from 'react-native';
 import {Post} from '../../api/http';
+import VideoCardScroll from '../Carousel/VideoCardScroll';
+import StoreCardScroll from '../Carousel/StoreCardScroll';
 
 const CardScrollSmall = (props) => {
   const [stores, setStores] = useState([]);
@@ -26,44 +19,30 @@ const CardScrollSmall = (props) => {
     });
   }, [props.location]);
 
-  return (
-    <>
-      <Text style={styles.mainSubHeading}>{props.item.title}</Text>
+  if (loading)
+    return (
       <View style={styles.container}>
-        {loading ? (
-          <ActivityIndicator size="large" color="#0062FF" />
+        <ActivityIndicator size="large" color="#0062FF" />
+      </View>
+    );
+  else
+    return (
+      <View style={styles.container}>
+        {props.videos ? (
+          <VideoCardScroll videos={stores} title={props.item.title} />
         ) : (
-          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-            {stores &&
-              stores.map((store) => {
-                return props.videos ? (
-                  <VideoCard key={store._id} video={store} />
-                ) : (
-                  <CardSmall key={store._id} store={store} />
-                );
-              })}
-          </ScrollView>
+          <StoreCardScroll stores={stores} title={props.item.title} />
         )}
       </View>
-    </>
-  );
+    );
 };
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: 20,
-    paddingLeft: 30,
-    height: 320,
+    marginRight: 30,
     width: '100%',
     justifyContent: 'center',
     alignItems: 'flex-start',
-  },
-  mainSubHeading: {
-    marginHorizontal: 35,
-    marginTop: 10,
-    textTransform: 'uppercase',
-    color: '#666',
-    ...textStyles.paragraphMediumBold,
   },
 });
 

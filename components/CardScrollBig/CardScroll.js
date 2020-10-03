@@ -1,6 +1,5 @@
 import React, {useState, useEffect, useRef} from 'react';
 import {StyleSheet, ScrollView, View} from 'react-native';
-import {URI} from '../../api/constants';
 import {Post} from '../../api/http';
 import BigCard, {BigCardLoading} from './BigCard';
 

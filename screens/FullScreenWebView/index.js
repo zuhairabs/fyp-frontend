@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {Dimensions, StyleSheet, View} from 'react-native';
 import {WebView} from 'react-native-webview';
 
@@ -7,14 +7,20 @@ const DEVICE_HEIGHT = Dimensions.get('screen').height;
 
 export default ({route}) => {
   const {uri} = route.params;
+  const webViewRef = useRef();
+
   return (
     <View style={styles.screenContainer}>
       <WebView
         source={{uri}}
         scrollEnabled={true}
-        // startInLoadingState={true}
         pullToRefreshEnabled={true}
         style={styles.webView}
+        ref={webViewRef}
+        onLoad={(syntheticEvent) => {
+          const {nativeEvent} = syntheticEvent;
+          console.log(nativeEvent.url);
+        }}
       />
     </View>
   );

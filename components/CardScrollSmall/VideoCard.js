@@ -1,5 +1,5 @@
-import React, {useState, useEffect} from 'react';
-import {Text, View, Image, StyleSheet} from 'react-native';
+import React from 'react';
+import {Text, View, Image} from 'react-native';
 import Icon from 'react-native-vector-icons/dist/MaterialIcons';
 import {TouchableWithoutFeedback} from 'react-native-gesture-handler';
 

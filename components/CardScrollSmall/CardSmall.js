@@ -83,9 +83,10 @@ const CardSmall = ({store}) => {
 export const styles = StyleSheet.create({
   container: {
     width: Math.floor(DEVICE_WIDTH / 2.6),
-    marginVertical: 10,
-    marginRight: 20,
-    marginLeft: 5,
+    marginVertical: 8,
+    marginRight: 10,
+    marginLeft: 20,
+    // marginHorizontal: 18,
   },
   card: {
     height: 272,

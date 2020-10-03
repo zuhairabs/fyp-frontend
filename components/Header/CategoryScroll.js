@@ -74,9 +74,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   scrollCardContainer: {
-    margin: 2,
     marginHorizontal: 18,
-    marginBottom: 5,
     justifyContent: 'center',
     alignItems: 'center',
   },

@@ -1,6 +1,6 @@
 import {StyleSheet, Platform, StatusBar, Dimensions} from 'react-native';
 import {COLORS, textStyles} from '../../styles/styles';
-const {width, height} = Dimensions.get('window');
+const {height} = Dimensions.get('window');
 
 const styles = StyleSheet.create({
   screenContainer: {
@@ -11,11 +11,14 @@ const styles = StyleSheet.create({
   container: {
     alignItems: 'flex-start',
     marginBottom: 100,
+  },
+  paddedContainer: {
     paddingHorizontal: 20,
   },
   searchHeader: {
     flex: 1,
     alignSelf: 'flex-start',
+    paddingHorizontal: 20,
   },
   search: {
     flexDirection: 'column',
@@ -109,6 +112,7 @@ const styles = StyleSheet.create({
     marginTop: 15,
     color: '#000',
   },
+
   emptyContainer: {
     flex: 1,
     height: height - 480,

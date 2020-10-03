@@ -2,6 +2,7 @@ import React from 'react';
 import {Text} from 'react-native';
 import {FlatList} from 'react-native-gesture-handler';
 import StoreCard from '../../components/Cards/StoreCard/StoreCard';
+import styles from './Styles';
 import {textStyles} from '../../styles/styles';
 
 export default ({stores, title}) => (
@@ -12,6 +13,7 @@ export default ({stores, title}) => (
           marginTop: 10,
           textTransform: 'uppercase',
           color: '#666',
+          ...styles.paddedContainer,
           ...textStyles.paragraphMediumBold,
         }}>
         {title}
@@ -24,6 +26,7 @@ export default ({stores, title}) => (
       bounces={true}
       initialNumToRender={0}
       maxToRenderPerBatch={4}
+      style={styles.paddedContainer}
     />
   </>
 );

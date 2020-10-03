@@ -12,6 +12,7 @@ export default ({videos, title}) => (
           marginTop: 10,
           textTransform: 'uppercase',
           color: '#666',
+          paddingHorizontal: 20,
           ...textStyles.paragraphMediumBold,
         }}>
         {title}
