@@ -59,14 +59,12 @@ export default ({route}) => {
       navigationRef.current?.navigate('SearchFull', {
         initial: brand.name,
         autoFocus: false,
+        initialTab: 1,
       });
     } else if (tag && tag.name) {
       navigationRef.current?.navigate('SearchFull', {
-        initial: {
-          query: tag.name,
-          id: tag._id,
-          model: 'tag',
-        },
+        initial: tag.name,
+        initialTab: 1,
         autoFocus: false,
       });
     }

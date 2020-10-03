@@ -13,12 +13,12 @@ import Stores from './Tabs/Stores';
 import EmptyResults from './EmptyResults';
 import {GlobalContext} from '../../providers/GlobalContext';
 
-export default (props) => {
+export default ({route}) => {
   const {state} = useContext(GlobalContext);
-  const {initial, autoFocus} = props.route.params;
+  const {initial, autoFocus, initialTab} = route.params;
   const [loading, setLoading] = useState(false);
   const [query, setQuery] = useState();
-  const [selectedTab, setSelectedTab] = useState(0);
+  const [selectedTab, setSelectedTab] = useState(initialTab || 0);
   const [results, setResults] = useState({});
 
   useEffect(() => {
