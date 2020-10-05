@@ -20,6 +20,7 @@ export default ({route}) => {
   const [query, setQuery] = useState();
   const [selectedTab, setSelectedTab] = useState(initialTab || 0);
   const [results, setResults] = useState({});
+  const [isEmpty, setEmpty] = useState(false);
 
   useEffect(() => {
     if (initial) fullSearch(initial);

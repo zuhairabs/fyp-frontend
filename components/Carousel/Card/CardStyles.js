@@ -6,9 +6,7 @@ const styles = StyleSheet.create({
   container: {
     width: Math.floor(DEVICE_WIDTH / 2.6),
     marginVertical: 8,
-    marginRight: 10,
-    marginLeft: 20,
-    // marginHorizontal: 15,
+    marginHorizontal: 15,
   },
   card: {
     height: 272,

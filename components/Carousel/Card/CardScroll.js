@@ -29,6 +29,7 @@ const CardScroll = ({data, title, videos}) => {
 const styles = StyleSheet.create({
   container: {
     marginBottom: 20,
+    paddingRight: 20,
     justifyContent: 'center',
     alignItems: 'flex-start',
   },

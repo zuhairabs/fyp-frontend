@@ -36,7 +36,7 @@ const CardScrollSmall = (props) => {
 
 const styles = StyleSheet.create({
   container: {
-    marginRight: 30,
+    marginRight: 50,
     width: '100%',
     justifyContent: 'center',
     alignItems: 'flex-start',

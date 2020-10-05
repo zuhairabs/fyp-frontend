@@ -26,7 +26,7 @@ export default ({videos, title}) => (
       initialNumToRender={2}
       maxToRenderPerBatch={4}
       keyExtractor={(item) => item._id}
-      style={{marginTop: 20}}
+      style={{marginTop: 20, alignSelf: 'center'}}
     />
   </>
 );
