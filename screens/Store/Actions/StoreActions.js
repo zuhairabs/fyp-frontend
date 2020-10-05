@@ -10,6 +10,18 @@ export const saveStoreHistory = (store, phone) => {
   Post('user/store/history/add', body);
 };
 
+export const fetchStoreData = async (_id) => {
+  try {
+    const body = JSON.stringify({storeData: {_id}});
+    const data = await Post('app/store/fetch/details', body);
+    if (data.store) return data.store;
+    else return {};
+  } catch (e) {
+    console.error('Error fetching store data', e);
+    return {};
+  }
+};
+
 export const getStoreVideos = async (businessId) => {
   const body = JSON.stringify({_id: businessId});
   const data = await Post('app/home/video/business', body);
@@ -40,5 +52,3 @@ export const constructActiveHoursText = (working_days, active_hours) => {
     }
   } else return `Open all days ${time}`;
 };
-
-export const getStoreData = () => {};

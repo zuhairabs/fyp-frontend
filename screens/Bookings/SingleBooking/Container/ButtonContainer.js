@@ -19,12 +19,11 @@ export const DisabledButton = ({text}) => (
   </TouchableOpacity>
 );
 
-const RegularButton = ({booking, setScreen}) =>
-  booking.status === 'completed' || booking.status === 'missed' ? (
-    <Button text="Rate Store" buttonFunction={() => setScreen(1)} />
-  ) : (
-    <DisabledButton text="Rate Store" />
-  );
+const RegularButton = ({booking, setScreen}) => {
+  if (booking.status === 'missed' || booking.status === 'compeleted')
+    return <Button text="Rate Store" buttonFunction={() => setScreen(1)} />;
+  else return <DisabledButton text="Rate Store" />;
+};
 
 const VirtualBookingButton = ({booking}) =>
   booking.status === 'upcoming' ? (

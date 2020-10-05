@@ -21,19 +21,19 @@ import SafetyElement from './Elements/SafetyElement';
 
 import {styles, headerHeight} from './Styles';
 import {textStyles} from '../../styles/styles';
-import {Post} from '../../api/http';
 
 import {
   saveStoreHistory,
   constructActiveHoursText,
   getStoreVideos,
+  fetchStoreData,
 } from './Actions/StoreActions';
 import {addFav, removeFav} from './Actions/UserActions';
 import BookSlotButtons from '../../components/BookSlotSlider/Buttons';
 
 const refRBSheet = createRef();
 
-const Store = (props) => {
+const Store = ({route}) => {
   const {
     store,
     searched,
@@ -41,9 +41,10 @@ const Store = (props) => {
     editSlot,
     previousBooking,
     bookSlot,
-  } = props.route.params;
+  } = route.params;
   const {state, userActions} = useContext(GlobalContext);
-  const [storeData, setStoreData] = useState({});
+  const [storeData, setStoreData] = useState(data || {});
+  const [storeVideos, setStoreVideos] = useState([]);
   const [favourite, setFavourite] = useState(false);
   const [videoSlot, setVideoSlot] = useState(false);
 
@@ -51,20 +52,15 @@ const Store = (props) => {
     if (state.favourites && state.favourites.indexOf(store) > -1)
       setFavourite(true);
     if (searched) saveStoreHistory(store, state.user.phone);
-    getStoreData();
+    fetchMissingData();
   }, []);
 
-  const getStoreData = () => {
-    setStoreData(data);
-    fetchMissingData();
-  };
-
-  const fetchMissingData = () => {
-    const body = JSON.stringify({storeData: {_id: store}});
-    Post('app/store/fetch/details', body).then((missingData) => {
-      setStoreData((prev) => ({...prev, ...missingData.store}));
-      if (bookSlot) refRBSheet.current?.open();
-    });
+  const fetchMissingData = async () => {
+    const missingData = await fetchStoreData(store);
+    setStoreData((prev) => ({...prev, ...missingData}));
+    if (bookSlot) refRBSheet.current?.open();
+    const videos = await getStoreVideos(storeData.business._id);
+    setStoreVideos(videos);
   };
 
   const getWorkingDaysText = () => {
@@ -85,7 +81,7 @@ const Store = (props) => {
     <View style={styles.screenContainer}>
       <MainBackground />
       <StatusBarWhite />
-      <NavbarBackButton navigation={props.navigation} />
+      <NavbarBackButton />
       <ScrollView style={styles.container}>
         <View
           style={styles.contentContainer}
@@ -126,7 +122,7 @@ const Store = (props) => {
                 )}
                 {storeData.displacement && (
                   <Text style={styles.location}>
-                    {Math.round(storeData.displacement * 10) / 10} km
+                    {Math.round(storeData.displacement * 10) / 10} km away
                   </Text>
                 )}
               </View>
@@ -178,10 +174,7 @@ const Store = (props) => {
             </View>
 
             {storeData.business && (
-              <VideoMasonry
-                videos={getStoreVideos(storeData.business._id)}
-                title="Featured Videos"
-              />
+              <VideoMasonry videos={storeVideos} title="Featured Videos" />
             )}
           </ScrollView>
         </View>
@@ -200,7 +193,6 @@ const Store = (props) => {
         <BookSlotSlider
           closeBottomSheet={closeBottomSheet}
           storeData={storeData}
-          navigation={props.navigation}
           previousBooking={previousBooking}
           editSlot={editSlot}
           videoSlot={videoSlot}

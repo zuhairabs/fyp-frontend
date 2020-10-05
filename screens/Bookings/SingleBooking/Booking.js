@@ -46,16 +46,18 @@ export default ({booking}) => {
             icon="date-range"
           />
         </View>
-        {screen === 0 ? (
-          <>
-            <QrContainer booking={booking} />
-            {!booking.review && (
-              <ButtonContainer booking={booking} setScreen={setScreen} />
-            )}
-          </>
-        ) : (
-          <Rating booking={booking} />
-        )}
+        <View>
+          {screen === 0 ? (
+            <>
+              <QrContainer booking={booking} />
+              {!booking.review && (
+                <ButtonContainer booking={booking} setScreen={setScreen} />
+              )}
+            </>
+          ) : (
+            <Rating booking={booking} />
+          )}
+        </View>
       </View>
     </View>
   );

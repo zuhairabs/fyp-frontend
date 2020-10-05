@@ -23,6 +23,7 @@ import Calendar, {monthNames} from './Calendar';
 import TimePicker, {timeToString, stringToTime, MINUTE} from './TimePicker';
 import {textStyles, COLORS, buttons} from '../../styles/styles';
 import {Post} from '../../api/http';
+import {navigationRef} from '../../Navigation/Navigation';
 
 const WINDOW_HEIGHT = Dimensions.get('window').height;
 const WINDOW_WIDTH = Dimensions.get('window').width;
@@ -39,7 +40,6 @@ const BookSlotSlider = (props) => {
     storeData,
     previousBooking,
     editSlot,
-    navigation,
     closeBottomSheet,
     videoSlot,
   } = props;
@@ -93,7 +93,7 @@ const BookSlotSlider = (props) => {
     });
     Post('booking/actions/edit', body, state.token)
       .then(() => {
-        navigation.reset({
+        navigationRef.current?.reset({
           index: 1,
           routes: [
             {name: 'Home'},
@@ -169,7 +169,7 @@ const BookSlotSlider = (props) => {
       });
       Post('booking/actions/create', body, state.token)
         .then((data) => {
-          navigation.reset({
+          navigationRef.current?.reset({
             index: 1,
             routes: [
               {

@@ -4,14 +4,15 @@ import {TouchableWithoutFeedback} from 'react-native-gesture-handler';
 
 import LeftArrow from './svg/left-arrow.svg';
 import LeftArrowWhite from './svg/left-arrow-white.svg';
+import {navigationRef} from '../../Navigation/Navigation';
 
-const NavbarBackButton = (props) => {
+const NavbarBackButton = ({color, header}) => {
   return (
     <View style={Styles.navbar}>
-      {props.color === 'white' ? (
+      {color === 'white' ? (
         <TouchableWithoutFeedback
           onPress={() => {
-            props.navigation.goBack();
+            navigationRef.current?.goBack();
           }}
           style={Styles.navbarLogo}>
           <LeftArrowWhite width={24} height={60} />
@@ -19,18 +20,16 @@ const NavbarBackButton = (props) => {
       ) : (
         <TouchableWithoutFeedback
           onPress={() => {
-            props.navigation.goBack();
+            navigationRef.current?.goBack();
           }}
           style={Styles.navbarLogo}>
           <LeftArrow width={24} height={60} />
         </TouchableWithoutFeedback>
       )}
 
-      {props.header ? (
-        <View style={Styles.navbarHeader}>
-          <Text style={Styles.navbarHeaderText}>{props.header}</Text>
-        </View>
-      ) : null}
+      <View style={Styles.navbarHeader}>
+        <Text style={Styles.navbarHeaderText}>{header}</Text>
+      </View>
     </View>
   );
 };
