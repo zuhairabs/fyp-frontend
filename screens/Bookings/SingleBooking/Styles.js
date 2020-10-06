@@ -4,7 +4,6 @@ const WINDOW_HEIGHT = Dimensions.get('window').height;
 
 const styles = StyleSheet.create({
   screenContainer: {
-    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
     backgroundColor: COLORS.WHITE,
   },
   container: {
