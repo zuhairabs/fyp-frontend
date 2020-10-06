@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useContext} from 'react';
+import React, {useState, useEffect, useContext, createRef} from 'react';
 import {
   View,
   StyleSheet,
@@ -27,6 +27,9 @@ import {Post} from '../../api/http';
 import StatusBarWhite from '../../components/StatusBar';
 import NavbarBackButton from '../../components/Header/NavbarBackButton';
 import {COLORS, textStyles, buttons} from '../../styles/styles';
+import RBSheet from 'react-native-raw-bottom-sheet';
+
+const bottomSheet = createRef();
 
 const EditProfile = (props) => {
   const {state} = useContext(GlobalContext);
@@ -100,6 +103,7 @@ const EditProfile = (props) => {
   };
 
   const selectPicture = () => {
+    bottomSheet.current?.close();
     requestPermission().then((granted) => {
       if (granted) {
         pickImageFromLocalStorage()
@@ -117,6 +121,21 @@ const EditProfile = (props) => {
           .catch((pickerError) => exceptionHandler(pickerError));
       } else exceptionHandler('File permission required to upload image');
     });
+  };
+
+  const deletePicture = () => {
+    bottomSheet.current?.close();
+    Alert.alert('Do you want to remove your picture?', '', [
+      {
+        text: 'Yes, Delete',
+        style: 'destructive',
+        onPress: () => setAvatar(''),
+      },
+      {
+        text: 'No',
+        style: 'cancel',
+      },
+    ]);
   };
 
   const getUserFromAsyncStorage = async () => {
@@ -184,6 +203,31 @@ const EditProfile = (props) => {
         <Circle cx="300" cy="300" r="300" fill={COLORS.PRIMARY} />
       </Svg>
 
+      <RBSheet
+        closeOnDragDown={true}
+        closeOnPressMask={true}
+        closeOnPressBack={true}
+        animationType="slide"
+        customStyles={{
+          container: styles.bottomSheetContainer,
+          wrapper: styles.bottomSheetWrapper,
+          draggableIcon: styles.bottomSheetDraggableIcon,
+        }}
+        ref={bottomSheet}>
+        <View style={styles.buttonArea}>
+          <TouchableOpacity
+            onPress={selectPicture}
+            style={buttons.primaryButton}>
+            <Text style={textStyles.primaryButtonText}>Change picture</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={deletePicture}
+            style={buttons.secondaryButton}>
+            <Text style={textStyles.secondaryButtonText}>Delete picture</Text>
+          </TouchableOpacity>
+        </View>
+      </RBSheet>
+
       <NavbarBackButton color="white" navigation={navigation} />
 
       <ScrollView style={styles.container}>
@@ -200,9 +244,7 @@ const EditProfile = (props) => {
               )}
               <TouchableHighlight
                 style={styles.cameraContainer}
-                onPress={() => {
-                  selectPicture();
-                }}>
+                onPress={() => bottomSheet.current?.open()}>
                 <Icon name="camera-alt" size={18} color="#BDBDBD" />
               </TouchableHighlight>
             </View>
@@ -297,6 +339,13 @@ const styles = StyleSheet.create({
   },
   container: {
     height: Dimensions.get('window').height,
+  },
+  bottomSheetContainer: {
+    flex: 1,
+    maxHeight: 200,
+  },
+  bottomSheetDraggableIcon: {
+    backgroundColor: COLORS.PRIMARY,
   },
   contentContainer: {
     paddingHorizontal: 20,
