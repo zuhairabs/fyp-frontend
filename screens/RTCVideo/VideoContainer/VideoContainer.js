@@ -104,7 +104,7 @@ export default ({channelName, appId, uid}) => {
           draggableIcon: styles.bottomSheetDraggableIcon,
         }}
         ref={chatBoxRef}>
-        <ChatBox closeChatBox={closeChatBox} />
+        <ChatBox closeChatBox={closeChatBox} channel={channelName} />
       </RBSheet>
       <View style={styles.buttonHolder}>
         <BottomButton

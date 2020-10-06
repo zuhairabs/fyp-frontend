@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -6,6 +6,7 @@ import {
   StyleSheet,
   KeyboardAvoidingView,
 } from 'react-native';
+import firestore from '@react-native-firebase/firestore';
 import {COLORS, textStyles} from '../../../styles/styles';
 import Icon from 'react-native-vector-icons/dist/MaterialIcons';
 import {FlatList, TextInput} from 'react-native-gesture-handler';
@@ -117,9 +118,19 @@ const MessageBox = ({messages}) => (
   />
 );
 
-export default ({closeChatBox}) => {
+export default ({closeChatBox, channel}) => {
   const [text, setText] = useState('');
   const [keyboardEnabled, setKeyboardEnabled] = useState(false);
+
+  const init = () => {
+    firestore()
+      .collection('THREADS')
+      .add({name: channel})
+      .then(() => {
+        console.log(`Channel ${channel} created`);
+      });
+  };
+
   const constructNewMessage = async (text) => {
     return {
       text,
@@ -132,6 +143,11 @@ export default ({closeChatBox}) => {
     dummyData.push(await constructNewMessage(text));
     setText('');
   };
+
+  useEffect(() => {
+    init();
+  }, []);
+
   return (
     <KeyboardAvoidingView
       behavior="height"

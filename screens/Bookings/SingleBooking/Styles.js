@@ -18,7 +18,7 @@ const styles = StyleSheet.create({
   },
   bookingData: {
     flex: 1,
-    marginTop: 20,
+    marginTop: 40,
     alignItems: 'center',
     justifyContent: 'space-around',
   },
@@ -40,8 +40,6 @@ const styles = StyleSheet.create({
   },
   qrContainer: {
     flex: 3,
-    marginTop: 50,
-    marginBottom: 50,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -50,7 +48,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     alignItems: 'center',
     width: '100%',
-    marginBottom: 20,
+    marginBottom: 50,
   },
 });
 

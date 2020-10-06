@@ -51,10 +51,10 @@ const Rating = ({booking}) => {
   }, []);
 
   return (
-    <>
+    <View>
       <Text
         style={{
-          marginTop: 20,
+          marginTop: 50,
           color: COLORS.SECONDARY,
           ...textStyles.paragraphLarge,
         }}>
@@ -75,7 +75,7 @@ const Rating = ({booking}) => {
       <View style={styles.buttonArea}>
         <Button text="Submit" buttonFunction={submitReview} />
       </View>
-    </>
+    </View>
   );
 };
 
