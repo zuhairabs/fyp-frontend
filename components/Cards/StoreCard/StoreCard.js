@@ -103,6 +103,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderBottomWidth: 1,
     borderColor: COLORS.BORDER_LIGHT,
+    paddingVertical: 10,
   },
   rating: {
     flex: 1,

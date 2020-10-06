@@ -1,30 +1,20 @@
 import React, {useEffect, useState, useContext} from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Platform,
-  StatusBar,
-  Dimensions,
-  ActivityIndicator,
-  Alert,
-  Image,
-} from 'react-native';
+import {View, Text, Dimensions, ActivityIndicator, Image} from 'react-native';
 import Icon from 'react-native-vector-icons/dist/MaterialIcons';
 import {TouchableOpacity, ScrollView} from 'react-native-gesture-handler';
 
 import {GlobalContext} from '../../providers/GlobalContext';
-import {URI} from '../../api/constants';
 import StatusBarWhite from '../../components/StatusBar';
 import StoreCard from '../../components/Cards/StoreCard/StoreCard';
 import {Post} from '../../api/http';
-const DEVICE_HEIGHT = Dimensions.get('screen').height;
+import styles from './Styles';
+
 const WINDOW_HEIGHT = Dimensions.get('window').height;
 
-const Categories = (props) => {
+const Categories = ({route}) => {
   const {state} = useContext(GlobalContext);
 
-  const {title, list} = props.route.params;
+  const {title, list} = route.params;
 
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -51,11 +41,7 @@ const Categories = (props) => {
 
   useEffect(() => {
     fetchResults(title);
-  }, [props.route.params]);
-
-  const switchCategory = (cat) => {
-    fetchResults(cat);
-  };
+  }, [route.params]);
 
   return (
     <View style={styles.screenContainer}>
@@ -104,7 +90,7 @@ const Categories = (props) => {
                       onPress={() => {
                         setDropdown(false);
                         setCurrent(item.name);
-                        switchCategory(item.name);
+                        fetchResults(item.name);
                       }}>
                       <Text style={styles.dropdownText}>{item.name}</Text>
                     </TouchableOpacity>
@@ -123,13 +109,7 @@ const Categories = (props) => {
             }}>
             {results && results.length > 0 ? (
               results.map((item, index) => {
-                return (
-                  <StoreCard
-                    key={index}
-                    store={item}
-                    navigation={props.navigation}
-                  />
-                );
+                return <StoreCard key={index} store={item} />;
               })
             ) : (
               <View
@@ -168,48 +148,5 @@ const Categories = (props) => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  screenContainer: {
-    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
-    backgroundColor: '#fff',
-  },
-  container: {
-    marginBottom: 50 + DEVICE_HEIGHT - WINDOW_HEIGHT,
-    height: DEVICE_HEIGHT,
-  },
-  dropdown: {
-    position: 'absolute',
-    zIndex: 5,
-    elevation: 3,
-    maxHeight: DEVICE_HEIGHT / 2.8,
-    backgroundColor: '#FFF',
-    borderRadius: 6,
-    borderWidth: 1,
-    borderColor: '#CAD0D8',
-    width: '100%',
-    top: 50,
-  },
-  headerContainer: {
-    borderWidth: 1,
-    borderColor: '#CAD0D8',
-    borderRadius: 6,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 20,
-    marginHorizontal: 20,
-    zIndex: 2,
-  },
-  dropdownTextBox: {
-    paddingHorizontal: 20,
-    paddingVertical: 15,
-  },
-  dropdownText: {
-    textTransform: 'capitalize',
-    color: '#666',
-    fontSize: 15,
-  },
-});
 
 export default Categories;

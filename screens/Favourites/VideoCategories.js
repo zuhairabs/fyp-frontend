@@ -1,75 +1,47 @@
 import React, {useEffect, useState, useContext} from 'react';
-import {
-  View,
-  Text,
-  ScrollView,
-  Dimensions,
-  ActivityIndicator,
-  Image,
-} from 'react-native';
+import {View, Text, Dimensions, ActivityIndicator, Image} from 'react-native';
 import Icon from 'react-native-vector-icons/dist/MaterialIcons';
-import {TouchableOpacity} from 'react-native-gesture-handler';
+import {TouchableOpacity, ScrollView} from 'react-native-gesture-handler';
 
 import {GlobalContext} from '../../providers/GlobalContext';
-
 import StatusBarWhite from '../../components/StatusBar';
 import StoreCard from '../../components/Cards/StoreCard/StoreCard';
-import {COLORS, textStyles} from '../../styles/styles';
 import {Post} from '../../api/http';
+import styles from './Styles';
 
 const WINDOW_HEIGHT = Dimensions.get('window').height;
 
-import styles from './Styles';
-
-const Favourites = (props) => {
+const VideoCategories = ({route}) => {
   const {state} = useContext(GlobalContext);
 
-  const [all, setAll] = useState([]);
+  const {title, list} = route.params;
+
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(true);
   const [dropdown, setDropdown] = useState(false);
-  const [categories, setCategories] = useState([]);
-  const [current, setCurrent] = useState('all');
+  const [current, setCurrent] = useState(title);
 
-  useEffect(() => {
+  const fetchResults = (name) => {
+    setLoading(true);
+    const {lat, long} = state.location || {lat: null, long: null};
+    const base = 'app/home/video/category/single';
+    let route = base + `?name=${name}&lat=${lat}&long=${long}`;
     const body = JSON.stringify({
       cred: {
         phone: state.user.phone,
       },
     });
-    Post('app/favourite/all/stores', body, state.token).then((data) => {
-      const favs = data.response.favouriteStores;
-      console.log(data);
-      setResults(favs);
-      setAll(favs);
+    Post(route, body, state.token).then((data) => {
+      setResults(data.response);
       setLoading(false);
-      setCurrent('all');
-      let temp = [];
-      favs.forEach((fav) => {
-        if (temp.indexOf(fav.business.category) === -1)
-          temp.push(fav.business.category);
-      });
-      setCategories(temp);
-    });
-  }, []);
-
-  const switchCategory = (cat) => {
-    if (cat === 'all') setResults(all);
-    else {
-      let favs = all;
-      let temp = [];
-      favs.forEach((fav) => {
-        if (fav.business.category === cat) temp.push(fav);
-      });
-      setResults(temp);
-    }
-  };
-
-  const removeFavourite = (id) => {
-    setResults((prev) => {
-      return prev.filter((item) => item._id != id);
+      setCurrent(name);
+      setDropdown(false);
     });
   };
+
+  useEffect(() => {
+    fetchResults(title);
+  }, [route.params]);
 
   return (
     <View style={styles.screenContainer}>
@@ -83,15 +55,15 @@ const Favourites = (props) => {
             height: WINDOW_HEIGHT - 100,
             width: '100%',
           }}>
-          <ActivityIndicator size="large" color={COLORS.PRIMARY} />
+          <ActivityIndicator size="large" color="#0062FF" />
         </View>
       ) : (
         <ScrollView style={styles.container}>
           <View style={styles.headerContainer}>
             <Text
               style={{
-                color: COLORS.SECONDARY,
-                ...textStyles.paragraphMedium,
+                color: '#666',
+                fontSize: 15,
                 paddingHorizontal: 20,
                 textTransform: 'capitalize',
               }}>
@@ -103,33 +75,24 @@ const Favourites = (props) => {
                 setDropdown(!dropdown);
               }}>
               {dropdown ? (
-                <Icon name="arrow-drop-up" size={20} color={COLORS.BLACK} />
+                <Icon name="arrow-drop-up" size={20} color="#000" />
               ) : (
-                <Icon name="arrow-drop-down" size={20} color={COLORS.BLACK} />
+                <Icon name="arrow-drop-down" size={20} color="#000" />
               )}
             </TouchableOpacity>
             {dropdown ? (
               <ScrollView style={styles.dropdown}>
-                <TouchableOpacity
-                  style={styles.dropdownTextBox}
-                  onPress={() => {
-                    setDropdown(false);
-                    setCurrent('all');
-                    switchCategory('all');
-                  }}>
-                  <Text style={styles.dropdownText}>All</Text>
-                </TouchableOpacity>
-                {categories.map((cat) => {
+                {list.map((item) => {
                   return (
                     <TouchableOpacity
-                      key={cat}
+                      key={item._id}
                       style={styles.dropdownTextBox}
                       onPress={() => {
                         setDropdown(false);
-                        setCurrent(cat);
-                        switchCategory(cat);
+                        setCurrent(item.name);
+                        fetchResults(item.name);
                       }}>
-                      <Text style={styles.dropdownText}>{cat}</Text>
+                      <Text style={styles.dropdownText}>{item.name}</Text>
                     </TouchableOpacity>
                   );
                 })}
@@ -146,15 +109,7 @@ const Favourites = (props) => {
             }}>
             {results && results.length > 0 ? (
               results.map((item, index) => {
-                return (
-                  <StoreCard
-                    key={index}
-                    store={item}
-                    navigation={props.navigation}
-                    favourite={true}
-                    removeFavourite={removeFavourite}
-                  />
-                );
+                return <StoreCard key={index} store={item} />;
               })
             ) : (
               <View
@@ -194,4 +149,4 @@ const Favourites = (props) => {
   );
 };
 
-export default Favourites;
+export default VideoCategories;
