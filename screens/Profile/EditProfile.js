@@ -138,9 +138,8 @@ const EditProfile = (props) => {
     ]);
   };
 
-  const getUserFromAsyncStorage = async () => {
-    return (storedUser = JSON.parse(await AsyncStorage.getItem('user')));
-  };
+  const getUserFromAsyncStorage = async () =>
+    JSON.parse(await AsyncStorage.getItem('user'));
 
   const setInputBoxValues = (user) => {
     setUser(user);

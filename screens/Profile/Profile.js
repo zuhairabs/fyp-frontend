@@ -14,7 +14,6 @@ import AsyncStorage from '@react-native-community/async-storage';
 
 import {GlobalContext} from '../../providers/GlobalContext';
 
-import StatusBarWhite from '../../components/StatusBar';
 import MenuBackground from '../../components/Backgrounds/MenuBackground';
 import {COLORS, textStyles} from '../../styles/styles';
 
@@ -22,9 +21,8 @@ const Profile = ({navigation}) => {
   const {authActions, state} = React.useContext(GlobalContext);
   const [user, setUser] = useState({});
 
-  const getUserFromAsyncStorage = async () => {
-    return (storedUser = JSON.parse(await AsyncStorage.getItem('user')));
-  };
+  const getUserFromAsyncStorage = async () =>
+    (storedUser = JSON.parse(await AsyncStorage.getItem('user')));
 
   useEffect(() => {
     if (state.user) setUser(state.user);
