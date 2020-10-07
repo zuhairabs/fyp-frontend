@@ -3,9 +3,8 @@ import {COLORS, textStyles} from '../../../styles/styles';
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: COLORS.WHITE,
     flex: 1,
-    justifyContent: 'space-between',
+    backgroundColor: COLORS.WHITE,
   },
   header: {
     flexDirection: 'row',
@@ -19,59 +18,17 @@ const styles = StyleSheet.create({
     color: COLORS.WHITE,
   },
   statusLight: {
-    backgroundColor: COLORS.GREEN,
     padding: 6,
     borderRadius: 10,
+    backgroundColor: COLORS.GREEN,
   },
   body: {
     flex: 1,
   },
-  inputContainer: {
-    // marginTop: 8,
-    marginBottom: 20,
-  },
-  inputBox: {
-    padding: 10,
-    borderWidth: 1,
-    borderColor: COLORS.BORDER_LIGHT,
-    backgroundColor: COLORS.WHITE,
-  },
-  messageBox: {
-    paddingHorizontal: 20,
-    marginTop: 8,
-    height: '75%',
-  },
-  messageBubble: {
-    marginVertical: 5,
-    justifyContent: 'space-between',
+  loadingContainer: {
     flex: 1,
-  },
-  sentmessageBubble: {
-    alignItems: 'flex-end',
-  },
-  recievedmessageBubble: {
-    alignItems: 'flex-start',
-  },
-  messageText: {
-    ...textStyles.paragraphMedium,
-    paddingHorizontal: 8,
-    paddingVertical: 5,
-    borderRadius: 10,
-    maxWidth: '65%',
-  },
-  sentMessageText: {
-    color: COLORS.WHITE,
-    backgroundColor: COLORS.PRIMARY,
-  },
-  sentMessageLink: {
-    color: COLORS.GREEN,
-  },
-  recievedMessageText: {
-    color: COLORS.BLACK,
-    backgroundColor: COLORS.BORDER_LIGHT,
-  },
-  recievedMessageLink: {
-    color: COLORS.PRIMARY,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 

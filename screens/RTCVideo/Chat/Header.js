@@ -1,8 +1,8 @@
 import React from 'react';
 import {View, Text, TouchableOpacity} from 'react-native';
 import Icon from 'react-native-vector-icons/dist/MaterialIcons';
-import {COLORS} from '../../../../styles/styles';
-import styles from '../Styles';
+import {COLORS} from '../../../styles/styles';
+import styles from './Styles';
 
 const Header = ({title, closeChatBox}) => (
   <View style={styles.header}>

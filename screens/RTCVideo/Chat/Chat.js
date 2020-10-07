@@ -1,48 +1,108 @@
-import React, {useEffect, useState} from 'react';
-import {View, KeyboardAvoidingView} from 'react-native';
+import React, {useContext, useEffect, useState} from 'react';
+import {
+  View,
+  KeyboardAvoidingView,
+  Platform,
+  Text,
+  ActivityIndicator,
+} from 'react-native';
+import firestore from '@react-native-firebase/firestore';
+import {GiftedChat} from 'react-native-gifted-chat';
+import {GlobalContext} from '../../../providers/GlobalContext';
 import styles from './Styles';
-import {dummyData} from './Constants';
-import ChatBox from './Body/ChatBox';
-import Input from './Body/Input';
-import Header from './Header/Header';
-import {init} from './Controller';
+import Header from './Header';
+import {init, navigateToExternalLink} from './Controller';
+import {COLORS, textStyles} from '../../../styles/styles';
+
+const emptyMessages = [
+  {
+    text: 'start a conversation',
+    user: {
+      _id: 0,
+    },
+    system: true,
+  },
+];
 
 export default ({closeChatBox, channel}) => {
-  const [text, setText] = useState('');
-  const [keyboardEnabled, setKeyboardEnabled] = useState(false);
+  const {state} = useContext(GlobalContext);
+  const {_id, firstName, lastName} = state.user;
+  const [loading, setLoading] = useState(true);
+  const [messages, setMessages] = useState([]);
 
-  const constructNewMessage = async (text) => {
-    return {
+  const sendMessage = async (newMessage = []) => {
+    const {text, user} = newMessage[0];
+    setMessages(GiftedChat.append(messages, newMessage));
+    firestore().collection('THREADS').doc(channel).collection('MESSAGES').add({
       text,
-      time: new Date(),
-      sent: true,
-      sender: 'username',
-    };
-  };
-  const sendMessage = async () => {
-    dummyData.push(await constructNewMessage(text));
-    setText('');
+      createdAt: new Date().getTime(),
+      user,
+    });
   };
 
   useEffect(() => {
-    init(channel);
+    const messagesListener = async (channel) => {
+      await init(channel);
+      firestore()
+        .collection('THREADS')
+        .doc(channel)
+        .collection('MESSAGES')
+        .orderBy('createdAt', 'desc')
+        .onSnapshot((querySnapshot) => {
+          const messages = querySnapshot.docs.map((doc) => {
+            const firebaseData = doc.data();
+            const data = {
+              _id: doc.id,
+              text: '',
+              createdAt: new Date(),
+              ...firebaseData,
+            };
+            return data;
+          });
+          if (messages.length === 0) setMessages(emptyMessages);
+          else setMessages(messages);
+          setLoading(false);
+        });
+    };
+    messagesListener(channel);
+    return () => {};
   }, []);
 
   return (
-    <KeyboardAvoidingView
-      behavior="height"
-      style={styles.container}
-      enabled={keyboardEnabled}>
+    <View style={styles.container}>
       <Header title="Store Manager" closeChatBox={closeChatBox} />
       <View style={styles.body}>
-        <ChatBox messages={dummyData} />
-        <Input
-          text={text}
-          setText={setText}
-          sendMessage={sendMessage}
-          setKeyboardEnabled={setKeyboardEnabled}
+        {loading ? (
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator size="large" color={COLORS.PRIMARY} />
+            <Text style={textStyles.paragraphMedium}>Fetching messages</Text>
+          </View>
+        ) : (
+          <GiftedChat
+            messages={messages}
+            user={{
+              _id,
+              name: `${firstName} ${lastName}`,
+            }}
+            onSend={(newMessage) => sendMessage(newMessage)}
+            isLoadingEarlier={loading}
+            multiline={false}
+            parsePatterns={(linkStyle) => [
+              {
+                type: 'url',
+                style: linkStyle,
+                onPress: (url) => navigateToExternalLink(url),
+              },
+            ]}
+            renderAvatar={() => <></>}
+          />
+        )}
+        <KeyboardAvoidingView
+          enabled={Platform.OS === 'android'}
+          behavior="padding"
+          keyboardVerticalOffset={120}
         />
       </View>
-    </KeyboardAvoidingView>
+    </View>
   );
 };
