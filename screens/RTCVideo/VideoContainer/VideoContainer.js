@@ -1,11 +1,11 @@
 import React, {useState, useEffect, createRef} from 'react';
-import {Text, View} from 'react-native';
+import {View} from 'react-native';
 import RtcEngine from 'react-native-agora';
 import {navigationRef} from '../../../Navigation/Navigation';
 import styles from './ContainerStyles';
 import {BottomButton, EndCallButton} from './Controls';
 import {RenderVideos} from './RenderVideos';
-import ChatBox from './ChatBox';
+import ChatBox from '../Chat/Chat';
 import RBSheet from 'react-native-raw-bottom-sheet';
 
 export const chatBoxRef = createRef();
