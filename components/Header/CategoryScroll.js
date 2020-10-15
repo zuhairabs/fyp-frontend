@@ -35,9 +35,10 @@ const CategoryScroll = ({categories}) => {
           <TouchableNativeFeedback
             style={styles.categoryScrollCard}
             onPress={() => {
-              navigationRef.current?.navigate('Categories', {
-                title: item.name,
-                list: categories,
+              navigationRef.current?.navigate('SearchFull', {
+                initial: item.name,
+                initialTab: 0,
+                autoFocus: false,
               });
             }}>
             {item.icon ? (
