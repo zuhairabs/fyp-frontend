@@ -94,7 +94,9 @@ export default ({closeChatBox, channel}) => {
                 onPress: (url) => navigateToExternalLink(url),
               },
             ]}
-            renderAvatar={() => <></>}
+            renderAvatar={() => null}
+            showAvatarForEveryMessage
+            showUserAvatar={false}
           />
         )}
         <KeyboardAvoidingView
