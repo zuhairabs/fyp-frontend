@@ -1,5 +1,5 @@
 import React, {useContext, useEffect, useRef, useState} from 'react';
-import {Dimensions, StyleSheet, View} from 'react-native';
+import {BackHandler, Dimensions, StyleSheet, View} from 'react-native';
 import {WebView} from 'react-native-webview';
 import ProgressBar from '../../components/ProgressBar';
 import {Post} from '../../api/http';
@@ -12,10 +12,17 @@ const sessionURL = 'app/tracker/history/session';
 export default ({route}) => {
   const {uri} = route.params;
   const {state} = useContext(GlobalContext);
-  const webViewRef = useRef();
+  const [canGoBack, setCanGoBack] = useState(false);
+  const [canGoForward, setCanGoForward] = useState(false);
+  const [currentUrl, setCurrentUrl] = useState(uri);
+  const webViewRef = useRef(null);
 
   const [sessionId, setSessionId] = useState();
   const [loadProgress, setLoadProgress] = useState(0);
+
+  const backButtonHandler = () => {
+    if (canGoBack) webViewRef.current?.goBack();
+  };
 
   const generateSession = async () => {
     try {
@@ -46,6 +53,10 @@ export default ({route}) => {
 
   useEffect(() => {
     generateSession();
+    BackHandler.addEventListener('hardwareBackPress', backButtonHandler);
+    return () => {
+      BackHandler.removeEventListener('hardwareBackPress', backButtonHandler);
+    };
   }, []);
 
   return (
@@ -60,15 +71,15 @@ export default ({route}) => {
         startInLoadingState
         javaScriptEnabled
         domStorageEnabled
-        onLoad={({nativeEvent}) => {
-          if (!nativeEvent.loading) {
-            console.log({nativeEvent});
-            addToSession(nativeEvent.url, sessionId);
-          }
-        }}
         onLoadProgress={({nativeEvent}) =>
           setLoadProgress(nativeEvent.progress)
         }
+        onNavigationStateChange={(navState) => {
+          setCanGoBack(navState.canGoBack);
+          setCanGoForward(navState.canGoForward);
+          setCurrentUrl(navState.url);
+          addToSession(navState.url, sessionId);
+        }}
       />
     </View>
   );
@@ -76,7 +87,7 @@ export default ({route}) => {
 
 const styles = StyleSheet.create({
   screenContainer: {
-    minHeight: height,
+    height: height,
     backgroundColor: COLORS.WHITE,
   },
   webView: {
