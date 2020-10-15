@@ -104,7 +104,7 @@ const styles = StyleSheet.create({
     zIndex: 2,
   },
   suggestionText: {
-    marginVertical: 15,
+    paddingVertical: 15,
     color: '#666',
     fontSize: 14,
   },
