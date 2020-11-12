@@ -14,17 +14,25 @@ const BookSlotButtons = ({
   primaryTitle,
   secondaryTitle,
   secondaryFunction,
+  enablePrimary = true,
+  enableSecondary = false,
 }) => {
   return (
     <View style={styles.buttonArea}>
-      <TouchableOpacity style={styles.primaryButton} onPress={primaryFunction}>
-        <Text style={styles.primaryButtonText}>{primaryTitle}</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={styles.secondaryButton}
-        onPress={secondaryFunction}>
-        <Text style={styles.secondaryButtonText}>{secondaryTitle}</Text>
-      </TouchableOpacity>
+      {enablePrimary && (
+        <TouchableOpacity
+          style={styles.primaryButton}
+          onPress={primaryFunction}>
+          <Text style={styles.primaryButtonText}>{primaryTitle}</Text>
+        </TouchableOpacity>
+      )}
+      {enableSecondary && (
+        <TouchableOpacity
+          style={styles.secondaryButton}
+          onPress={secondaryFunction}>
+          <Text style={styles.secondaryButtonText}>{secondaryTitle}</Text>
+        </TouchableOpacity>
+      )}
     </View>
   );
 };
