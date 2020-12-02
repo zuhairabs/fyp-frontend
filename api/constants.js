@@ -1,4 +1,4 @@
-export const BASE_URI = 'https://api.shopout.co.in';
+export const BASE_URI = 'https://shopout-demo.herokuapp.com';
 export const URI = `${BASE_URI}/user`;
 export const RTC_URI = `${BASE_URI}/rtc-video`;
 

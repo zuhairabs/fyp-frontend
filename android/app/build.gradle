@@ -153,11 +153,11 @@ android {
             keyPassword 'android'
         }
         release {
-            // if (project.hasProperty('shopout-key.keystore')) {
-                storeFile file('shopout.keystore')
-                storePassword 'Welcome@123'
-                keyAlias 'suryansh'
-                keyPassword 'Welcome@123'
+            // if (project.hasProperty('shopout-user.keystore')) {
+                storeFile file('shopout-user.keystore')
+                storePassword 'Shopout123'
+                keyAlias 'shopout-user'
+                keyPassword 'Shopout123'
             // }
         }
     }

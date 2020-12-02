@@ -79,6 +79,7 @@ const Home = ({navigation}) => {
       Post('app/home/store/category/list').then(
         (data) => {
           resolve(data.response);
+		  console.log(data);
         },
         (e) => {
           reject(e);

@@ -1,5 +1,5 @@
 {
-  "name": "user",
+  "name": "user demo",
   "version": "0.0.1",
   "private": true,
   "scripts": {
@@ -30,6 +30,7 @@
     "react-native-hyperlink": "0.0.19",
     "react-native-image-picker": "^2.3.3",
     "react-native-image-resizer": "^1.2.3",
+    "react-native-incoming-call": "^2.0.3",
     "react-native-linear-gradient": "^2.5.6",
     "react-native-modalbox": "^2.0.0",
     "react-native-qrcode-svg": "^6.0.6",

@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useContext, createRef} from 'react';
-import {View, Text, ActivityIndicator} from 'react-native';
+import {View, Text, ActivityIndicator, Dimensions} from 'react-native';
 import {
   ScrollView,
   TouchableWithoutFeedback,
@@ -21,6 +21,7 @@ import SafetyElement from './Elements/SafetyElement';
 
 import {styles, headerHeight} from './Styles';
 import {textStyles} from '../../styles/styles';
+const WINDOW_WIDTH = Dimensions.get('window').width;
 
 import {
   saveStoreHistory,
@@ -116,8 +117,8 @@ const Store = ({route}) => {
                 {storeData.name === storeData.location_desc ? (
                   <Text style={styles.location}>{storeData.name}</Text>
                 ) : (
-                  <Text style={styles.location}>
-                    {storeData.name}, {storeData.location_desc}
+                  <Text style={[styles.location, { width: WINDOW_WIDTH/1.7}]}>
+                    {storeData.name} {storeData.location_desc}
                   </Text>
                 )}
                 {storeData.displacement && (

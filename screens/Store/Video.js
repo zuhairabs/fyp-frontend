@@ -54,16 +54,10 @@ export default ({route}) => {
 
   const onPressCart = () => {
     let brand = video.brand;
-    let tag = video.tag;
-    if (brand && brand.name) {
+    let tags = video.tags;
+	if (tags) {
       navigationRef.current?.navigate('SearchFull', {
-        initial: brand.name,
-        autoFocus: false,
-        initialTab: 1,
-      });
-    } else if (tag && tag.name) {
-      navigationRef.current?.navigate('SearchFull', {
-        initial: tag.name,
+        initial: tags[0],
         initialTab: 1,
         autoFocus: false,
       });
