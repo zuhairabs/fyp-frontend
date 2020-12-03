@@ -7,30 +7,31 @@ import messaging from '@react-native-firebase/messaging';
 import App from './App';
 import {name as appName} from './app.json';
 import {fetchNotifications} from './controllers/Notifications/NotificationHandler';
-//import IncomingCall from 'react-native-incoming-call';
+import IncomingCall from 'react-native-incoming-call';
 
 messaging().setBackgroundMessageHandler(async (remoteMessage) => {
   fetchNotifications();
- /* if (remoteMessage?.notification?.title === 'Incoming Call') {
-	  console.log('Handle Notification');
+  console.log(remoteMessage.notification.title);
+  if (remoteMessage?.notification?.title === 'Incoming call') {
+    console.log('Handle Notification');
     // Display incoming call activity.
     IncomingCall.display(
       'callUUIDv4', // Call UUID v4
-      'Quocs', // Username
+      'Apparel Nation', // Username
       'https://avatars3.githubusercontent.com/u/16166195', // Avatar URL
-      'Incoming Call', // Info text
-      20000 // Timeout for end call after 20s
+      'Incoming Video Call', // Info text
+      20000, // Timeout for end call after 20s
     );
-  } else if (remoteMessage?.notification?.title === 'Missed Call') {
+  } else if (remoteMessage?.notification?.title === 'Missed call') {
     // Terminate incoming activity. Should be called when call expired.
     IncomingCall.dismiss();
   }
- 
+
   // Listen to headless action events
-  DeviceEventEmitter.addListener("endCall", payload => {
+  DeviceEventEmitter.addListener('endCall', (payload) => {
     // End call action here
   });
-  DeviceEventEmitter.addListener("answerCall", (payload) => {
+  DeviceEventEmitter.addListener('answerCall', (payload) => {
     console.log('answerCall', payload);
     if (payload.isHeadless) {
       // Called from killed state
@@ -39,7 +40,7 @@ messaging().setBackgroundMessageHandler(async (remoteMessage) => {
       // Called from background state
       IncomingCall.backToForeground();
     }
-  }); */
+  });
 });
 
 AppRegistry.registerHeadlessTask(
