@@ -31,6 +31,7 @@ const CategoryScroll = lazy(() =>
 import {GlobalContext} from '../../providers/GlobalContext';
 import {textStyles, COLORS} from '../../styles/styles';
 import {Post} from '../../api/http';
+import {PostBaseRoute} from '../../api/http';
 
 const DEVICE_HEIGHT = Dimensions.get('window').height;
 

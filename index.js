@@ -13,12 +13,12 @@ messaging().setBackgroundMessageHandler(async (remoteMessage) => {
   fetchNotifications();
   console.log(remoteMessage.notification.title);
   if (remoteMessage?.notification?.title === 'Incoming call') {
-    console.log('Handle Notification');
+    console.log(remoteMessage.data);
     // Display incoming call activity.
     IncomingCall.display(
-      'callUUIDv4', // Call UUID v4
-      'Apparel Nation', // Username
-      'https://avatars3.githubusercontent.com/u/16166195', // Avatar URL
+      remoteMessage.data.channelName, // Call UUID v4
+      remoteMessage.data.display_name, // Username
+      'https://e1.pngegg.com/pngimages/929/197/png-clipart-button-ui-system-icons-facetime-video-call-icon.png', // Avatar URL
       'Incoming Video Call', // Info text
       20000, // Timeout for end call after 20s
     );
@@ -29,7 +29,7 @@ messaging().setBackgroundMessageHandler(async (remoteMessage) => {
 
   // Listen to headless action events
   DeviceEventEmitter.addListener('endCall', (payload) => {
-    // End call action here
+    IncomingCall.dismiss();
   });
   DeviceEventEmitter.addListener('answerCall', (payload) => {
     console.log('answerCall', payload);
