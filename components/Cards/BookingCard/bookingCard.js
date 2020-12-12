@@ -29,7 +29,7 @@ const mlist = [
 const BookingCard = (props) => {
   const {state} = useContext(GlobalContext);
   const [extended, setExtended] = useState(false);
-
+console.log(Object.keys(props.booking.store));
   const shareBooking = async () => {
     const display_name = props.booking.store.business.display_name;
     const date = new Date(props.booking.start);

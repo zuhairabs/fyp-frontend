@@ -21,11 +21,11 @@ const ImageHeader = ({title_image, height, store}) => {
   const scrollRef = createRef();
 
   const changeImage = (number) => {
-    scrollRef.current.scrollTo({
-      animated: true,
-      y: 0,
-      x: WINDOW_WIDTH * number,
-    });
+    //scrollRef.current.scrollTo({
+      //animated: true,
+      //y: 0,
+      //x: WINDOW_WIDTH * number,
+    //});
     setHeaderImage(number);
   };
 

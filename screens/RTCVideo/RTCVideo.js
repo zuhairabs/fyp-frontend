@@ -2,6 +2,7 @@ import React, {useState, useEffect, useContext} from 'react';
 import {Text, View, ActivityIndicator} from 'react-native';
 import VideoContainer from './VideoContainer/VideoContainer';
 import requestCameraAndAudioPermission from './VideoContainer/Permissions';
+import {ongoingCall} from '../../controllers/Notifications/pushNotification';
 import {
   registerNewParticipant,
   generateRandomUid,
@@ -19,6 +20,7 @@ export default ({route}) => {
     console.log({channelName});
     requestCameraAndAudioPermission().then((granted) => {
       if (granted) {
+		  ongoingCall(channelName);
         registerNewParticipant(state.user._id, channelName, uid).then(() =>
           setPermissionStatus(true),
         );
@@ -36,7 +38,7 @@ export default ({route}) => {
         alignItems: 'center',
       }}>
       <ActivityIndicator color="#0062FF" size="large" />
-      <Text style={{paddingTop: 20}}>Trying to find the channel</Text>
+      <Text style={{paddingTop: 20}}>Connecting....</Text>
     </View>
   );
 };

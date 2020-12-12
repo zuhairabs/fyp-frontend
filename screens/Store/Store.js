@@ -48,7 +48,10 @@ const Store = ({route}) => {
   const [storeVideos, setStoreVideos] = useState([]);
   const [favourite, setFavourite] = useState(false);
   const [videoSlot, setVideoSlot] = useState(false);
-
+  const [physical_enabled, setEnablePrimary] = useState(storeData.physical_enabled || true);
+  const [virtual_enabled, setEnableSecondary] = useState(storeData.virtual_enabled || true);
+  
+  
   useEffect(() => {
     if (state.favourites && state.favourites.indexOf(store) > -1)
       setFavourite(true);
@@ -91,7 +94,7 @@ const Store = ({route}) => {
             alignItems: 'center',
           }}>
           <View style={styles.ratingBadge}>
-            <RatingBadge color="orange" value={storeData.avg_rating || false} />
+            <RatingBadge color="orange" value={storeData.avg_rating} />
           </View>
 
           {storeData.business && (
@@ -110,7 +113,7 @@ const Store = ({route}) => {
             <View style={styles.heading}>
               <View style={styles.headingText}>
                 {storeData.business && (
-                  <Text style={textStyles.serifHeader}>
+                  <Text style={[textStyles.serifHeader, {width: WINDOW_WIDTH/1.5}]}>
                     {storeData.business.display_name}
                   </Text>
                 )}
@@ -202,11 +205,13 @@ const Store = ({route}) => {
       {storeData.active_hours && storeData.working_days && (
         <BookSlotButtons
           primaryTitle="Go to store"
+		  enablePrimary={physical_enabled}
           primaryFunction={() => {
             setVideoSlot(false);
             refRBSheet.current?.open();
           }}
           secondaryTitle="Video call"
+		  enableSecondary={virtual_enabled}
           secondaryFunction={() => {
             setVideoSlot(true);
             refRBSheet.current?.open();

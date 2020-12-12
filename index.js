@@ -7,13 +7,16 @@ import messaging from '@react-native-firebase/messaging';
 import App from './App';
 import {name as appName} from './app.json';
 import {fetchNotifications} from './controllers/Notifications/NotificationHandler';
+import {callNotification} from './controllers/Notifications/pushNotification';
 import IncomingCall from 'react-native-incoming-call';
+import PushNotification from "react-native-push-notification";
 
 messaging().setBackgroundMessageHandler(async (remoteMessage) => {
   fetchNotifications();
-  console.log(remoteMessage.notification.title);
+
   if (remoteMessage?.notification?.title === 'Incoming call') {
-    console.log(remoteMessage.data);
+	 PushNotification.cancelAllLocalNotifications();
+    callNotification(remoteMessage.data.channelName, remoteMessage.data.display_name);
     // Display incoming call activity.
     IncomingCall.display(
       remoteMessage.data.channelName, // Call UUID v4
