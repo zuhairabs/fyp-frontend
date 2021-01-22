@@ -10,6 +10,7 @@ import {
   Alert,
   Dimensions,
   FlatList,
+  TouchableOpacity,
 } from 'react-native';
 import Geolocation from 'react-native-geolocation-service';
 import {TouchableHighlight} from 'react-native-gesture-handler';
@@ -118,6 +119,10 @@ export default ({navigation}) => {
         showsVerticalScrollIndicator={false}>
         <Navbar type="unlocked" navigation={navigation} />
         <SearchBarIdle navigation={navigation} />
+
+        <TouchableOpacity onPress={() => navigation.navigate('Ringer')}>
+          <Text>Ringer Screen</Text>
+        </TouchableOpacity>
 
         {locationPermissionStatus ? (
           <>
