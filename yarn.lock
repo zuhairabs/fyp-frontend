@@ -6309,6 +6309,11 @@ react-native-communications@^2.2.1:
   resolved "https://registry.yarnpkg.com/react-native-communications/-/react-native-communications-2.2.1.tgz#7883b56b20a002eeb790c113f8616ea8692ca795"
   integrity sha1-eIO1ayCgAu63kMET+GFuqGksp5U=
 
+react-native-draw-overlay@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/react-native-draw-overlay/-/react-native-draw-overlay-1.0.1.tgz#718d716c820f36726841a05410c2ea5df96ba2e0"
+  integrity sha512-6hMIhl43+Rh2Tjxqy7BptmGcTshnqSnQSUwkdIEheEgIV+VHtDWGzRinZrPziknzJSsbOcQgRaQ5BUTH0tQlEQ==
+
 react-native-fs@^2.16.6:
   version "2.16.6"
   resolved "https://registry.yarnpkg.com/react-native-fs/-/react-native-fs-2.16.6.tgz#2901789a43210a35a0ef0a098019bbef3af395fd"

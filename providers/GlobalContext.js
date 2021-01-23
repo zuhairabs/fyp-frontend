@@ -78,6 +78,7 @@ export const GlobalContextProvider = (props) => {
           messaging()
             .getToken()
             .then((firebaseToken) => {
+              console.log("FCM -> ", firebaseToken)
               const requestOptions = {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},

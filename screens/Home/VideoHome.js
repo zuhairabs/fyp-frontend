@@ -11,6 +11,7 @@ import {
   Dimensions,
   FlatList,
   TouchableOpacity,
+  AsyncStorage,
 } from 'react-native';
 import Geolocation from 'react-native-geolocation-service';
 import {TouchableHighlight} from 'react-native-gesture-handler';
@@ -22,6 +23,7 @@ import SearchBarIdle from '../../components/Header/SearchBarIdle';
 import Location from '../../components/Header/HeaderLocation';
 import CardScrollSmall from '../../components/CardScrollSmall/CardScrollSmall';
 import CategoryScroll from '../../components/Header/CategoryScroll';
+import RNDrawOverlay from 'react-native-draw-overlay';
 
 import {GlobalContext} from '../../providers/GlobalContext';
 import {COLORS} from '../../styles/styles';
@@ -41,6 +43,16 @@ export default ({navigation}) => {
   const [offset, setOffset] = useState(0);
   const [categories, setCategories] = useState([]);
   const [categoryList, setCategoryList] = useState([]);
+
+  overAppPermissionAction = () => {
+    RNDrawOverlay.askForDispalayOverOtherAppsPermission()
+      .then(async (res) => {
+        await AsyncStorage.setItem('overAppPermission', 'true');
+      })
+      .catch(async (e) => {
+        await AsyncStorage.setItem('overAppPermission', 'false');
+      });
+  };
 
   const requestLocationPermission = async () => {
     const granted = await PermissionsAndroid.request(
@@ -82,7 +94,25 @@ export default ({navigation}) => {
     });
   };
 
+  const checkOverlayPermission = async () => {
+    let permission = await AsyncStorage.getItem('overAppPermission');
+    console.log('permission -> ', permission);
+    if (permission === 'false' || permission === null) {
+      Alert.alert(
+        'Overlay Permission',
+        'You need to give permission for overlay app to get video calls.',
+        [
+          {
+            text: 'Cancel',
+          },
+          {text: 'Grant permission', onPress: () => overAppPermissionAction()},
+        ],
+      );
+    }
+  };
+
   useEffect(() => {
+    checkOverlayPermission();
     requestLocationPermission();
     getCategories().then((response) => {
       setCategoryList(response);
@@ -121,7 +151,7 @@ export default ({navigation}) => {
         <SearchBarIdle navigation={navigation} />
 
         <TouchableOpacity onPress={() => navigation.navigate('Ringer')}>
-          <Text>Ringer Screen</Text>
+          {/* <Text>Ringer Screen</Text> */}
         </TouchableOpacity>
 
         {locationPermissionStatus ? (

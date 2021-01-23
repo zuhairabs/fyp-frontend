@@ -211,6 +211,8 @@ dependencies {
 	
 	implementation project(':rn-android-overlay-permission')
 	implementation project(':react-native-push-notification')
+    
+    implementation project(':react-native-draw-overlay')
 
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {
       exclude group:'com.facebook.fbjni'
