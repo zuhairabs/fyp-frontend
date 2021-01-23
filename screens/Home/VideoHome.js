@@ -150,10 +150,6 @@ export default ({navigation}) => {
         <Navbar type="unlocked" navigation={navigation} />
         <SearchBarIdle navigation={navigation} />
 
-        <TouchableOpacity onPress={() => navigation.navigate('Ringer')}>
-          {/* <Text>Ringer Screen</Text> */}
-        </TouchableOpacity>
-
         {locationPermissionStatus ? (
           <>
             <Location location={location} />

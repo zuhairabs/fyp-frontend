@@ -22,7 +22,7 @@ import Success from '../../screens/Authentication/ResetPassword/Success';
 import Bookings from '../../screens/Bookings/Bookings';
 import Video from '../../screens/Store/Video';
 import RTCVideo from '../../screens/RTCVideo/RTCVideo';
-import Ringer from '../../screens/Ringer';
+
 // NAVIGATOR OPTIONS
 import {SCREEN_HEADER_OPTIONS, SCREEN_OPTIONS} from './ScreenOptions';
 import FullScreenWebView from '../../screens/FullScreenWebView';
@@ -45,7 +45,6 @@ export default () => (
         ...SCREEN_HEADER_OPTIONS,
       }}
     />
-    <Stack.Screen name="Ringer" component={Ringer} />
     <Stack.Screen
       name="Categories"
       component={Categories}
