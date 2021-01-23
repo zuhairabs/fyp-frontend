@@ -153,14 +153,14 @@ android {
             keyAlias 'androiddebugkey'
             keyPassword 'android'
         }
-        release {
+        // release {
             // if (project.hasProperty('shopout-user.keystore')) {
-                storeFile file('shopout-user.keystore')
-                storePassword 'Shopout123'
-                keyAlias 'shopout-user'
-                keyPassword 'Shopout123'
+                // storeFile file('shopout-user.keystore')
+                // storePassword 'Shopout123'
+                // keyAlias 'shopout-user'
+                // keyPassword 'Shopout123'
             // }
-        }
+        // }
     }
     buildTypes {
         debug {
