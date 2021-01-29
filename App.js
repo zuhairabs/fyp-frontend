@@ -48,7 +48,7 @@ const App = () => {
    * App open from killed state (headless mode)
    */
       const payload = IncomingCall.getExtrasFromHeadlessMode();
-    //console.log('launchParameters', payload);
+    console.log('launchParameters', payload);
  
     /**
      * App in foreground / background: listen to call events and determine what to do next
