@@ -1,5 +1,5 @@
 import React, {useEffect, useContext} from 'react';
-import {DeviceEventEmitter, Platform} from 'react-native';
+import {DeviceEventEmitter, Platform, AsyncStorage} from 'react-native';
 import IncomingCall from 'react-native-incoming-call';
 import {GlobalContextProvider} from './providers/GlobalContext';
 import AppNavigation from './Navigation/Navigation';
@@ -10,7 +10,7 @@ import {leaveCall} from './screens/RTCVideo/VideoContainer/VideoContainer';
 
 // Must be outside of any component LifeCycle (such as `componentDidMount`).
 PushNotification.configure({
-  onNotification: function (notification) {
+  onNotification: async function (notification) {
 	  //if(notification.action === "Leave Call") {
 		//leaveCall();
 		//navigationRef.current?.navigate('Home');
@@ -22,6 +22,7 @@ PushNotification.configure({
 		navigationRef.current?.navigate('RTCVideo', {
           channelName: notification.tag,
         });
+    await AsyncStorage.setItem('callDetails', null);
 		IncomingCall.dismiss();
 	} else {
 		console.log("Declined");
@@ -48,7 +49,7 @@ const App = () => {
    * App open from killed state (headless mode)
    */
       const payload = IncomingCall.getExtrasFromHeadlessMode();
-    console.log('launchParameters', payload);
+    // console.log('launchParameters', payload);
  
     /**
      * App in foreground / background: listen to call events and determine what to do next

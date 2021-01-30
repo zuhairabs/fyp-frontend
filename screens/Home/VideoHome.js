@@ -44,6 +44,27 @@ export default ({navigation}) => {
   const [categories, setCategories] = useState([]);
   const [categoryList, setCategoryList] = useState([]);
 
+  const onFocus = async () => {
+    await requestLocationPermission();
+    await checkOverlayPermission();
+    await checkCall();
+  }
+
+  const checkCall = async () => {
+    let callDetails = await AsyncStorage.getItem('callDetails');
+    if(callDetails){
+      callDetails = JSON.parse(callDetails);
+      console.log('callDetails ->', callDetails);
+      navigation.navigate('RTCVideo', {
+        channelName: callDetails.uuid,
+      });
+      await AsyncStorage.setItem('callDetails', null);
+    } else{
+      await AsyncStorage.setItem('callDetails', null);
+    }
+    
+  }
+
   overAppPermissionAction = () => {
     RNDrawOverlay.askForDispalayOverOtherAppsPermission()
       .then(async (res) => {
@@ -112,8 +133,7 @@ export default ({navigation}) => {
   };
 
   useEffect(() => {
-    checkOverlayPermission();
-    requestLocationPermission();
+    onFocus();
     getCategories().then((response) => {
       setCategoryList(response);
       let res = [];

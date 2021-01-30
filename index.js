@@ -2,7 +2,7 @@
  * @format
  */
 
-import {AppRegistry, ToastAndroid, DeviceEventEmitter} from 'react-native';
+import {AppRegistry, ToastAndroid, DeviceEventEmitter, AsyncStorage} from 'react-native';
 import messaging from '@react-native-firebase/messaging';
 import App from './App';
 import {name as appName} from './app.json';
@@ -38,8 +38,10 @@ messaging().setBackgroundMessageHandler(async (remoteMessage) => {
   DeviceEventEmitter.addListener('endCall', (payload) => {
     IncomingCall.dismiss();
   });
-  DeviceEventEmitter.addListener('answerCall', (payload) => {
+  DeviceEventEmitter.addListener('answerCall', async (payload) => {
     console.log('answerCall', payload);
+    const callPlayload = JSON.stringify(payload);
+    await AsyncStorage.setItem('callDetails', callPlayload);
     if (payload.isHeadless) {
       // Called from killed state
       IncomingCall.openAppFromHeadlessMode(payload.uuid);
