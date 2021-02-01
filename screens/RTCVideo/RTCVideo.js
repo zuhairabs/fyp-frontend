@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useContext} from 'react';
-import {Text, View, ActivityIndicator} from 'react-native';
+import {Text, View, ActivityIndicator, AsyncStorage} from 'react-native';
 import VideoContainer from './VideoContainer/VideoContainer';
 import requestCameraAndAudioPermission from './VideoContainer/Permissions';
 import {ongoingCall} from '../../controllers/Notifications/pushNotification';
@@ -16,7 +16,12 @@ export default ({route}) => {
   const [uid] = useState(generateRandomUid());
   const [permission, setPermissionStatus] = useState(false);
 
+  const clearStorage = async () =>{
+    await AsyncStorage.setItem('callDetails', "");
+  }
+
   useEffect(() => {
+    clearStorage();
     console.log({channelName});
     requestCameraAndAudioPermission().then((granted) => {
       if (granted) {

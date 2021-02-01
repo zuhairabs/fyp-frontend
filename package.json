@@ -47,7 +47,8 @@
     "react-native-vector-icons": "^7.1.0",
     "react-native-webview": "^10.9.0",
     "react-native-youtube": "^2.0.1",
-    "rn-android-overlay-permission": "^1.0.5"
+    "rn-android-overlay-permission": "^1.0.5",
+    "urijs": "^1.19.5"
   },
   "devDependencies": {
     "@babel/core": "^7.10.2",

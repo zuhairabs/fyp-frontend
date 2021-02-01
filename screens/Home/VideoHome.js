@@ -48,22 +48,18 @@ export default ({navigation}) => {
     await requestLocationPermission();
     await checkOverlayPermission();
     await checkCall();
-  }
+  };
 
   const checkCall = async () => {
     let callDetails = await AsyncStorage.getItem('callDetails');
-    if(callDetails){
+    if (callDetails) {
       callDetails = JSON.parse(callDetails);
       console.log('callDetails ->', callDetails);
       navigation.navigate('RTCVideo', {
         channelName: callDetails.uuid,
       });
-      await AsyncStorage.setItem('callDetails', null);
-    } else{
-      await AsyncStorage.setItem('callDetails', null);
-    }
-    
-  }
+    } 
+  };
 
   overAppPermissionAction = () => {
     RNDrawOverlay.askForDispalayOverOtherAppsPermission()

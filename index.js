@@ -2,7 +2,13 @@
  * @format
  */
 
-import {AppRegistry, ToastAndroid, DeviceEventEmitter, AsyncStorage} from 'react-native';
+import {
+  AppRegistry,
+  ToastAndroid,
+  DeviceEventEmitter,
+  AsyncStorage,
+  Linking,
+} from 'react-native';
 import messaging from '@react-native-firebase/messaging';
 import App from './App';
 import {name as appName} from './app.json';
@@ -10,9 +16,31 @@ import {fetchNotifications} from './controllers/Notifications/NotificationHandle
 import {callNotification} from './controllers/Notifications/pushNotification';
 import IncomingCall from 'react-native-incoming-call';
 import PushNotification from 'react-native-push-notification';
+import uri from 'urijs';
 
 messaging().setBackgroundMessageHandler(async (remoteMessage) => {
   fetchNotifications();
+
+  try {
+    const data = remoteMessage.data;
+
+    if (typeof data.type != 'undefined' && data.type == 'call') {
+      const url = 'com-shopout-user://notification';
+      const isSupported = Linking.canOpenURL(url);
+      if (!isSupported) {
+        throw new Error("Can't handle url: " + url);
+      } else {
+        const deepLinkUrlNotificaionUrl = new uri(url);
+        deepLinkUrlNotificaionUrl.addSearch(data);
+        console.log('deepLinkUrlNotificaionUrl ->', deepLinkUrlNotificaionUrl);
+        Linking.openURL(deepLinkUrlNotificaionUrl.toString());
+      }
+    } else {
+      await AsyncStorage.setItem('notificationData', JSON.stringify(data));
+    }
+  } catch (error) {
+    console.log(error);
+  }
 
   if (remoteMessage?.notification?.title === 'Incoming call') {
     console.log('remoteMessage ->', remoteMessage);
