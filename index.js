@@ -67,7 +67,7 @@ messaging().setBackgroundMessageHandler(async (remoteMessage) => {
     IncomingCall.dismiss();
   });
   DeviceEventEmitter.addListener('answerCall', async (payload) => {
-    console.log('answerCall', payload);
+    console.log('answerCall -> ', payload);
     const callPlayload = JSON.stringify(payload);
     await AsyncStorage.setItem('callDetails', callPlayload);
     if (payload.isHeadless) {
