@@ -16,21 +16,25 @@ export default ({route}) => {
   const [uid] = useState(generateRandomUid());
   const [permission, setPermissionStatus] = useState(false);
 
-  const clearStorage = async () =>{
-    await AsyncStorage.setItem('callDetails', "");
-  }
+  const clearStorage = async () => {
+    await AsyncStorage.setItem('callDetails', '');
+  };
 
-  useEffect(() => {
-    clearStorage();
-    console.log({channelName});
-    requestCameraAndAudioPermission().then((granted) => {
+  const onFocus = async () => {
+    await requestCameraAndAudioPermission().then((granted) => {
       if (granted) {
-		  ongoingCall(channelName);
+        ongoingCall(channelName);
         registerNewParticipant(state.user._id, channelName, uid).then(() =>
           setPermissionStatus(true),
         );
+        clearStorage();
       } else console.log('Permissions not granted');
     });
+  };
+
+  useEffect(() => {
+    console.log({channelName});
+    onFocus();
   }, []);
 
   return permission && channelName && channelName.length > 0 ? (
