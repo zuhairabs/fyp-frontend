@@ -19,6 +19,7 @@ const VideoCard = ({video}) => (
     <View style={styles.card}>
       <TouchableWithoutFeedback
         onPress={() => {
+          navigationRef.current?.goBack();
           navigationRef.current?.navigate('Video', {video});
         }}>
         <View style={styles.cardHeader}>
