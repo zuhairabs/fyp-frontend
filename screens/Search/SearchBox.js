@@ -18,8 +18,8 @@ export default ({fullSearch, autoFocus}) => {
   const clearPartialSearchResults = () => {
     inputBox.current?.blur();
     setSuggestions([]);
-    setDropdown(false);
     setText('');
+    setDropdown(false);
   };
 
   const handleTextChange = async (query) => {
@@ -34,6 +34,7 @@ export default ({fullSearch, autoFocus}) => {
 
   const ClearButton = () => (
     <TouchableWithoutFeedback
+      style={{backgroundColor: 'red'}}
       onPress={() => {
         clearPartialSearchResults();
       }}>
@@ -57,12 +58,11 @@ export default ({fullSearch, autoFocus}) => {
           value={text}
           onChangeText={(query) => handleTextChange(query)}
           onSubmitEditing={() => {
-            clearPartialSearchResults();
             fullSearch(text);
+            clearPartialSearchResults();
           }}
           returnKeyType="search"
           blurOnSubmit={true}
-          onBlur={() => clearPartialSearchResults()}
           placeholder={placeholder}
           placeholderTextColor={COLORS.BORDER}
           ref={inputBox}
@@ -70,7 +70,10 @@ export default ({fullSearch, autoFocus}) => {
         <ClearButton />
       </View>
       <Dropdown
-        fullSearch={fullSearch}
+        fullSearch={(text) => {
+          fullSearch(text);
+          clearPartialSearchResults();
+        }}
         dropdownOpen={dropdownOpen}
         suggestions={suggestions}
       />

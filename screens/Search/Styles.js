@@ -32,8 +32,9 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     alignItems: 'center',
     paddingHorizontal: 20,
-    marginTop: 20,
+    paddingTop: 20,
     marginBottom: 10,
+    zIndex: -1,
   },
   tab: {
     flex: 2,
