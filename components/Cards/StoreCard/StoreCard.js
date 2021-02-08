@@ -1,5 +1,5 @@
 import React, {useContext} from 'react';
-import {Text, View, StyleSheet, Image} from 'react-native';
+import {Text, View, StyleSheet, Image, Dimensions} from 'react-native';
 import {
   TouchableWithoutFeedback,
   TouchableOpacity,
@@ -12,6 +12,8 @@ import BookButton from '../../Buttons/BookButton';
 import {removeFav} from '../../../screens/Store/Actions/UserActions';
 import {COLORS, textStyles} from '../../../styles/styles';
 import {navigationRef} from '../../../Navigation/Navigation';
+
+const WINDOW_WIDTH = Dimensions.get('window').width;
 
 const StoreCard = (props) => {
   const {state, userActions} = useContext(GlobalContext);
@@ -59,8 +61,8 @@ const StoreCard = (props) => {
               <Text style={styles.subheadingText}>
                 {props.store.business.category}
               </Text>
-              <Text style={styles.subheadingText}>
-                {props.store.name}, {props.store.location_desc}
+              <Text style={[styles.subheadingText, {width: WINDOW_WIDTH/1.7}]}>
+                {props.store.name} {props.store.location_desc}
               </Text>
             </View>
           </View>

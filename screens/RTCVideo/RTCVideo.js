@@ -1,7 +1,8 @@
 import React, {useState, useEffect, useContext} from 'react';
-import {Text, View, ActivityIndicator} from 'react-native';
+import {Text, View, ActivityIndicator, AsyncStorage} from 'react-native';
 import VideoContainer from './VideoContainer/VideoContainer';
 import requestCameraAndAudioPermission from './VideoContainer/Permissions';
+import {ongoingCall} from '../../controllers/Notifications/pushNotification';
 import {
   registerNewParticipant,
   generateRandomUid,
@@ -15,15 +16,25 @@ export default ({route}) => {
   const [uid] = useState(generateRandomUid());
   const [permission, setPermissionStatus] = useState(false);
 
-  useEffect(() => {
-    console.log({channelName});
-    requestCameraAndAudioPermission().then((granted) => {
+  const clearStorage = async () => {
+    await AsyncStorage.setItem('callDetails', '');
+  };
+
+  const onFocus = async () => {
+    await requestCameraAndAudioPermission().then((granted) => {
       if (granted) {
+        ongoingCall(channelName);
         registerNewParticipant(state.user._id, channelName, uid).then(() =>
           setPermissionStatus(true),
         );
+        clearStorage();
       } else console.log('Permissions not granted');
     });
+  };
+
+  useEffect(() => {
+    console.log({channelName});
+    onFocus();
   }, []);
 
   return permission && channelName && channelName.length > 0 ? (
@@ -36,7 +47,7 @@ export default ({route}) => {
         alignItems: 'center',
       }}>
       <ActivityIndicator color="#0062FF" size="large" />
-      <Text style={{paddingTop: 20}}>Trying to find the channel</Text>
+      <Text style={{paddingTop: 20}}>Connecting....</Text>
     </View>
   );
 };

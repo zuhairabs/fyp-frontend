@@ -14,6 +14,7 @@ import {
 } from 'react-native';
 import Geolocation from 'react-native-geolocation-service';
 import {TouchableHighlight} from 'react-native-gesture-handler';
+import OverlayPermissionModule from "rn-android-overlay-permission";
 
 import MainBackground from '../../components/Backgrounds/MainBackground';
 import StatusBarWhite from '../../components/StatusBar';
@@ -31,6 +32,7 @@ const CategoryScroll = lazy(() =>
 import {GlobalContext} from '../../providers/GlobalContext';
 import {textStyles, COLORS} from '../../styles/styles';
 import {Post} from '../../api/http';
+import {PostBaseRoute} from '../../api/http';
 
 const DEVICE_HEIGHT = Dimensions.get('window').height;
 
@@ -47,7 +49,32 @@ const Home = ({navigation}) => {
   const [categories, setCategories] = useState([]);
   const [categoryList, setCategoryList] = useState([]);
 
-  const requestLocationPermission = async () => {
+	const requestOverlayPermission = () => {
+		if (Platform.OS === "android") {
+	OverlayPermissionModule.isRequestOverlayPermissionGranted((status: false) => {
+    if (status) {
+      Alert.alert(
+        "Permissions",
+        "Overlay Permission",
+        [
+          {
+            text: "Cancel",
+            onPress: () => console.log("Cancel Pressed"),
+            style: "cancel",
+          },
+          {
+            text: "OK",
+            onPress: () => OverlayPermissionModule.requestOverlayPermission(),
+          },
+        ],
+        { cancelable: false }
+      );
+    }
+  });
+}
+	}
+
+  /* const requestLocationPermission = async () => {
     const granted = await PermissionsAndroid.request(
       PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
     );
@@ -72,13 +99,14 @@ const Home = ({navigation}) => {
         },
       );
     else setLocationPermissionStatus(false);
-  };
+  }; */
 
   const getCategories = () => {
     return new Promise((resolve, reject) => {
       Post('app/home/store/category/list').then(
         (data) => {
           resolve(data.response);
+		  console.log(data);
         },
         (e) => {
           reject(e);
@@ -88,6 +116,7 @@ const Home = ({navigation}) => {
   };
 
   useEffect(() => {
+	OverlayPermissionModule.requestOverlayPermission();
     requestLocationPermission();
     getCategories().then((response) => {
       setCategoryList(response);

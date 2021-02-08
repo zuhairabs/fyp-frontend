@@ -1,12 +1,14 @@
 import React, {useState, useEffect, createRef} from 'react';
 import {View} from 'react-native';
 import RtcEngine from 'react-native-agora';
+import PushNotification from "react-native-push-notification";
 import {navigationRef} from '../../../Navigation/Navigation';
 import styles from './ContainerStyles';
 import {BottomButton, EndCallButton} from './Controls';
 import {RenderVideos} from './RenderVideos';
 import ChatBox from '../Chat/Chat';
 import RBSheet from 'react-native-raw-bottom-sheet';
+import KeepAwake from 'react-native-keep-awake';
 
 export const chatBoxRef = createRef();
 
@@ -49,7 +51,8 @@ export default ({channelName, appId, uid}) => {
     (await _engine).destroy();
     setPeerIds([]);
     setJoinSucceed(false);
-    console.log('LeaveChannelSuccess', {channelName});
+	PushNotification.cancelAllLocalNotifications();
+	console.log('LeaveChannelSuccess', {channelName});
   };
 
   // RTC listeners
@@ -122,6 +125,7 @@ export default ({channelName, appId, uid}) => {
           onPressFunction={() => toggleCameraView()}
         />
       </View>
+      <KeepAwake />
     </View>
   );
 };

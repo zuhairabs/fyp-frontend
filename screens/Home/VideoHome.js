@@ -10,6 +10,8 @@ import {
   Alert,
   Dimensions,
   FlatList,
+  TouchableOpacity,
+  AsyncStorage,
 } from 'react-native';
 import Geolocation from 'react-native-geolocation-service';
 import {TouchableHighlight} from 'react-native-gesture-handler';
@@ -21,6 +23,7 @@ import SearchBarIdle from '../../components/Header/SearchBarIdle';
 import Location from '../../components/Header/HeaderLocation';
 import CardScrollSmall from '../../components/CardScrollSmall/CardScrollSmall';
 import CategoryScroll from '../../components/Header/CategoryScroll';
+import RNDrawOverlay from 'react-native-draw-overlay';
 
 import {GlobalContext} from '../../providers/GlobalContext';
 import {COLORS} from '../../styles/styles';
@@ -40,6 +43,33 @@ export default ({navigation}) => {
   const [offset, setOffset] = useState(0);
   const [categories, setCategories] = useState([]);
   const [categoryList, setCategoryList] = useState([]);
+
+  const onFocus = async () => {
+    await requestLocationPermission();
+    await checkOverlayPermission();
+    await checkCall();
+  };
+
+  const checkCall = async () => {
+    let callDetails = await AsyncStorage.getItem('callDetails');
+    if (callDetails) {
+      callDetails = JSON.parse(callDetails);
+      console.log('callDetails ->', callDetails);
+      navigation.navigate('RTCVideo', {
+        channelName: callDetails.uuid,
+      });
+    }
+  };
+
+  overAppPermissionAction = () => {
+    RNDrawOverlay.askForDispalayOverOtherAppsPermission()
+      .then(async (res) => {
+        await AsyncStorage.setItem('overAppPermission', 'true');
+      })
+      .catch(async (e) => {
+        await AsyncStorage.setItem('overAppPermission', 'false');
+      });
+  };
 
   const requestLocationPermission = async () => {
     const granted = await PermissionsAndroid.request(
@@ -66,6 +96,21 @@ export default ({navigation}) => {
         },
       );
     else setLocationPermissionStatus(false);
+
+    await PermissionsAndroid.requestMultiple([
+      PermissionsAndroid.PERMISSIONS.CAMERA,
+      PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
+    ]);
+    if (
+      granted['android.permission.RECORD_AUDIO'] ===
+        PermissionsAndroid.RESULTS.GRANTED &&
+      granted['android.permission.CAMERA'] ===
+        PermissionsAndroid.RESULTS.GRANTED
+    ) {
+      console.log('You can use the cameras & mic');
+    } else {
+      console.log('Permission denied');
+    }
   };
 
   const getCategories = () => {
@@ -81,8 +126,25 @@ export default ({navigation}) => {
     });
   };
 
+  const checkOverlayPermission = async () => {
+    let permission = await AsyncStorage.getItem('overAppPermission');
+    console.log('permission -> ', permission);
+    if (permission === 'false' || permission === null) {
+      Alert.alert(
+        'Overlay Permission',
+        'You need to give permission for overlay app to get video calls.',
+        [
+          {
+            text: 'Cancel',
+          },
+          {text: 'Grant permission', onPress: () => overAppPermissionAction()},
+        ],
+      );
+    }
+  };
+
   useEffect(() => {
-    requestLocationPermission();
+    onFocus();
     getCategories().then((response) => {
       setCategoryList(response);
       let res = [];

@@ -134,8 +134,9 @@ android {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         multiDexEnabled true
-        versionCode 1
-        versionName "1.0"
+        versionCode 3
+        versionName "3.0"
+        missingDimensionStrategy 'react-native-camera', 'general'
     }
     splits {
         abi {
@@ -153,11 +154,11 @@ android {
             keyPassword 'android'
         }
         release {
-            // if (project.hasProperty('shopout-key.keystore')) {
-                storeFile file('shopout.keystore')
-                storePassword 'Welcome@123'
-                keyAlias 'suryansh'
-                keyPassword 'Welcome@123'
+            // if (project.hasProperty('shopout-user.keystore')) {
+                // storeFile file('shopout-user.keystore')
+                // storePassword 'Shopout123'
+                // keyAlias 'shopout-user'
+                // keyPassword 'Shopout123'
             // }
         }
     }
@@ -169,7 +170,7 @@ android {
             // Caution! In production, you need to generate your own keystore file.
             // see https://facebook.github.io/react-native/docs/signed-apk-android.
             // signingConfig signingConfigs.debug
-            signingConfig signingConfigs.release
+            // signingConfig signingConfigs.release
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }
@@ -207,6 +208,11 @@ dependencies {
     implementation 'com.google.firebase:firebase-analytics:17.4.3'
     implementation 'com.google.firebase:firebase-messaging:20.2.1'
     implementation 'com.android.support:multidex:1.0.3'
+	
+	implementation project(':rn-android-overlay-permission')
+	implementation project(':react-native-push-notification')
+    
+    implementation project(':react-native-draw-overlay')
 
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {
       exclude group:'com.facebook.fbjni'

@@ -13,20 +13,28 @@ import Stores from './Tabs/Stores';
 import EmptyResults from './EmptyResults';
 import {GlobalContext} from '../../providers/GlobalContext';
 
-export default ({route}) => {
+export default ({route, navigation}) => {
   const {state} = useContext(GlobalContext);
   const {initial, autoFocus, initialTab} = route.params;
   const [loading, setLoading] = useState(false);
   const [query, setQuery] = useState();
-  const [selectedTab, setSelectedTab] = useState(initialTab || 0);
+  const [selectedTab, setSelectedTab] = useState(initialTab ? initialTab : 0);
   const [results, setResults] = useState({});
   const [isEmpty, setEmpty] = useState(false);
 
   useEffect(() => {
-    if (initial) fullSearch(initial);
-  }, []);
+    const unsubscribe = navigation.addListener('focus', () => {
+      if (initialTab) {
+        setSelectedTab(initialTab);
+        console.log('initial ->', initial);
+        if (initial) fullSearch(initial);
+      }
+    });
+    return unsubscribe;
+  }, [navigation]);
 
   const fullSearch = (searchTerm) => {
+    console.log('searchTerm ->', searchTerm);
     if (searchTerm && searchTerm.length > 0) {
       setLoading(true);
       setQuery(searchTerm);

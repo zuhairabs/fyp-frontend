@@ -14,8 +14,8 @@ const BookSlotButtons = ({
   primaryTitle,
   secondaryTitle,
   secondaryFunction,
-  enablePrimary = true,
-  enableSecondary = false,
+  enablePrimary,
+  enableSecondary,
 }) => {
   return (
     <View style={styles.buttonArea}>

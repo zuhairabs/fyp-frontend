@@ -1,5 +1,6 @@
 package com.shopout.user;
 
+import com.overlaypermission.OverlayPermissionPackage;
 import com.facebook.react.ReactActivity;
 
 public class MainActivity extends ReactActivity {

@@ -23,6 +23,7 @@ import RNFS from 'react-native-fs';
 
 import {GlobalContext} from '../../providers/GlobalContext';
 import {Post} from '../../api/http';
+import {PostBaseRoute} from '../../api/http';
 
 import StatusBarWhite from '../../components/StatusBar';
 import NavbarBackButton from '../../components/Header/NavbarBackButton';

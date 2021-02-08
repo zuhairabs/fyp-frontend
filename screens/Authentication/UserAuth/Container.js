@@ -91,7 +91,7 @@ export default Authentication = ({navigation}) => {
                 <Text
                   style={{color: '#0062FF'}}
                   onPress={() => {
-                    Linking.openURL('https://www.github.com');
+                    Linking.openURL('https://shopout.co.in/policy.html');
                   }}>
                   {' '}
                   Terms of Use
