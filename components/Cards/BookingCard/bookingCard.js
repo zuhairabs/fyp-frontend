@@ -29,7 +29,7 @@ const mlist = [
 const BookingCard = (props) => {
   const {state} = useContext(GlobalContext);
   const [extended, setExtended] = useState(false);
-console.log(Object.keys(props.booking.store));
+  console.log(Object.keys(props.booking.store));
   const shareBooking = async () => {
     const display_name = props.booking.store.business.display_name;
     const date = new Date(props.booking.start);
@@ -61,6 +61,8 @@ console.log(Object.keys(props.booking.store));
         visitors: props.booking.visitors,
         end: props.booking.end,
         start: props.booking.start,
+        type: props.booking.type,
+        assistance: props.booking.assistance,
       },
     });
     Post('booking/actions/cancel', body, state.token).then(() => {
