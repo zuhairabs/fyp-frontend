@@ -2,27 +2,24 @@ import messaging from '@react-native-firebase/messaging';
 import {navigationRef} from '../../Navigation/Navigation';
 import {fetchNotifications} from './NotificationHandler';
 
-const redirectPushNotification = (remoteMessage) => {
-  if (remoteMessage.data?.booking)
-    navigationRef.current?.navigate('SingleBooking', {
-      booking: remoteMessage.data.booking,
-      archived: remoteMessage.data.archived,
-    });
-  else if (remoteMessage.data?.store)
-    navigationRef.current?.navigate('Store', {
-      store: remoteMessage.data.store,
-      searched: false,
-    });
-};
-
 export default NotificationListener = (setNotifications) => {
   // Handler to control push notification interaction
   messaging().onNotificationOpenedApp((remoteMessage) => {
-    redirectPushNotification(remoteMessage);
+    const type = remoteMessage.data.type;
+    if (type && type === 'booking-60') {
+      navigationRef.current?.navigate('Bookings');
+    } else if (type && (type === 'booking-15' || type === 'booking-missed')) {
+      navigationRef.current?.navigate('SingleBooking', {
+        booking: remoteMessage.data.booking,
+        archived: remoteMessage.data.archived,
+      });
+    } else {
+      navigationRef.current?.navigate('Home');
+    }
   });
 
   messaging().getInitialNotification((remoteMessage) => {
-    redirectPushNotification(remoteMessage);
+    console.log('Backround ran');
   });
 
   // Global message handler
