@@ -27,7 +27,6 @@ PushNotification.configure({
       IncomingCall.dismiss();
     } else {
       console.log('Declined');
-      missedNotification();
       IncomingCall.dismiss();
     }
   },
