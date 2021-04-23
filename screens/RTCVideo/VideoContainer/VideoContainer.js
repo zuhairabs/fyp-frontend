@@ -1,7 +1,7 @@
 import React, {useState, useEffect, createRef} from 'react';
-import {View} from 'react-native';
+import {View, Alert, BackHandler, ToastAndroid} from 'react-native';
 import RtcEngine from 'react-native-agora';
-import PushNotification from "react-native-push-notification";
+import PushNotification from 'react-native-push-notification';
 import {navigationRef} from '../../../Navigation/Navigation';
 import styles from './ContainerStyles';
 import {BottomButton, EndCallButton} from './Controls';
@@ -15,6 +15,7 @@ export const chatBoxRef = createRef();
 export default ({channelName, appId, uid}) => {
   const _engine = RtcEngine.create(appId);
   const [joinSucceed, setJoinSucceed] = useState(false);
+  const [callended, setCallended] = useState(false);
   const [peerIds, setPeerIds] = useState([]);
   const [localAudio, setLocalAudio] = useState(true);
   const [localVideo, setLocalVideo] = useState(true);
@@ -51,8 +52,22 @@ export default ({channelName, appId, uid}) => {
     (await _engine).destroy();
     setPeerIds([]);
     setJoinSucceed(false);
-	PushNotification.cancelAllLocalNotifications();
-	console.log('LeaveChannelSuccess', {channelName});
+    PushNotification.cancelAllLocalNotifications();
+    navigationRef.current.goBack();
+    console.log('LeaveChannelSuccess', {channelName});
+  };
+
+  const backAction = async () => {
+    await Alert.alert('End ongoing call?', '', [
+      {
+        text: 'End',
+        onPress: () => {
+          endCall();
+        },
+        style: 'cancel',
+      },
+      {text: 'Continue', onPress: () => null},
+    ]);
   };
 
   // RTC listeners
@@ -70,8 +85,17 @@ export default ({channelName, appId, uid}) => {
       setPeerIds((prev) => {
         return prev.filter((id) => id !== uid);
       });
+      if (reason === 0 && !callended) {
+        setCallended(true);
+      }
+      if (reason === 1) {
+        ToastAndroid.show(
+          'Connectivity issues from store side',
+          ToastAndroid.SHORT,
+        );
+        console.log('left due to no internet connection');
+      }
     });
-
     (await _engine).addListener(
       'JoinChannelSuccess',
       (channel, uid, elapsed) => {
@@ -82,9 +106,21 @@ export default ({channelName, appId, uid}) => {
   };
 
   useEffect(() => {
+    let isMounted = true;
+    BackHandler.addEventListener('hardwareBackPress', backAction);
     console.log({uid});
-    if (_engine) init();
-  }, []);
+    if (_engine && isMounted) {
+      init();
+    }
+    if (callended) {
+      endCall();
+      ToastAndroid.show('Store ended the call', ToastAndroid.SHORT);
+    }
+    return () => {
+      BackHandler.removeEventListener('hardwareBackPress', backAction);
+      isMounted = false;
+    };
+  }, [callended]);
 
   return (
     <View style={styles.max}>
@@ -116,8 +152,7 @@ export default ({channelName, appId, uid}) => {
         />
         <EndCallButton
           onPressFunction={() => {
-            endCall();
-            navigationRef.current.goBack();
+            backAction();
           }}
         />
         <BottomButton
