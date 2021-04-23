@@ -24,7 +24,7 @@ export default ({route, navigation}) => {
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
-      if (initialTab) {
+      if (initialTab >= 0) {
         setSelectedTab(initialTab);
         console.log('initial ->', initial);
         if (initial) fullSearch(initial);
