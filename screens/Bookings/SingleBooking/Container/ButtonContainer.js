@@ -26,7 +26,7 @@ const RegularButton = ({booking, setScreen}) => {
 };
 
 const VirtualBookingButton = ({booking}) =>
-  booking.status === 'upcoming' ? (
+  booking.status === 'upcoming' || booking.status === 'completed' ? (
     <Button
       text="Join Call"
       buttonFunction={() =>
