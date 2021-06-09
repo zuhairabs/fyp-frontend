@@ -1,5 +1,5 @@
-import {StyleSheet, Dimensions} from 'react-native';
-import {textStyles, COLORS} from '../../../styles/styles';
+import { StyleSheet, Dimensions } from 'react-native';
+import { textStyles, COLORS } from '../../../styles/styles';
 
 const styles = StyleSheet.create({
   card: {
@@ -81,6 +81,14 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: 10,
     paddingHorizontal: 30,
+    borderRightWidth: 1,
+    borderColor: COLORS.BORDER_LIGHT,
+  },
+  extensionTab2: {
+    flex: 1,
+    paddingVertical: 10,
+    paddingHorizontal: 30,
+    paddingRight: 50,
     borderRightWidth: 1,
     borderColor: COLORS.BORDER_LIGHT,
   },

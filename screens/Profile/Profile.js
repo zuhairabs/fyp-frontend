@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -7,18 +7,20 @@ import {
   Dimensions,
   Image,
   Alert,
+  Button
 } from 'react-native';
-import {ScrollView, TouchableOpacity} from 'react-native-gesture-handler';
+import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/dist/MaterialIcons';
 import AsyncStorage from '@react-native-community/async-storage';
+import { navigationRef } from '../../Navigation/Navigation';
 
-import {GlobalContext} from '../../providers/GlobalContext';
+import { GlobalContext } from '../../providers/GlobalContext';
 
 import MenuBackground from '../../components/Backgrounds/MenuBackground';
-import {COLORS, textStyles} from '../../styles/styles';
+import { COLORS, textStyles } from '../../styles/styles';
 
-const Profile = ({navigation}) => {
-  const {authActions, state} = React.useContext(GlobalContext);
+const Profile = ({ navigation }) => {
+  const { authActions, state } = React.useContext(GlobalContext);
   const [user, setUser] = useState({});
 
   const getUserFromAsyncStorage = async () =>
@@ -45,7 +47,7 @@ const Profile = ({navigation}) => {
               <View style={styles.photo}>
                 {user.avatar ? (
                   <Image
-                    source={{uri: `data:image/gif;base64,${user.avatar}`}}
+                    source={{ uri: `data:image/gif;base64,${user.avatar}` }}
                     style={styles.avatar}
                   />
                 ) : (
@@ -62,7 +64,7 @@ const Profile = ({navigation}) => {
           <View style={styles.buttonContainer}>
             <TouchableOpacity
               onPress={() => {
-                navigation.navigate('EditProfile', {cachedUser: user});
+                navigation.navigate('EditProfile', { cachedUser: user });
               }}
               style={styles.button}>
               <View style={styles.buttonIcon}>
@@ -85,6 +87,19 @@ const Profile = ({navigation}) => {
                 />
               </View>
               <Text style={styles.buttonText}>Appointments</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => {
+                navigation.navigate('MyOrders');
+              }}>
+              <View style={styles.buttonIcon}>
+                <Image
+                  source={require('./menu-icons/date_range-black-48dp.png')}
+                  style={styles.buttonIconImage}
+                />
+              </View>
+              <Text style={styles.buttonText}>My Orders</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.button}
@@ -118,7 +133,7 @@ const Profile = ({navigation}) => {
                 Alert.alert('Do you want to logout?', '', [
                   {
                     text: 'NO',
-                    onPress: () => {},
+                    onPress: () => { },
                     style: 'cancel',
                   },
                   {

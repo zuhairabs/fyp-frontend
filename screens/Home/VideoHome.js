@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useContext} from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import {
   StyleSheet,
   Text,
@@ -14,7 +14,7 @@ import {
   AsyncStorage,
 } from 'react-native';
 import Geolocation from 'react-native-geolocation-service';
-import {TouchableHighlight} from 'react-native-gesture-handler';
+import { TouchableHighlight } from 'react-native-gesture-handler';
 
 import MainBackground from '../../components/Backgrounds/MainBackground';
 import StatusBarWhite from '../../components/StatusBar';
@@ -24,15 +24,16 @@ import Location from '../../components/Header/HeaderLocation';
 import CardScrollSmall from '../../components/CardScrollSmall/CardScrollSmall';
 import CategoryScroll from '../../components/Header/CategoryScroll';
 import RNDrawOverlay from 'react-native-draw-overlay';
+import DemoCardScrollSmall from '../../components/CardScrollSmall/DemoCardScrollSmall';
 
-import {GlobalContext} from '../../providers/GlobalContext';
-import {COLORS} from '../../styles/styles';
-import {Post} from '../../api/http';
+import { GlobalContext } from '../../providers/GlobalContext';
+import { COLORS } from '../../styles/styles';
+import { Post } from '../../api/http';
 
 const DEVICE_HEIGHT = Dimensions.get('window').height;
 
-export default ({navigation}) => {
-  const {authActions} = useContext(GlobalContext);
+export default ({ navigation }) => {
+  const { authActions } = useContext(GlobalContext);
 
   const [location, setLocation] = useState({});
   const [locationPermissionStatus, setLocationPermissionStatus] = useState(
@@ -103,9 +104,9 @@ export default ({navigation}) => {
     ]);
     if (
       granted['android.permission.RECORD_AUDIO'] ===
-        PermissionsAndroid.RESULTS.GRANTED &&
+      PermissionsAndroid.RESULTS.GRANTED &&
       granted['android.permission.CAMERA'] ===
-        PermissionsAndroid.RESULTS.GRANTED
+      PermissionsAndroid.RESULTS.GRANTED
     ) {
       console.log('You can use the cameras & mic');
     } else {
@@ -137,7 +138,7 @@ export default ({navigation}) => {
           {
             text: 'Cancel',
           },
-          {text: 'Grant permission', onPress: () => overAppPermissionAction()},
+          { text: 'Grant permission', onPress: () => overAppPermissionAction() },
         ],
       );
     }
@@ -185,6 +186,7 @@ export default ({navigation}) => {
           <>
             <Location location={location} />
             <CategoryScroll categories={categoryList} />
+            <DemoCardScrollSmall title={'Upcoming LiveShop'} />
             <CardScrollSmall
               item={{
                 title: 'featured videos',
@@ -203,7 +205,7 @@ export default ({navigation}) => {
               onEndReached={onListEnd}
               onEndReachedThreshold={0.2}
               data={dataList}
-              renderItem={({item}) => (
+              renderItem={({ item }) => (
                 <CardScrollSmall
                   item={item}
                   category={item.category}
@@ -220,7 +222,7 @@ export default ({navigation}) => {
               height: DEVICE_HEIGHT - 150,
               padding: 20,
             }}>
-            <Text style={{fontSize: 20}}>
+            <Text style={{ fontSize: 20 }}>
               We need your device's location to provide you a catered experience
             </Text>
             <TouchableHighlight
@@ -234,7 +236,7 @@ export default ({navigation}) => {
                 marginTop: 20,
                 borderRadius: 15,
               }}>
-              <Text style={{color: COLORS.WHITE, fontSize: 20}}>
+              <Text style={{ color: COLORS.WHITE, fontSize: 20 }}>
                 Give location permission
               </Text>
             </TouchableHighlight>

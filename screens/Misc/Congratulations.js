@@ -1,13 +1,13 @@
-import React, {useState, useEffect, useContext} from 'react';
-import {View, Text, StyleSheet, Dimensions} from 'react-native';
-import {TouchableOpacity} from 'react-native-gesture-handler';
+import React, { useState, useEffect, useContext } from 'react';
+import { View, Text, StyleSheet, Dimensions } from 'react-native';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/dist/MaterialIcons';
 import Share from 'react-native-share';
-import {Post} from '../../api/http';
-import {GlobalContext} from '../../providers/GlobalContext';
+import { Post } from '../../api/http';
+import { GlobalContext } from '../../providers/GlobalContext';
 import StatusBarWhite from '../../components/StatusBar';
 import CongratulationsImage from './congratulations.svg';
-import {COLORS, textStyles, buttons} from '../../styles/styles';
+import { COLORS, textStyles, buttons } from '../../styles/styles';
 
 const DEVICE_HEIGHT = Dimensions.get('screen').height;
 const WINDOW_HEIGHT = Dimensions.get('window').height;
@@ -15,9 +15,10 @@ const WINDOW_HEIGHT = Dimensions.get('window').height;
 const Congratulations = (props) => {
   const [text] = useState(props.route.params.text || '');
   const [booking, setBooking] = useState(
-    {_id: props.route.params.booking} || null,
+    { _id: props.route.params.booking } || null,
   );
-  const {state} = useContext(GlobalContext);
+  const { state } = useContext(GlobalContext);
+  const demoBooking = props.route.params.demoBooking || false;
 
   const shareBooking = () => {
     if (booking && booking.store) {
@@ -58,14 +59,14 @@ const Congratulations = (props) => {
   };
 
   useEffect(() => {
-    if (booking && booking._id) fetchBooking();
+    if (!demoBooking && booking && booking._id) fetchBooking();
   }, []);
 
   return (
     <View
       style={{
         justifyContent: 'space-between',
-        height: Dimensions.get('window').height,
+        height: DEVICE_HEIGHT,
         width: Dimensions.get('window').width,
         backgroundColor: COLORS.WHITE,
       }}>
@@ -119,9 +120,13 @@ const Congratulations = (props) => {
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() => {
-            props.navigation.navigate('SingleBooking', {
-              booking: booking._id,
-            });
+            demoBooking
+              ? props.navigation.navigate('SingleDemoBooking', {
+                booking: booking._id,
+              })
+              : props.navigation.navigate('SingleBooking', {
+                booking: booking._id,
+              });
           }}
           style={buttons.primaryButton}>
           <Text style={textStyles.primaryButtonText}>View Booking</Text>

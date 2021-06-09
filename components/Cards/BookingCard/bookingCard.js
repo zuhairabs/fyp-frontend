@@ -1,14 +1,14 @@
-import React, {useState, useContext} from 'react';
-import {Text, View, Image, Alert, ToastAndroid} from 'react-native';
+import React, { useState, useContext } from 'react';
+import { Text, View, Image, Alert, ToastAndroid } from 'react-native';
 import {
   TouchableOpacity,
   TouchableWithoutFeedback,
 } from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/dist/MaterialIcons';
 import Share from 'react-native-share';
-import {GlobalContext} from '../../../providers/GlobalContext';
-import {Post} from '../../../api/http';
-import {COLORS} from '../../../styles/styles';
+import { GlobalContext } from '../../../providers/GlobalContext';
+import { Post } from '../../../api/http';
+import { COLORS } from '../../../styles/styles';
 import styles from './Styles';
 
 const mlist = [
@@ -27,9 +27,9 @@ const mlist = [
 ];
 
 const BookingCard = (props) => {
-  const {state} = useContext(GlobalContext);
+  const { state } = useContext(GlobalContext);
   const [extended, setExtended] = useState(false);
-  console.log(Object.keys(props.booking.store));
+  const type = props.booking.type;
   const shareBooking = async () => {
     const display_name = props.booking.store.business.display_name;
     const date = new Date(props.booking.start);
@@ -47,6 +47,36 @@ const BookingCard = (props) => {
       .catch((err) => {
         err && console.log(err);
       });
+  };
+
+  const shareDemoBooking = async () => {
+    const options = {
+      message:
+        'Hey! I am Livestream shopping at Shopout! Join me here and lets have fun.',
+      title: 'Try out the ShopOut app',
+      url: 'https://play.google.com/store/apps/details?id=com.shopout.user',
+    };
+    Share.open(options)
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        err && console.log(err);
+      });
+  };
+
+  const unregister = async () => {
+    const body = JSON.stringify({
+      cred: {
+        phone: state.user.phone,
+      },
+      event: props.booking._id,
+      user: state.user._id,
+    });
+    Post('demoBooking/actions/unregister', body, state.token).then(() => {
+      ToastAndroid.show('Unregistered successfully', ToastAndroid.LONG);
+      props.removeBooking(props.booking._id);
+    });
   };
 
   const cancelBooking = async () => {
@@ -72,124 +102,232 @@ const BookingCard = (props) => {
   };
 
   return (
-    <View style={styles.card}>
-      <View style={styles.container}>
-        <TouchableWithoutFeedback
-          style={styles.mainCard}
-          onPress={() => {
-            extended ? setExtended(false) : setExtended(true);
-          }}>
-          <View style={styles.dateContainer}>
-            <Text style={styles.date} numberOfLines={1}>
-              {new Date(props.booking.start).getUTCDate()}
-            </Text>
-            <Text style={styles.date} numberOfLines={1}>
-              {mlist[new Date(props.booking.start).getUTCMonth()]}
-            </Text>
-          </View>
-          <View style={styles.imageContainer}>
-            <Image
-              source={{
-                uri: `data:image/gif;base64,${
-                  props.booking.store.business.title_image ||
-                  props.booking.store.business.logo
-                }`,
-              }}
-              style={styles.image}
-            />
-          </View>
-          <View style={styles.details}>
-            <Text style={styles.header} numberOfLines={1}>
-              {props.booking.store.business.display_name}{' '}
-              {props.booking.store.name}
-            </Text>
+    <>
+      {type === 'live' ? (
+        <View style={styles.card}>
+          <View style={styles.container}>
+            <TouchableWithoutFeedback
+              style={styles.mainCard}
+              onPress={() => {
+                extended ? setExtended(false) : setExtended(true);
+              }}>
+              <View style={styles.dateContainer}>
+                <Text style={styles.date} numberOfLines={1}>
+                  {new Date(props.booking.start).getUTCDate()}
+                </Text>
+                <Text style={styles.date} numberOfLines={1}>
+                  {mlist[new Date(props.booking.start).getUTCMonth()]}
+                </Text>
+              </View>
+              <View style={styles.imageContainer}>
+                <Image
+                  source={{
+                    uri: `data:image/gif;base64,${props.booking.business.title_image ||
+                      props.booking.business.logo
+                      }`,
+                  }}
+                  style={styles.image}
+                />
+              </View>
+              <View style={styles.details}>
+                <Text style={styles.header} numberOfLines={1}>
+                  {props.booking.business.display_name}
+                </Text>
 
-            <View style={styles.time}>
-              {props.booking.type === 'virtual' ? (
-                <Icon name="videocam" size={16} color={COLORS.SECONDARY} />
-              ) : (
-                <Icon name="access-time" size={16} color={COLORS.SECONDARY} />
-              )}
-              <Text style={styles.timeText}>
-                {new Date(props.booking.start)
-                  .toLocaleTimeString('en-US', {
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    hour12: false,
-                  })
-                  .replace(/(:\d{2}| [AP]M)$/, '')}{' '}
-                -{' '}
-                {new Date(props.booking.end)
-                  .toLocaleTimeString('en-US', {
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    hour12: false,
-                  })
-                  .replace(/(:\d{2}| [AP]M)$/, '')}
-              </Text>
-            </View>
+                <View style={styles.time}>
+                  <Image
+                    source={require('../../../components/UXComponents/svg/live-icon.png')}
+                    // eslint-disable-next-line react-native/no-inline-styles
+                    style={{
+                      width: '33%',
+                      height: '100%',
+                      marginLeft: -12,
+                      marginRight: -12,
+                      marginTop: 5,
+                    }}
+                  />
+                  <Text style={styles.timeText}>
+                    {new Date(props.booking.start)
+                      .toLocaleTimeString('en-US', {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        hour12: false,
+                      })
+                      .replace(/(:\d{2}| [AP]M)$/, '')}{' '}
+                  </Text>
+                </View>
+              </View>
+            </TouchableWithoutFeedback>
+            {extended ? (
+              <View style={styles.extension}>
+                <TouchableOpacity
+                  onPress={() => {
+                    props.navigation.navigate('SingleDemoBooking', {
+                      booking: props.booking._id,
+                    });
+                  }}
+                  style={styles.extensionTab}>
+                  <Text style={styles.tabText}>View</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => {
+                    Alert.alert(
+                      'Are you sure you want to cancel this appointment?',
+                      '',
+                      [
+                        {
+                          text: "No, don't",
+                          onPress: () => { },
+                          style: 'default',
+                        },
+                        {
+                          text: 'Yes, cancel',
+                          onPress: () => {
+                            unregister();
+                          },
+                          style: 'destructive',
+                        },
+                      ],
+                    );
+                  }}
+                  style={styles.extensionTab2}>
+                  <Text style={styles.tabText}>Unregister</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.extensionTabLast}
+                  onPress={() => {
+                    shareDemoBooking();
+                  }}>
+                  <Icon name="share" size={16} color={COLORS.SECONDARY} />
+                </TouchableOpacity>
+              </View>
+            ) : null}
           </View>
-        </TouchableWithoutFeedback>
-        {extended ? (
-          <View style={styles.extension}>
-            <TouchableOpacity
+        </View>
+      ) : (
+        <View style={styles.card}>
+          <View style={styles.container}>
+            <TouchableWithoutFeedback
+              style={styles.mainCard}
               onPress={() => {
-                props.navigation.navigate('SingleBooking', {
-                  booking: props.booking._id,
-                });
-              }}
-              style={styles.extensionTab}>
-              <Text style={styles.tabText}>View</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.extensionTab}
-              onPress={() => {
-                props.navigation.navigate('Store', {
-                  store: props.booking.store,
-                  data: props.booking.store,
-                  bookSlot: true,
-                  editSlot: true,
-                  videoSlot: props.booking.type === 'virtual',
-                  previousBooking: props.booking,
-                });
+                extended ? setExtended(false) : setExtended(true);
               }}>
-              <Text style={styles.tabText}>Edit</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => {
-                Alert.alert(
-                  'Are you sure you want to cancel this appointment?',
-                  '',
-                  [
-                    {
-                      text: "No, don't",
-                      onPress: () => {},
-                      style: 'default',
-                    },
-                    {
-                      text: 'Yes, cancel',
-                      onPress: () => {
-                        cancelBooking();
-                      },
-                      style: 'destructive',
-                    },
-                  ],
-                );
-              }}
-              style={styles.extensionTab}>
-              <Text style={styles.tabText}>Delete</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.extensionTabLast}
-              onPress={() => {
-                shareBooking();
-              }}>
-              <Icon name="share" size={16} color={COLORS.SECONDARY} />
-            </TouchableOpacity>
+              <View style={styles.dateContainer}>
+                <Text style={styles.date} numberOfLines={1}>
+                  {new Date(props.booking.start).getUTCDate()}
+                </Text>
+                <Text style={styles.date} numberOfLines={1}>
+                  {mlist[new Date(props.booking.start).getUTCMonth()]}
+                </Text>
+              </View>
+              <View style={styles.imageContainer}>
+                <Image
+                  source={{
+                    uri: `data:image/gif;base64,${props.booking.store.business.title_image ||
+                      props.booking.store.business.logo
+                      }`,
+                  }}
+                  style={styles.image}
+                />
+              </View>
+              <View style={styles.details}>
+                <Text style={styles.header} numberOfLines={1}>
+                  {props.booking.store.business.display_name}{' '}
+                  {props.booking.store.name}
+                </Text>
+
+                <View style={styles.time}>
+                  {props.booking.type === 'virtual' ? (
+                    <Icon name="videocam" size={16} color={COLORS.SECONDARY} />
+                  ) : (
+                    <Icon
+                      name="access-time"
+                      size={16}
+                      color={COLORS.SECONDARY}
+                    />
+                  )}
+                  <Text style={styles.timeText}>
+                    {new Date(props.booking.start)
+                      .toLocaleTimeString('en-US', {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        hour12: false,
+                      })
+                      .replace(/(:\d{2}| [AP]M)$/, '')}{' '}
+                    -{' '}
+                    {new Date(props.booking.end)
+                      .toLocaleTimeString('en-US', {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        hour12: false,
+                      })
+                      .replace(/(:\d{2}| [AP]M)$/, '')}
+                  </Text>
+                </View>
+              </View>
+            </TouchableWithoutFeedback>
+            {extended ? (
+              <View style={styles.extension}>
+                <TouchableOpacity
+                  onPress={() => {
+                    props.navigation.navigate('SingleBooking', {
+                      booking: props.booking._id,
+                    });
+                  }}
+                  style={styles.extensionTab}>
+                  <Text style={styles.tabText}>View</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.extensionTab}
+                  onPress={() => {
+                    props.navigation.navigate('Store', {
+                      store: props.booking.store,
+                      data: props.booking.store,
+                      bookSlot: true,
+                      editSlot: true,
+                      videoSlot: props.booking.type === 'virtual',
+                      previousBooking: props.booking,
+                    });
+                  }}>
+                  <Text style={styles.tabText}>Edit</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => {
+                    Alert.alert(
+                      'Are you sure you want to cancel this appointment?',
+                      '',
+                      [
+                        {
+                          text: "No, don't",
+                          onPress: () => { },
+                          style: 'default',
+                        },
+                        {
+                          text: 'Yes, cancel',
+                          onPress: () => {
+                            cancelBooking();
+                          },
+                          style: 'destructive',
+                        },
+                      ],
+                    );
+                  }}
+                  style={styles.extensionTab}>
+                  <Text style={styles.tabText}>Delete</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.extensionTabLast}
+                  onPress={() => {
+                    shareBooking();
+                  }}>
+                  <Icon name="share" size={16} color={COLORS.SECONDARY} />
+                </TouchableOpacity>
+              </View>
+            ) : null}
           </View>
-        ) : null}
-      </View>
-    </View>
+        </View>
+      )}
+    </>
   );
 };
 

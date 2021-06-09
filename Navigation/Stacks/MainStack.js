@@ -1,10 +1,11 @@
 import React from 'react';
-import {Text} from 'react-native';
-import {TouchableOpacity} from 'react-native-gesture-handler';
+import { Text } from 'react-native';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 import {
   createStackNavigator,
   CardStyleInterpolators,
 } from '@react-navigation/stack';
+
 // SCREEN IMPORTS
 import Home from '../../screens/Home/VideoHome';
 import Store from '../../screens/Store/Store';
@@ -22,9 +23,17 @@ import Success from '../../screens/Authentication/ResetPassword/Success';
 import Bookings from '../../screens/Bookings/Bookings';
 import Video from '../../screens/Store/Video';
 import RTCVideo from '../../screens/RTCVideo/RTCVideo';
+import Product from '../../screens/Product/Product';
+import PaymentSuccess from '../../screens/Payment/PaymentSuccessful';
+import PaymentFailure from '../../screens/Payment/PaymentFailure';
+import Feedback from '../../screens/Feedback/Feedback';
+import Demo from '../../screens/Store/Demo';
+import SingleDemoBooking from '../../screens/Bookings/SingleBooking/SingleDemoBooking';
+import MyOrders from '../../screens/Orders/OrderList';
+import LiveStream from '../../screens/RTCVideo/LiveStream';
 
 // NAVIGATOR OPTIONS
-import {SCREEN_HEADER_OPTIONS, SCREEN_OPTIONS} from './ScreenOptions';
+import { SCREEN_HEADER_OPTIONS, SCREEN_OPTIONS } from './ScreenOptions';
 import FullScreenWebView from '../../screens/FullScreenWebView';
 
 const Stack = createStackNavigator();
@@ -38,10 +47,26 @@ export default () => (
     <Stack.Screen name="Home" component={Home} />
     <Stack.Screen name="Profile" component={Profile} />
     <Stack.Screen
+      name="SingleDemoBooking"
+      component={SingleDemoBooking}
+      options={{
+        title: 'View Booking',
+        ...SCREEN_HEADER_OPTIONS,
+      }}
+    />
+    <Stack.Screen
       name="Favourites"
       component={Favourites}
       options={{
         title: 'Favourites',
+        ...SCREEN_HEADER_OPTIONS,
+      }}
+    />
+    <Stack.Screen
+      name="MyOrders"
+      component={MyOrders}
+      options={{
+        title: 'My Orders',
         ...SCREEN_HEADER_OPTIONS,
       }}
     />
@@ -67,6 +92,12 @@ export default () => (
     <Stack.Screen name="Store" component={Store} />
     <Stack.Screen name="Video" component={Video} />
     <Stack.Screen name="RTCVideo" component={RTCVideo} />
+    <Stack.Screen name="LiveStream" component={LiveStream} />
+    <Stack.Screen name="Product" component={Product} />
+    <Stack.Screen name="Demo" component={Demo} />
+    <Stack.Screen name="PaymentSuccess" component={PaymentSuccess} />
+    <Stack.Screen name="PaymentFailure" component={PaymentFailure} />
+    <Stack.Screen name="Feedback" component={Feedback} />
     <Stack.Screen
       name="SearchFull"
       component={SearchFull}
@@ -116,7 +147,7 @@ export default () => (
     <Stack.Screen
       name="FullScreenWebView"
       component={FullScreenWebView}
-      options={({route}) => ({
+      options={({ route }) => ({
         title: route.params.title,
         ...SCREEN_HEADER_OPTIONS,
       })}
