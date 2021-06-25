@@ -11,7 +11,7 @@ const WINDOW_WIDTH = Dimensions.get('window').width;
 import PaymentSuccess from './svg/Payment-Success';
 import Back from './svg/Back-Button';
 
-const paymentUri = '/payment/createPayment'
+const paymentUri = 'payment/createPayment'
 const ordertUri = 'order/create/order';
 
 export default (props) => {
@@ -20,16 +20,16 @@ export default (props) => {
   const [paymentParams, setPaymentParams] = useState(props.route.params.paymentParams);
 
   useEffect(() => {
+    paymentParams.shopout_transaction_id = orderParams.txnID;
+    paymentParams.user_id = state.user._id;
+    paymentParams.event_id = orderParams.event;
+    paymentParams.payment_date = new Date();
+
     const paymentBody = JSON.stringify({
-      cred: {
-        phone: state.user.phone
-      },
       paymentDetail: paymentParams
-    })
+    });
+
     const orderBody = JSON.stringify({
-      cred: {
-        phone: state.user.phone
-      },
       orderData: {
         product: orderParams.productID,
         user: state.user._id,
@@ -37,38 +37,19 @@ export default (props) => {
         address: orderParams.customerAddress,
         variant: orderParams.variant,
         amount: orderParams.amount,
-        paymentId: orderParams.paymentID,
+        paymentId: paymentParams.razorpay_payment_id,
         email: orderParams.customerEmail,
-        status: orderParams.payment
       }
     });
 
     Post(paymentUri, paymentBody, state.token)
       .then(data => {
-        console.log(data)
         Post(ordertUri, orderBody, state.token)
           .then(data => console.log(data))
           .catch(err => console.log(err))
-
-        //navigation resetting
-        navigationRef.current?.reset({
-          index: 1,
-          routes: [
-            {
-              name: 'LiveStream',
-              params: {
-                channelName: props.route.params.channelName,
-                event: props.route.params.event
-              }
-            },
-            {
-              name: 'Home',
-            },
-          ],
-        });
       })
-      .catch(err => console.log(err))
-  })
+      .catch(err => console.error(err))
+  }, [props.route.params])
 
   return (
     <View style={styles.innerContainer}>
@@ -76,7 +57,7 @@ export default (props) => {
         <PaymentSuccess height={WINDOW_WIDTH / 3} width={WINDOW_WIDTH / 3} />
         <Text style={styles.infoTitle}>{'Congratulations!'}</Text>
         <Text style={styles.infoMessage}>{'Your order has been confirmed. Please check your inbox for the receipt.'}</Text>
-        <Text style={styles.infoMessage}>{`Your Order No: ${paymentParams.response.result.txnid}`}</Text>
+        <Text style={styles.infoMessage}>{`Your Order No: ${orderParams.txnID}`}</Text>
       </View>
       <View style={styles.options}>
         <TouchableOpacity onPress={() => navigationRef.current?.navigate('LiveStream', { channelName: props.route.params.channelName, event: props.route.params.event })} >

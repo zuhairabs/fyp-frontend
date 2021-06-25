@@ -23,8 +23,7 @@ import { Post } from './../../api/http';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 const WINDOW_HEIGHT = Dimensions.get('window').height;
 const DEVICE_HEIGHT = Dimensions.get('screen').height;
-const NAVIGATION_HEIGHT =
-  DEVICE_HEIGHT - WINDOW_HEIGHT - (StatusBar.currentHeight || 0);
+const NAVIGATION_HEIGHT = DEVICE_HEIGHT - WINDOW_HEIGHT - (StatusBar.currentHeight || 0);
 
 export default (props) => {
   const { state } = useContext(GlobalContext);
@@ -32,8 +31,18 @@ export default (props) => {
   const [response, setResponse] = useState({});
   const [loading, setLoading] = useState(true);
 
+  const formatTime = (date) => {
+    return new Date(date)
+      .toLocaleTimeString('en-US', {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false,
+      })
+      .replace(/(:\d{2}| [AP]M)$/, '');
+  };
+
   useEffect(() => {
-    console.log('demo from props', demo);
+    // console.log('demo from props', demo);
     let uri = 'app/home/demoBooking/single';
     const body = JSON.stringify({
       cred: {
@@ -43,19 +52,28 @@ export default (props) => {
       user: { _id: state.user._id },
     });
     Post(uri, body, state.token).then((data) => {
-      console.log('got the register data', data);
+      // console.log('got the register data', data);
       setResponse(data.demoInformation);
       setLoading(false);
     });
   }, []);
 
   const timeToText = () => {
-    return new Date(demo.startTime).toDateString();
+    const dateTime = new Date(demo.startTime);
+    return `${dateTime.toDateString()} ${formatTime(dateTime)} `;
   };
 
   const registeredFunction = () => {
     ToastAndroid.showWithGravity(
       'You have already registered for the event',
+      ToastAndroid.LONG,
+      ToastAndroid.CENTER,
+    );
+  };
+
+  const eventEndedFunction = () => {
+    ToastAndroid.showWithGravity(
+      'This event has ended, please try for other events.',
       ToastAndroid.LONG,
       ToastAndroid.CENTER,
     );
@@ -234,6 +252,30 @@ export default (props) => {
                 marginBottom: 5,
               }}>
               JOIN NOW
+            </Text>
+          </TouchableWithoutFeedback>
+        ) : response.ended ? (
+          <TouchableWithoutFeedback
+            onPress={eventEndedFunction}
+            style={{
+              justifyContent: 'center',
+              alignItems: 'center',
+              height: 50,
+              width: 340,
+              borderRadius: 30,
+              backgroundColor: '#D9D9D9',
+              marginBottom: 5,
+            }}>
+            {eventEndedFunction()}
+            <Text
+              style={{
+                fontSize: 20,
+                fontFamily: 'Roboto-Black',
+                color: COLORS.WHITE,
+                textTransform: 'uppercase',
+                marginBottom: 5,
+              }}>
+              EVENT ENDED
             </Text>
           </TouchableWithoutFeedback>
         ) : response.userRegistered ? (

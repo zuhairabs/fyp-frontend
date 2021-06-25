@@ -16,6 +16,8 @@ const upcomingUri = 'demoBooking/fetch/single';
 const SingleDemoBooking = (props) => {
   const {state} = useContext(GlobalContext);
 
+  console.log("DATA FROM SDB ==> ", props.route.params.booking);
+
   const _id = props.route.params.booking;
   const archived = props.route.params.archived;
   const [loading, setLoading] = useState(true);
@@ -32,7 +34,7 @@ const SingleDemoBooking = (props) => {
     });
     const uri = archived ? archivedUri : upcomingUri;
     Post(uri, body, state.token).then((data) => {
-      // console.log('booking data in singledemobooking is ', data);
+      console.log('booking data in singledemobooking is ', data);
       setBooking(data.demobooking);
       setLoading(false);
     });

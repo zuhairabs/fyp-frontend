@@ -2,9 +2,10 @@ import React, {Suspense, lazy, useState, useEffect, useContext} from 'react';
 import {StyleSheet, View, Text} from 'react-native';
 import {ScrollView} from 'react-native-gesture-handler';
 import {NotificationLoadingEffect} from '../Cards/NotificationCard/NotificationCard';
-const NotificationCard = lazy(() =>
-  import('../Cards/NotificationCard/NotificationCard'),
-);
+// const NotificationCard = lazy(() =>
+//   import('../Cards/NotificationCard/NotificationCard'),
+// );
+import NotificationCard from '../Cards/NotificationCard/NotificationCard';
 import {COLORS, textStyles} from '../../styles/styles';
 
 const NotificationList = ({notifications}) => {

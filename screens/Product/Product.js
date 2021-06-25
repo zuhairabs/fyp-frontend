@@ -1,19 +1,15 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { View } from 'react-native';
-import { ScrollView } from 'react-native-gesture-handler';
+import React, { useState, useEffect, useContext, useRef } from 'react';
+import { View, Text, ScrollView } from 'react-native';
 
 import { GlobalContext } from '../../providers/GlobalContext';
 import { Post } from '../../api/http';
 
 import StatusBarWhite from '../../components/StatusBar';
-import NavBackButton from '../../components/Header/NavbarBackButton';
-import MainBackground from '../../components/Backgrounds/MainBackground';
 import LoadingContainer from './Container/LoadingContainer';
 
 import Cart from './Cart';
 
 import styles from './Styles';
-import { COLORS, textStyles } from '../../styles/styles';
 
 const currentUri = 'order/fetch/product';
 
@@ -43,11 +39,17 @@ export default Product = (props) => {
 
   return (
     <View style={styles.screenContainer}>
-      <MainBackground />
       <StatusBarWhite />
-      <NavBackButton />
-      <ScrollView style={styles.container}>
-        {loading ? <LoadingContainer /> : props.route.params.buyNow ? <Cart productDetail={product} buyNow={true} user={state.user._id} channelName={props.route.params.channelName} event={props.route.params.event} /> : <Cart productDetail={product} buyNow={false} orderDetail={orderData} />}
+      <ScrollView>
+        {
+          loading ?
+            <LoadingContainer />
+            :
+            props.route.params.buyNow ?
+              <Cart productDetail={product} buyNow={true} channelName={props.route.params.channelName} event={props.route.params.event} />
+              :
+              <Cart productDetail={product} buyNow={false} orderDetail={orderData} />
+        }
       </ScrollView>
     </View>
   );

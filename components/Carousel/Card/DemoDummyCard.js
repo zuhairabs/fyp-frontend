@@ -25,7 +25,7 @@ const styless = StyleSheet.create({
     backgroundColor: COLORS.WHITE,
     justifyContent: 'center',
     elevation: 5,
-    borderRadius: 15,
+    borderRadius: 32,
   },
 });
 

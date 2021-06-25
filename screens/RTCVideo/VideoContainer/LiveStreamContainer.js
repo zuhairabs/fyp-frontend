@@ -23,7 +23,21 @@ export default ({ channelName, appId, uid, product, event }) => {
     setPeerIds([]);
     setJoinSucceed(false);
     console.log('LeaveChannelSuccess', { channelName });
-    navigationRef.current.goBack();
+    navigationRef.current?.reset({
+      index: 1,
+      routes: [
+        {
+          name: 'Home',
+        },
+        {
+          name: 'Feedback',
+          params: {
+            event: event,
+            leaveTime: new Date()
+          }
+        },
+      ],
+    })
   };
 
   const backAction = async () => {

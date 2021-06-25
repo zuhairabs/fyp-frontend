@@ -1,9 +1,8 @@
-import React from 'react';
-import { Text, TextInput, View, StatusBar, KeyboardAvoidingView, ScrollView, TouchableOpacity, Dimensions, ToastAndroid } from 'react-native';
+import React, { useState, useEffect, useContext } from 'react';
+import { Text, TextInput, View, BackHandler, KeyboardAvoidingView, TouchableOpacity, Dimensions, ToastAndroid, ScrollView } from 'react-native';
 import ModalDropdown from 'react-native-modal-dropdown';
-import PayuMoney, { HashGenerator } from 'react-native-payumoney';
-import { useState } from 'react';
-import { useEffect } from 'react';
+import RazorpayCheckout from 'react-native-razorpay';
+
 import 'react-native-get-random-values';
 import { customAlphabet } from 'nanoid';
 const charset = "0123456789";
@@ -17,9 +16,17 @@ import Add from './svg/Add';
 
 import styles from './Styles';
 import { navigationRef } from '../../Navigation/Navigation';
+import { GlobalContext } from '../../providers/GlobalContext';
+import { Post } from '../../api/http';
+
 const WINDOW_WIDTH = Dimensions.get('window').width;
 
+const verificationUri = 'payment/razorpay/verifyPayment';
+const razorOrderUri = 'payment/razorpay/createOrder';
+
 export default Cart = React.memo(props => {
+  const { state } = useContext(GlobalContext);
+
   const [product, setProduct] = useState(props.productDetail.product);
   const [order, setOrder] = useState(props.orderDetail);
   const [payTotal, setPayTotal] = useState(0);
@@ -35,169 +42,164 @@ export default Cart = React.memo(props => {
     })
   }
 
-  // const validateEmail = (input) => {
-  //   let regEmail = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
-  //   regEmail.test(input) ? setEmail(input) : ToastAndroid.show("Incorrect email.", ToastAndroid.SHORT);
-  // }
+  const validateEmail = (input) => {
+    let regEmail = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
+    regEmail.test(input) ? setEmail(input) : ToastAndroid.show("Incorrect email.", ToastAndroid.SHORT);
+  }
 
-  // const checkAddressEmail = () => {
-  //   if (!address) ToastAndroid.show("Please fill in the address.", ToastAndroid.SHORT);
-  //   else if (!email) ToastAndroid.show("Please fill in your email.", ToastAndroid.SHORT);
-  //   else pay();
-  // }
+  const checkAddressEmail = () => {
+    if (!address) ToastAndroid.show("Please fill in the address.", ToastAndroid.SHORT);
+    else if (!email) ToastAndroid.show("Please fill in your email.", ToastAndroid.SHORT);
+    else payNow();
+  }
 
-  // const successStack = (orderParams, paymentParams) => {
-  //   navigationRef.current?.reset({
-  //     index: 2,
-  //     routes: [
-  //       {
-  //         name: 'Home',
-  //       },
-  //       {
-  //         name: 'LiveStream',
-  //         params: {
-  //           channelName: props.channelName,
-  //           event: props.event
-  //         }
-  //       },
-  //       {
-  //         name: 'PaymentSuccess',
-  //         params: {
-  //           orderParams: orderParams,
-  //           paymentParams: paymentParams,
-  //           channelName: props.channelName,
-  //           event: props.event
-  //         }
-  //       },
-  //     ],
-  //   })
-  // }
+  const payNow = () => {
+    console.log('Initiating payment...')
 
-  // const FailureStack = () => {
-  //   navigationRef.current?.reset({
-  //     index: 2,
-  //     routes: [
-  //       {
-  //         name: 'Home',
-  //       },
-  //       {
-  //         name: 'LiveStream',
-  //         params: {
-  //           channelName: props.channelName,
-  //           event: props.event
-  //         }
-  //       },
-  //       {
-  //         name: 'PaymentFailure',
-  //         params: {
-  //           channelName: props.channelName,
-  //           event: props.event,
+    const orderParams = {
+      productID: product._id,
+      event: props.productDetail.product.event,
+      name: product.name,
+      amount: payTotal,
+      variant: variantType,
+      customerEmail: email,
+      customerPhone: state.user.phone,
+      customerName: `${state.user.firstName} ${state.user.lastName}`,
+      customerAddress: address,
+      itemQuantity: quantity,
+      txnID: txnid
+    }
 
-  //         }
-  //       },
-  //     ],
-  //   })
-  // }
+    createOrder(orderParams)
+  }
 
-  // const pay = () => {
+  const createOrder = async (product) => {
+    console.log('createOrder...');
 
+    const body = JSON.stringify({
+      paymentDetails: {
+        amount: product.amount * 100,
+        currency: 'INR'
+      }
+    })
+    Post(razorOrderUri, body, state.token)
+      .then(order => {
+        console.log(order);
+        return razorpayProcess(order.order, product);
+      })
+      .catch(err => console.warn(err));
+  }
 
-  //   // const hash = HashGenerator({
-  //   //   key: "GKTsy6",
-  //   //   amount: payTotal.toString(),
-  //   //   email: email,
-  //   //   txnId: txnid.toString(),
-  //   //   productName: `${product.name}-${variantType}`,
-  //   //   firstName: "John",
-  //   //   salt: "f23CXnEh",
-  //   //   udf1: product._id,
-  //   //   udf2: props.user
-  //   // });
+  const razorpayProcess = async (order, productData) => {
+    console.log('razorpayProcess...');
 
-  //   // const payData = {
-  //   //   amount: payTotal.toString(),
-  //   //   txnId: txnid.toString(),
-  //   //   productName: `${product.name}-${variantType}`,
-  //   //   firstName: 'John',
-  //   //   email: email,
-  //   //   phone: '9876543211',
-  //   //   merchantId: '8138429',
-  //   //   key: 'GKTsy6',
-  //   //   successUrl: 'https://www.payumoney.com/mobileapp/payumoney/success.php',
-  //   //   failedUrl: 'https://www.payumoney.com/mobileapp/payumoney/failure.php',
-  //   //   isDebug: true,
-  //   //   hash: hash,
-  //   //   udf1: product._id,
-  //   //   udf2: props.user
-  //   // };
+    var options = {
+      description: `Payment for ${productData.name}`,
+      notes: {
+        product: `${productData.name}-${productData.variant}`,
+        transactionID: productData.txnID
+      },
+      image: 'https://media-exp1.licdn.com/dms/image/C4E0BAQHRR-xEa_e_9A/company-logo_200_200/0/1595433439244?e=1630540800&v=beta&t=1E282UAzKahyjmdejgdA3i7afxL7DlHRcfdznmvr92Y',
+      currency: order.currency,
+      key: 'rzp_test_vLyTJZelJNXK3A',
+      amount: order.amount,
+      order_id: order.id,
+      name: 'ShopOut',
+      prefill: {
+        email: productData.customerEmail,
+        contact: productData.customerPhone,
+        name: productData.customerName
+        // method: 'upi'
+      },
+      theme: { color: '#0063ff' },
+      sendsmshash: true,
+      modal: {
+        confirm_close: true,
+        handleback: true,
+        animation: true
+      },
+      retry: {
+        enabled: true,
+        max_count: 2
+      }
+    }
+    RazorpayCheckout.open(options)
+      .then((data) => {
+        Post(verificationUri, JSON.stringify({ orderID: order.razorpay_order_id, transaction: data }), state.token)
+          .then(verified => verified ? successStack(productData, data) : console.error("SECURITY BREACH! TRANSACTION PROCESS HACKED."))
+          .catch(err => console.log(err));
+      })
+      .catch((error) => {
+        console.warn(error);
+        failureStack(error, productData)
+      });
+  }
 
-  //   const hash = HashGenerator({
-  //     key: "QylhKRVd", //rjQUPktU
-  //     amount: payTotal.toString(),
-  //     email: email,
-  //     txnId: txnid.toString(),
-  //     productName: `${product.name}-${variantType}`,
-  //     firstName: "Purnima",
-  //     salt: "seVTUgzrgE", //e5iIg1jwi8
-  //     udf1: product._id,
-  //     udf2: props.user
-  //   });
+  const successStack = (orderParams, paymentParams) => {
+    navigationRef.current?.reset({
+      index: 2,
+      routes: [
+        {
+          name: 'Home',
+        },
+        {
+          name: 'LiveStream',
+          params: {
+            channelName: props.channelName,
+            event: props.event
+          }
+        },
+        {
+          name: 'PaymentSuccess',
+          params: {
+            orderParams: orderParams,
+            paymentParams: paymentParams,
+            channelName: props.channelName,
+            event: props.event
+          }
+        },
+      ],
+    })
+  }
 
-  //   const payData = {
-  //     amount: payTotal.toString(),
-  //     txnId: txnid.toString(),
-  //     productName: `${product.name}-${variantType}`,
-  //     firstName: 'Purnima',
-  //     email: email,
-  //     phone: '8901298677',
-  //     merchantId: '5960507', //4934580 
-  //     key: 'QylhKRVd', //rjQUPktU
-  //     successUrl: 'https://www.payumoney.com/mobileapp/payumoney/success.php',
-  //     failedUrl: 'https://www.payumoney.com/mobileapp/payumoney/failure.php',
-  //     isDebug: true,
-  //     hash: hash,
-  //     udf1: product._id,
-  //     udf2: props.user
-  //   };
+  const failureStack = (error, productData) => {
+    navigationRef.current?.reset({
+      index: 2,
+      routes: [
+        {
+          name: 'Home',
+        },
+        {
+          name: 'LiveStream',
+          params: {
+            channelName: props.channelName,
+            event: props.event
+          }
+        },
+        {
+          name: 'PaymentFailure',
+          params: {
+            product: productData,
+            paymentParams: error,
+            channelName: props.channelName,
+            event: props.event
+          }
+        },
+      ],
+    })
+  }
 
-  //   PayuMoney(payData)
-  //     .then((data) => {
-  //       var success = false;
-  //       success = data.success;
-  //       console.log("data for payu ===> ", data)
-
-  //       const orderParams = {
-  //         paymentID: data.response.result.paymentId,
-  //         productID: product._id,
-  //         amount: payTotal,
-  //         variant: variantType,
-  //         customerEmail: email,
-  //         customerAddress: address,
-  //         itemQuantity: quantity,
-  //         paymment: 'success'
-  //       }
-
-  //       success ? successStack(orderParams, data) : FailureStack();
-  //     })
-  //     .catch((error) => {
-  //       console.log('error: ', error);
-  //       FailureStack();
-  //     })
-  // };
+  useEffect(() => {
+    BackHandler.addEventListener('hardwareBackPress', () => navigationRef.current?.navigate('LiveStream', { channelName: props.channelName, event: props.event }));
+    return () => {
+      BackHandler.removeEventListener('hardwareBackPress', () => navigationRef.current?.navigate('LiveStream', { channelName: props.channelName, event: props.event }));
+    }
+  })
 
   return (
-    <View style={styles.cartContainer} >
-
-      <StatusBar
-        barStyle="dark-content"
-        backgroundColor="transparent"
-        animated={true}
-        translucent
-      />
-
-      <KeyboardAvoidingView style={{ flex: 1 }} behavior='padding' enabled={true} >
-
-        <ScrollView>
+    <ScrollView style={styles.container} >
+      <View style={styles.cartContainer} >
+        <KeyboardAvoidingView style={{ flex: 1 }} behavior='padding' enabled={true} keyboardVerticalOffset={0} >
 
           <View style={styles.innerContainer}>
 
@@ -208,12 +210,12 @@ export default Cart = React.memo(props => {
                 (
                   <View style={{ alignItems: 'center', justifyContent: 'center', }}>
                     <View style={styles.dropDownBar}>
-                      <Text style={styles.dropText}>{`Quantity ${order.quantity}`}</Text>
+                      <Text style={styles.dropText}>{`Qty: ${order.quantity}`}</Text>
 
                     </View>
 
                     <View style={styles.dropDownBar}>
-                      <Text style={styles.dropText}>{`Variant ${order.variant}`}</Text>
+                      <Text style={styles.dropText}>{`Variant: ${order.variant}`}</Text>
 
                     </View>
 
@@ -232,7 +234,7 @@ export default Cart = React.memo(props => {
 
                     <View style={styles.email}>
                       <TextInput
-                        style={{ color: '#000', fontSize: 16, marginLeft: 10, height: 140, maxWidth: Math.floor(WINDOW_WIDTH / 1.85) }}
+                        style={{ color: '#000', fontSize: 16, marginLeft: 10, height: 140, maxWidth: Math.floor(WINDOW_WIDTH) }}
                         multiline={true}
                         placeholder={order.email}
                         placeholderTextColor={'#0E0E0E'}
@@ -241,11 +243,11 @@ export default Cart = React.memo(props => {
                     </View>
                   </View>
                 ) : (
-                  <View style={{ alignItems: 'center' }}>
+                  <View style={{ alignItems: 'center', marginTop: '-10%' }}>
                     {
                       !props.productDetail.sold ?
                         <View style={styles.dropDownBar}>
-                          <Text style={styles.dropText}>Quantity</Text>
+                          <Text style={styles.dropText}>{'Qty:'}</Text>
                           <ModalDropdown
                             options={new Array(product.quantity).fill().map((_, i) => (i + 1).toString())}
                             defaultIndex={0}
@@ -254,7 +256,9 @@ export default Cart = React.memo(props => {
                             textStyle={{
                               fontSize: 16,
                               textAlign: 'center',
-                              width: Math.floor(WINDOW_WIDTH / 5),
+                              width: Math.floor(WINDOW_WIDTH / 10),
+                              color: 'white',
+                              fontWeight: 'bold'
                             }}
                             dropdownStyle={{
                               marginTop: -Math.floor(WINDOW_WIDTH / 12),
@@ -262,24 +266,24 @@ export default Cart = React.memo(props => {
                             dropdownTextStyle={{
                               fontSize: 16,
                               textAlign: 'center',
-                              width: Math.floor(WINDOW_WIDTH / 5),
+                              width: Math.floor(WINDOW_WIDTH / 10),
                             }}
                             style={{
-                              borderWidth: 0.7,
-                              borderColor: 'FAFAFA',
-                              marginLeft: Math.floor(WINDOW_WIDTH / 35),
-                              padding: 2
+                              borderWidth: 1,
+                              borderRadius: 8,
+                              borderColor: '#FAFAFA',
+                              marginLeft: '1%',
+                              padding: 2,
+                              backgroundColor: '#E0E0E0'
                             }}
                           />
                         </View>
                         :
-                        <View style={styles.dropDownBar}>
-                          <Text style={{ color: 'red', fontSize: 14, fontWeight: 'bold', width: Math.floor(WINDOW_WIDTH / 1.9) }}>{'Product is currently Sold Out!'}</Text>
-                        </View>
+                        null
                     }
 
                     <View style={styles.dropDownBar}>
-                      <Text style={styles.dropText}>Variant</Text>
+                      <Text style={styles.dropText}>{'Variant:'}</Text>
                       <ModalDropdown
                         options={product.variants}
                         defaultIndex={0}
@@ -288,7 +292,9 @@ export default Cart = React.memo(props => {
                         textStyle={{
                           fontSize: 16,
                           textAlign: 'center',
-                          width: Math.floor(WINDOW_WIDTH / 3.5),
+                          width: Math.floor(WINDOW_WIDTH / 5),
+                          color: 'white',
+                          fontWeight: 'bold'
                         }}
                         dropdownStyle={{
                           marginTop: -Math.floor(WINDOW_WIDTH / 12),
@@ -296,32 +302,49 @@ export default Cart = React.memo(props => {
                         dropdownTextStyle={{
                           fontSize: 16,
                           textAlign: 'center',
-                          width: Math.floor(WINDOW_WIDTH / 3.5),
+                          width: Math.floor(WINDOW_WIDTH / 5),
                         }}
                         style={{
                           borderWidth: 0.7,
-                          borderColor: 'FAFAFA',
-                          marginLeft: Math.floor(WINDOW_WIDTH / 35),
-                          padding: 2
+                          borderColor: '#FAFAFA',
+                          borderRadius: 8,
+                          marginLeft: '1%',
+                          padding: 2,
+                          backgroundColor: '#E0E0E0',
+                          textAlign: 'center'
                         }}
                       />
                     </View>
 
-                    {!props.productDetail.sold ?
-                      <Pricing key={quantity} prodPrice={product} qty={quantity} callback={updateTotal} /> : <Pricing key={quantity} prodPrice={product} qty={1} callback={updateTotal} />
+                    {
+                      !props.productDetail.sold ?
+                        <Pricing key={quantity} prodPrice={product} qty={quantity} callback={updateTotal} />
+                        :
+                        <Pricing key={quantity} prodPrice={product} qty={1} callback={updateTotal} />
+                    }
+                    {
+                      props.productDetail.sold ?
+                        <View>
+                          <Text
+                            style={{ color: 'red', fontSize: 16, fontWeight: 'bold',  }}>
+                            {'Product is currently Sold Out!'}
+                          </Text>
+                        </View>
+                        :
+                        null
                     }
 
-                    {/* {
+                    {
                       !props.productDetail.sold ?
                         <View style={styles.address}>
                           {!address.trim() ? <Add height={32} width={32} style={{ marginLeft: Math.floor(WINDOW_WIDTH / 50) }} /> : null}
                           <TextInput
-                            autoCompleteType='street-address'
+                            autoCompleteType='off'
                             style={{ color: '#000', fontSize: 16, marginLeft: 10, height: 170, maxWidth: Math.floor(WINDOW_WIDTH) }}
                             multiline={true}
                             placeholder={'Add Address'}
                             placeholderTextColor={'#0E0E0E'}
-                            onEndEditing={(event) => setAddress(event.nativeEvent.text.trim())}
+                            onChangeText={text => setAddress(text.trim())}
                           />
                         </View>
                         :
@@ -333,37 +356,35 @@ export default Cart = React.memo(props => {
                         <View style={styles.email}>
                           {!email.trim() ? <Add height={32} width={32} style={{ marginLeft: Math.floor(WINDOW_WIDTH / 50) }} /> : null}
                           <TextInput
-                            autoCompleteType='email'
-                            style={{ color: '#000', fontSize: 16, marginLeft: 10, height: 100, maxWidth: Math.floor(WINDOW_WIDTH / 1.85) }}
+                            autoCompleteType='off'
+                            style={{ color: '#000', fontSize: 16, marginLeft: 10, height: 100, maxWidth: Math.floor(WINDOW_WIDTH) }}
                             multiline={true}
                             placeholder={'Add your email'}
                             placeholderTextColor={'#0E0E0E'}
+                            // onChangeText={text => validateEmail(text.trim())}
                             onEndEditing={(event) => validateEmail(event.nativeEvent.text.trim())}
                           />
                         </View>
                         :
                         null
-                    } */}
+                    }
 
-                    {/* {
+                    {
                       !props.productDetail.sold ?
                         <TouchableOpacity onPress={() => { checkAddressEmail() }}>
                           <PayNow height={Math.floor(WINDOW_WIDTH / 5)} width={Math.floor(WINDOW_WIDTH / 1.3)} />
                         </TouchableOpacity>
                         :
                         null
-                    } */}
+                    }
 
                   </View>
                 )
             }
 
           </View>
-
-        </ScrollView>
-
-      </KeyboardAvoidingView>
-
-    </View>
+        </KeyboardAvoidingView>
+      </View>
+    </ScrollView>
   );
 })

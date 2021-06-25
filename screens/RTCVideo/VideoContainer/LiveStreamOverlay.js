@@ -1,6 +1,6 @@
 /* eslint-disable */
-import React from 'react';
-import { View, StyleSheet, Image, TouchableOpacity, Text } from 'react-native';
+import React, {useRef, useState} from 'react';
+import { View, StyleSheet, Image, TouchableOpacity, Text, Animated } from 'react-native';
 import { navigationRef } from '../../../Navigation/Navigation';
 import LiveChat from '../Chat/LiveChat';
 import Icon from 'react-native-vector-icons/dist/MaterialIcons';
@@ -24,6 +24,31 @@ const shareDemoBooking = async () => {
 };
 
 export default ({ product, channelName, event, overlayFunctions }) => {
+
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const [show, setShow] = useState(true);
+
+  const fadeIn = () => {
+    Animated.timing(fadeAnim, {
+      toValue: 0.9,
+      duration: 1000,
+      useNativeDriver: true
+    }).start();
+  };
+  const fadeOut = () => {
+    Animated.timing(fadeAnim, {
+      toValue: 0,
+      duration: 500,
+      useNativeDriver: true
+    }).start();
+  };
+
+  const showInfo = () => {
+    console.log(`clicked... show --> ${show}`)
+    show ? fadeIn() : fadeOut()
+    setShow(!show);
+  }
+
   return (
     <View style={styles.overlay}>
       <View style={styles.top}>
@@ -41,7 +66,7 @@ export default ({ product, channelName, event, overlayFunctions }) => {
           <View style={{ marginLeft: -10, marginRight: 12 }}>
             <Icon name="share" size={25} color="#FFF" onPress={() => shareDemoBooking()} />
           </View>
-          <Icon name="info" size={25} color="#FFF" />
+          <Icon name="info" size={25} color="#FFF" onPress={() => showInfo()} />
         </View>
         <View style={styles.topRight}>
           <TouchableOpacity
@@ -52,6 +77,12 @@ export default ({ product, channelName, event, overlayFunctions }) => {
           </TouchableOpacity>
         </View>
       </View>
+      
+      <Animated.View
+        style={{ backgroundColor: '#E0E0E0', marginTop: '15%', padding: 4, borderRadius: 36, flexDirection: 'row', alignItems: 'center', opacity: fadeAnim }}>
+        <Text style={{fontSize: 12, textAlign: 'center'}}>{product.title}</Text>
+      </Animated.View>
+   
       <View style={styles.bottom}>
         <View style={styles.bottomLeft}>
           <LiveChat channel={channelName} />
@@ -103,6 +134,7 @@ export default ({ product, channelName, event, overlayFunctions }) => {
                   marginLeft: 2,
                   textDecorationLine: 'line-through',
                   textDecorationStyle: 'solid',
+                  color: 'red'
                 }}>
                 {product.price}
               </Text>

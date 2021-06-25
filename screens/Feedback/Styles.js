@@ -1,8 +1,11 @@
 import { StyleSheet, Dimensions, StatusBar } from 'react-native';
 
-import { COLORS, WINDOW_HEIGHT, WINDOW_WIDTH } from '../../styles/styles';
+import { COLORS } from '../../styles/styles';
 
-export default styles = StyleSheet.create({
+const WINDOW_WIDTH = Dimensions.get('window').width;
+const WINDOW_HEIGHT = Dimensions.get('window').height;
+
+const styles = StyleSheet.create({
   screenContainer: {
     paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
     backgroundColor: COLORS.WHITE,
@@ -14,6 +17,7 @@ export default styles = StyleSheet.create({
     width: WINDOW_WIDTH,
     height: WINDOW_HEIGHT,
     padding: Math.floor(WINDOW_WIDTH / 30),
+    marginTop: -30,
     justifyContent: 'flex-start',
   },
   navbar: {
@@ -35,13 +39,13 @@ export default styles = StyleSheet.create({
   },
   product: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     textAlign: 'center',
     justifyContent: 'center',
   },
   image: {
-    width: Math.floor(WINDOW_WIDTH / 4),
-    height: Math.floor(WINDOW_WIDTH / 4),
+    width: Math.floor(WINDOW_WIDTH / 3),
+    height: Math.floor(WINDOW_WIDTH / 3),
     borderRadius: Math.floor(WINDOW_WIDTH / 20),
   },
   time: {
@@ -90,13 +94,15 @@ export default styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginTop: Math.floor(WINDOW_WIDTH / 45),
+    marginTop: '3%',
+    // borderWidth: 1
   },
   options: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-evenly',
-    width: Math.floor(WINDOW_WIDTH / 3),
+    justifyContent: 'center',
+    paddingHorizontal: '8%',
+    // borderWidth: 1
   },
   paramText: {
     fontSize: 16,
@@ -145,3 +151,5 @@ export default styles = StyleSheet.create({
     alignSelf: 'center',
   }
 })
+
+export default styles;

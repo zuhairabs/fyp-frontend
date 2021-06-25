@@ -93,7 +93,14 @@ export default () => (
     <Stack.Screen name="Video" component={Video} />
     <Stack.Screen name="RTCVideo" component={RTCVideo} />
     <Stack.Screen name="LiveStream" component={LiveStream} />
-    <Stack.Screen name="Product" component={Product} />
+    <Stack.Screen
+      name="Product"
+      component={Product}
+      options={{
+        title: 'Cart Details',
+        ...SCREEN_HEADER_OPTIONS,
+      }}
+    />
     <Stack.Screen name="Demo" component={Demo} />
     <Stack.Screen name="PaymentSuccess" component={PaymentSuccess} />
     <Stack.Screen name="PaymentFailure" component={PaymentFailure} />

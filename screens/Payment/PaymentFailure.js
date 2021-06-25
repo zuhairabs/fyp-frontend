@@ -5,16 +5,35 @@ import { navigationRef } from '../../Navigation/Navigation';
 import { GlobalContext } from '../../providers/GlobalContext';
 import { Post } from '../../api/http';
 
-import styles from './Styles';
-const WINDOW_WIDTH = Dimensions.get('window').width;
-
 import PaymentFailure from './svg/Payment-Failure';
 import Yes from './svg/Yes-Button';
 import No from './svg/No-Button';
+import styles from './Styles';
+
+const WINDOW_WIDTH = Dimensions.get('window').width;
+
+const paymentUri = 'payment/createPayment'
 
 export default (props) => {
   const { state } = useContext(GlobalContext);
-  
+
+  useEffect(() => {
+    const paymentBody = JSON.stringify({
+      paymentDetail: {
+        shopout_transaction_id: props.route.params.product.txnID,
+        user_id: state.user._id,
+        event_id: props.route.params.product.event,
+        error_code: props.route.params.paymentParams.code,
+        error_description: props.route.params.paymentParams.error.description,
+        payment_date: new Date()
+      }
+    })
+
+    Post(paymentUri, paymentBody, state.token)
+      .then(data => console.log(data))
+      .catch(err => console.log(err))
+  }, [props.route.params])
+
   return (
     <View style={styles.innerContainer}>
       <View style={styles.infoContainer}>

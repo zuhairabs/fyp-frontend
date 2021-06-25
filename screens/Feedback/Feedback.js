@@ -1,30 +1,51 @@
-import React, { useContext } from 'react';
-import { ToastAndroid } from 'react-native';
+import React, { useContext, useEffect, useState } from 'react';
+import { View, ScrollView, ToastAndroid, BackHandler } from 'react-native';
 
 import { GlobalContext } from '../../providers/GlobalContext';
 import { Post } from '../../api/http';
+import styles from './Styles';
 
 import StatusBarWhite from '../../components/StatusBar';
 import NavBackButton from '../../components/Header/NavbarBackButton';
-import MainBackground from '../../components/Backgrounds/MainBackground';
+// import MainBackground from '../../components/Backgrounds/MainBackground';
+import LoadingContainer from './Container/LoadingContainer';
 import FeedbackPage from './FeedbackPage';
+import { navigationRef } from '../../Navigation/Navigation';
 
-const currentUri = 'feedback/callFeedback'
+const demoBookingUri = 'demoBooking/fetch/single'
+const feedbackUri = 'feedback/callFeedback'
 
 export default (props) => {
-    // pass at least product image, event start time, name and descriptions as productDetails.
     const { state } = useContext(GlobalContext);
 
     const _id = props.route.params.event;
-    const productDetails = props.route.params.productDetails;
+    const [productDetails, setProductDeatils] = useState({});
+    const [loading, setLoading] = useState(true);
     const params = ['Call was useful', 'Information was relevant', 'Interested in callback'];
     let feedbackParams = [];
 
+    useEffect(() => {
+        const body = JSON.stringify({
+            cred: {
+                phone: state.user.phone,
+            },
+            bookingData: { _id: _id }
+        });
+
+        Post(demoBookingUri, body, state.token)
+            .then((data) => {
+                console.log("Feedback ==> ", data.demobooking.demoName);
+                setProductDeatils(data.demobooking);
+                setLoading(false);
+            })
+            .catch(error => console.log(error));
+    }, [props.route.params])
+
+    // after user gives feedback, there's a callback to below function.
     const updateFeedbackParams = (arr) => {
         feedbackParams = arr;
         postFeedack();
     }
-
     const postFeedack = () => {
         const body = JSON.stringify({
             cred: { phone: state.user.phone, },
@@ -35,23 +56,29 @@ export default (props) => {
                 callback: feedbackParams[2]
             }
         })
-        Post(currentUri, body, state.token)
-            .then(
-                (res) => {
-                    if (res.status === 201) res.json().then(data => ToastAndroid.show(data.feedback, ToastAndroid.LONG))
-                    else ToastAndroid.show('An error occured. Please try again later.', ToastAndroid.LONG)
+        Post(feedbackUri, body, state.token)
+            .then(data => {
+                if (data.feedback) {
+                    ToastAndroid.show('Feedback given!', ToastAndroid.LONG);
+                    navigationRef.current?.navigate('Home');
                 }
-            )
+                else ToastAndroid.show('An error occured. Please try again later.', ToastAndroid.LONG)
+            })
             .catch((error) => ToastAndroid.show(error, ToastAndroid.SHORT));
     }
 
     return (
         <View style={styles.screenContainer}>
-            <MainBackground />
+            {/* <MainBackground /> */}
             <StatusBarWhite />
-            <NavBackButton />
+            {/* <NavBackButton /> */}
             <ScrollView style={styles.container}>
-                <FeedbackPage productDetails={productDetails} feedbackParams={params} callback={updateFeedbackParams} />
+                {
+                    loading ?
+                        <LoadingContainer />
+                        :
+                        <FeedbackPage productDetails={productDetails} feedbackParams={params} callback={updateFeedbackParams} leaveTime={props.route.params.leaveTime} />
+                }
             </ScrollView>
         </View>
     )

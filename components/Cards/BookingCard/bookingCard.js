@@ -73,7 +73,7 @@ const BookingCard = (props) => {
       event: props.booking._id,
       user: state.user._id,
     });
-    Post('demoBooking/actions/unregister', body, state.token).then(() => {
+    Post('demoBooking/actions/cancel', body, state.token).then(() => {
       ToastAndroid.show('Unregistered successfully', ToastAndroid.LONG);
       props.removeBooking(props.booking._id);
     });

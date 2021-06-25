@@ -48,15 +48,15 @@ const styles = StyleSheet.create({
   container: {
     width: Math.floor(DEVICE_WIDTH / 2),
     marginTop: 4,
-    borderRadius: 15,
+    borderRadius: 16,
     marginHorizontal: 15,
   },
   card: {
-    height: 130,
+    height: 136,
     backgroundColor: COLORS.WHITE,
     justifyContent: 'flex-start',
-    elevation: 5,
-    borderRadius: 15,
+    elevation: 6,
+    borderRadius: 16,
   },
 });
 

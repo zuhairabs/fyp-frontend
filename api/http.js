@@ -13,6 +13,7 @@ export const Post = (route, body = {}, token = '') =>
     };
     fetch(`${URI}/${route}`, options).then(
       (res) => {
+        console.log(`${URI}/${route}`)
         if (res.status === 200 || res.status === 201) res.json().then((data) => resolve(data));
         else {
           reject(ERROR_MESSAGE[res.status]);

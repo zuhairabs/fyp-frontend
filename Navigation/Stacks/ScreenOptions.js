@@ -17,4 +17,8 @@ export const SCREEN_HEADER_OPTIONS = {
   headerLeftContainerStyle: {
     padding: 20,
   },
+  headerStyle: {
+    marginBotton: 0,
+    height: 90
+  }
 };

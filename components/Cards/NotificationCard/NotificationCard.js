@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Text,
   View,
@@ -7,9 +7,9 @@ import {
   TouchableOpacity,
   ToastAndroid,
 } from 'react-native';
-import {COLORS, textStyles} from '../../../styles/styles';
-import {dropdownModal} from '../../Header/NotificationDropdown';
-import {navigationRef} from '../../../Navigation/Navigation';
+import { COLORS, textStyles } from '../../../styles/styles';
+import { dropdownModal } from '../../Header/NotificationDropdown';
+import { navigationRef } from '../../../Navigation/Navigation';
 
 const MINUTE_LENGTH = 60 * 1000;
 const HOUR_LENGTH = 60 * MINUTE_LENGTH;
@@ -62,12 +62,17 @@ const calculateNotificationTime = (time) => {
   else return `${Math.floor(offset / MONTH_LENGTH)} months ago`;
 };
 
-const NotificationCard = ({notification}) => {
+const NotificationCard = ({ notification }) => {
   const handleNotificationCardPress = () => {
     dropdownModal.current?.close();
     if (notification.booking)
       navigationRef.current?.navigate('SingleBooking', {
         booking: notification.booking,
+        archived: notification.archived,
+      });
+    else if (notification.demobooking)
+      navigationRef.current?.navigate('SingleDemoBooking', {
+        booking: notification.demobooking,
         archived: notification.archived,
       });
     else if (notification.store)
@@ -94,7 +99,7 @@ const NotificationCard = ({notification}) => {
         }}>
         {notification.image ? (
           <Image
-            source={{uri: `data:image/png;base64,${notification.image}`}}
+            source={{ uri: `data:image/png;base64,${notification.image}` }}
             style={styles.logo}
           />
         ) : (

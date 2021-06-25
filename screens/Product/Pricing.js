@@ -34,14 +34,17 @@ export default (props) => {
   }
 
   return (
-    <View style={styles.pricingContainer} >
+    <View style={styles.pricingContainer, {
+      marginTop: '5%',
+      marginBottom: '15%',
+    }} >
       <View style={styles.pricing}>
         <Text style={styles.label}>Actual Price</Text>
         <Text style={styles.value}>{commaFormatPrice(price.toFixed(2), 0)}</Text>
       </View>
       <View style={styles.pricing}>
         <Text style={styles.label}>Discount</Text>
-        <Text style={[styles.value, { color: '#ff0000' }]}>{commaFormatPrice(discount.toFixed(2), 0)}</Text>
+        <Text style={[styles.value, { color: '#ff0000' }]}>{`-${commaFormatPrice(discount.toFixed(2), 0)}`}</Text>
       </View>
       <View style={styles.pricing}>
         <Text style={styles.label}>Total</Text>

@@ -5,9 +5,10 @@ import AsyncStorage from '@react-native-community/async-storage';
 
 import StatusBarWhite from '../../components/StatusBar';
 import {NotificationLoadingEffect} from '../../components/Cards/NotificationCard/NotificationCard';
-const NotificationCard = lazy(() =>
-  import('../../components/Cards/NotificationCard/NotificationCard'),
-);
+// const NotificationCard = lazy(() =>
+//   import('../../components/Cards/NotificationCard/NotificationCard'),
+// );
+import NotificationCard from '../../components/Cards/NotificationCard/NotificationCard'
 import {GlobalContext} from '../../providers/GlobalContext';
 import {COLORS} from '../../styles/styles';
 
