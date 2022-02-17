@@ -35,7 +35,7 @@
     "react-native-hyperlink": "0.0.19",
     "react-native-image-picker": "^3.2.1",
     "react-native-image-resizer": "^1.4.3",
-    "react-native-incoming-call": "git+https://github.com/iNeelPatel/react-native-incoming-call.git",
+    "react-native-incoming-call": "git+https://iNeelPatel@github.com/iNeelPatel/react-native-incoming-call.git",
     "react-native-keep-awake": "^4.0.0",
     "react-native-keyboard-listener": "^1.1.0",
     "react-native-keyboard-spacer": "^0.4.1",
