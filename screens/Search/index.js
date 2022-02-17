@@ -1,5 +1,13 @@
+/* eslint-disable react-native/no-inline-styles */
+/* eslint-disable prettier/prettier */
 import React, {useContext, useEffect, useState} from 'react';
-import {View, ScrollView, Text, ActivityIndicator} from 'react-native';
+import {
+  Dimensions,
+  View,
+  ScrollView,
+  Text,
+  ActivityIndicator,
+} from 'react-native';
 
 import StatusBarWhite from '../../components/StatusBar';
 import SearchBox from './SearchBox';
@@ -12,6 +20,9 @@ import Videos from './Tabs/Videos';
 import Stores from './Tabs/Stores';
 import EmptyResults from './EmptyResults';
 import {GlobalContext} from '../../providers/GlobalContext';
+import {COLORS, textStyles} from '../../styles/styles';
+
+const WINDOW_HEIGHT = Dimensions.get('window').height;
 
 export default ({route, navigation}) => {
   const {state} = useContext(GlobalContext);
@@ -40,6 +51,7 @@ export default ({route, navigation}) => {
       setQuery(searchTerm);
       fullSearchAPI(searchTerm, selectedTab.model, state.location || {}).then(
         (response) => {
+          console.log(response);
           setResults(response);
           setLoading(false);
         },
@@ -100,7 +112,19 @@ export default ({route, navigation}) => {
       <TabNavigation />
       <ScrollView contentContainerStyle={styles.container}>
         <Header query={query} />
-        {loading ? <ActivityIndicator /> : <>{TabComponent[selectedTab]}</>}
+        {loading ? (
+          <View
+            style={{
+              justifyContent: 'center',
+              alignItems: 'center',
+              height: WINDOW_HEIGHT - 200,
+              width: '100%',
+            }}>
+            <ActivityIndicator size="large" color={COLORS.PRIMARY} />
+          </View>
+        ) : (
+          <>{TabComponent[selectedTab]}</>
+        )}
       </ScrollView>
     </View>
   );
