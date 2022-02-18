@@ -173,7 +173,9 @@ export const textStyles = StyleSheet.create({
   smallCardHeading: {
     fontSize: 14,
     lineHeight: 20,
-    fontFamily: 'PTSerif-Bold',
+    fontWeight: 'bold',
+    fontFamily: 'Proxima',
+    textTransform: 'uppercase',
   },
   pageHeader: {
     fontSize: 26,

@@ -154,12 +154,12 @@ android {
             keyPassword 'android'
         }
         release {
-            // if (project.hasProperty('shopout-user.keystore')) {
-                // storeFile file('shopout-user.keystore')
-                // storePassword 'Shopout123'
-                // keyAlias 'shopout-user'
-                // keyPassword 'Shopout123'
-            // }
+            if (project.hasProperty('shopout-user.keystore')) {
+                storeFile file('shopout-user.keystore')
+                storePassword 'Shopout123'
+                keyAlias 'shopout-user'
+                keyPassword 'Shopout123'
+            }
             if (project.hasProperty('MYAPP_UPLOAD_STORE_FILE'))
             {
                 storeFile file(MYAPP_UPLOAD_STORE_FILE)
